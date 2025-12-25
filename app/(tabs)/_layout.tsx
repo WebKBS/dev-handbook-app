@@ -1,32 +1,57 @@
+import { useTheme } from "@/providers/ThemeProvider";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
-import { DynamicColorIOS } from "react-native";
 
 export default function TabLayout() {
+  const { theme } = useTheme();
+
   return (
     <NativeTabs
       labelStyle={{
-        color: DynamicColorIOS({
-          light: "#ff0000",
-          dark: "#FFFFFF",
-        }),
+        color: theme.colors.tabInactive,
       }}
-      tintColor={DynamicColorIOS({
-        light: "#ff0000",
-        dark: "#FFFFFF",
-      })}
+      tintColor={theme.colors.accent}
     >
       <NativeTabs.Trigger name="index">
-        <Label>학습</Label>
+        <Label
+          selectedStyle={{
+            color: theme.colors.accent,
+          }}
+        >
+          학습
+        </Label>
         <Icon sf="book" drawable="custom_settings_drawable" />
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="search/index">
+        <Label
+          selectedStyle={{
+            color: theme.colors.accent,
+          }}
+        >
+          검색
+        </Label>
+        <Icon sf="magnifyingglass" drawable="custom_settings_drawable" />
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="bookmark/index">
-        <Label>북마크</Label>
+        <Label
+          selectedStyle={{
+            color: theme.colors.accent,
+          }}
+        >
+          북마크
+        </Label>
         <Icon sf="bookmark" drawable="custom_settings_drawable" />
       </NativeTabs.Trigger>
-      {/*<NativeTabs.Trigger name="settings">*/}
-      {/*  <Icon sf="gear" drawable="custom_settings_drawable" />*/}
-      {/*  <Label>Settings</Label>*/}
-      {/*</NativeTabs.Trigger>*/}
+      {/* 설정 */}
+      <NativeTabs.Trigger name="settings/index">
+        <Label
+          selectedStyle={{
+            color: theme.colors.accent,
+          }}
+        >
+          설정
+        </Label>
+        <Icon sf="gearshape" drawable="custom_settings_drawable" />
+      </NativeTabs.Trigger>
     </NativeTabs>
   );
 }

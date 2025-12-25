@@ -1,11 +1,65 @@
-import { Text, View } from "react-native";
+import { AppText } from "@/components/text/AppText";
+import { useTheme } from "@/providers/ThemeProvider";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const BookmarkScreen = () => {
+export default function BookmarkScreen() {
+  const { theme } = useTheme();
+
   return (
-    <View>
-      <Text>BookmarkScreen</Text>
-    </View>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
+    >
+      <View style={styles.container}>
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.border,
+              shadowColor: theme.colors.shadow,
+            },
+          ]}
+        >
+          <AppText
+            weight={"bold"}
+            style={[styles.title, { color: theme.colors.text }]}
+          >
+            북마크가 비어 있습니다
+          </AppText>
+          <AppText style={[styles.description, { color: theme.colors.muted }]}>
+            이후 저장할 페이지나 섹션이 생기면 같은 테마로 표시될 예정입니다.
+            마크다운 기반 콘텐츠와 연동해보세요.
+          </AppText>
+        </View>
+      </View>
+    </SafeAreaView>
   );
-};
+}
 
-export default BookmarkScreen;
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  card: {
+    borderRadius: 16,
+    padding: 18,
+    borderWidth: 1,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.12,
+    shadowRadius: 18,
+    elevation: 4,
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+});
