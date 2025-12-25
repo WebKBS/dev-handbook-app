@@ -1,4 +1,5 @@
 import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Platform, StatusBar } from "react-native";
@@ -26,6 +27,9 @@ export default function RootLayout() {
 
   return (
     <>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
       {Platform.OS === "ios" ? (
         <StatusBar
           backgroundColor={"transparent"}
