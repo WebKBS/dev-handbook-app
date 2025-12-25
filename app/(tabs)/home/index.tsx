@@ -66,7 +66,7 @@ export default function HomeScreen() {
           </Pressable>
         </View>
         <Link
-          href={"/(tabs)/home/detail"}
+          href={"/(tabs)/home/html"}
           style={{
             paddingVertical: 12,
             paddingHorizontal: 16,

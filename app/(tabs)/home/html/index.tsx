@@ -2,14 +2,14 @@ import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import { AppText } from "@/components/text/AppText";
 import { View } from "react-native";
 
-const Detail = () => {
+const HtmlScreen = () => {
   return (
     <SafeAreaViewScreen>
       <View>
-        <AppText>Detail</AppText>
+        <AppText>HTML</AppText>
       </View>
     </SafeAreaViewScreen>
   );
 };
 
-export default Detail;
+export default HtmlScreen;
