@@ -6,6 +6,7 @@ export default function TabLayout() {
 
   return (
     <NativeTabs
+      minimizeBehavior="onScrollDown"
       labelStyle={{
         color: theme.colors.tabInactive,
       }}
@@ -21,16 +22,7 @@ export default function TabLayout() {
         </Label>
         <Icon sf="book" drawable="custom_settings_drawable" />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="search/index">
-        <Label
-          selectedStyle={{
-            color: theme.colors.accent,
-          }}
-        >
-          검색
-        </Label>
-        <Icon sf="magnifyingglass" drawable="custom_settings_drawable" />
-      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="bookmark/index">
         <Label
           selectedStyle={{
@@ -51,6 +43,9 @@ export default function TabLayout() {
           설정
         </Label>
         <Icon sf="gearshape" drawable="custom_settings_drawable" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="search/index" role={"search"}>
+        <Label>검색</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

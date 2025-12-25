@@ -1,26 +1,55 @@
-import { Stack } from "expo-router";
+import { useTheme } from "@/providers/ThemeProvider";
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
+import { Pressable } from "react-native";
 
-export default function HomeLayout() {
+const HomeLayout = () => {
+  const { theme } = useTheme();
+  const router = useRouter();
+
   return (
     <Stack
       screenOptions={{
-        headerShown: true,
-
         // iOS 네이티브 느낌 (큰 타이틀)
         headerLargeTitle: true,
-        headerLargeTitleShadowVisible: false,
 
-        // 헤더 그림자/구분선 조절 (플랫폼마다 다름)
-        headerShadowVisible: false,
-
-        // 가운데 타이틀(iOS는 largeTitle과 함께 쓰면 기본적으로 자연스러움)
-        headerTitleAlign: "center",
-
-        // 뒤로가기 아이콘/제스처는 기본이 네이티브스러움
+        headerTitleStyle: {
+          color: theme.colors.text,
+          fontFamily: "Pretendard-Bold",
+        },
+        headerTintColor: theme.colors.accent,
+        contentStyle: { backgroundColor: theme.colors.background },
       }}
     >
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="html/index" options={{ title: "HTML" }} />
+      <Stack.Screen
+        name="index"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="html/index"
+        options={{
+          title: "HTML",
+          headerLeft: () => (
+            <Pressable
+              onPress={() => {
+                router.back();
+              }}
+              hitSlop={10}
+            >
+              {/*hitSlop은 터치 영역을 확장해주는 속성입니다. */}
+              <Ionicons
+                name="chevron-back"
+                size={24}
+                color={theme.colors.text}
+              />
+            </Pressable>
+          ),
+        }}
+      />
     </Stack>
   );
-}
+};
+
+export default HomeLayout;
