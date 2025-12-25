@@ -44,31 +44,32 @@ const palette = {
   pebble: "#e2e8f0",
   cloud: "#f8fafc",
   accent: "#0ea5e9",
+  accentDeep: "#0284c7",
   accentBright: "#38bdf8",
   ember: "#f97316",
   ash: "#94a3b8",
+  mutedLight: "#64748b",
 };
 
 export const themes: Record<ThemeMode, Theme> = {
   light: {
-    mode: "light",
     colors: {
       background: palette.cloud,
       surface: "#ffffff",
       card: "#f4f6fb",
       text: palette.ink,
-      muted: "#475569",
+      muted: palette.mutedLight,
       accent: palette.accent,
-      accentStrong: palette.ember,
+      accentStrong: palette.accentDeep,
       border: palette.pebble,
-      codeBg: "rgba(15, 23, 42, 0.06)",
+      codeBg: "rgba(15, 23, 42, 0.07)",
       codeText: palette.ink,
       tabInactive: palette.ash,
       shadow: "rgba(15, 23, 42, 0.08)",
     },
+    mode: "light",
   },
   dark: {
-    mode: "dark",
     colors: {
       background: palette.ink,
       surface: palette.midnight,
@@ -78,11 +79,12 @@ export const themes: Record<ThemeMode, Theme> = {
       accent: palette.accentBright,
       accentStrong: palette.accent,
       border: "#1f2937",
-      codeBg: "rgba(255, 255, 255, 0.04)",
+      codeBg: "rgba(255, 255, 255, 0.05)",
       codeText: "#e5e7eb",
       tabInactive: "#6b7280",
       shadow: "rgba(8, 15, 26, 0.6)",
     },
+    mode: "light",
   },
 };
 
