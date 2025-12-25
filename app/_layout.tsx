@@ -1,9 +1,46 @@
+import { queryClient } from "@/libs/tanstack/tanstack-query";
+import { ThemeProvider, useTheme } from "@/providers/ThemeProvider";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Platform, StatusBar } from "react-native";
 
 SplashScreen.preventAutoHideAsync().then().catch(console.error);
+
+function RootLayoutNav() {
+  const { mode, theme } = useTheme();
+
+  return (
+    <>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: theme.colors.background },
+        }}
+      >
+        <Stack.Screen name="(tabs)" />
+      </Stack>
+      {Platform.OS === "ios" ? (
+        <StatusBar
+          backgroundColor={theme.colors.background}
+          showHideTransition={"fade"}
+          animated={true}
+          barStyle={mode === "dark" ? "light-content" : "dark-content"}
+          translucent={true}
+        />
+      ) : (
+        <StatusBar
+          backgroundColor={theme.colors.background}
+          showHideTransition={"fade"}
+          animated={true}
+          barStyle={mode === "dark" ? "light-content" : "dark-content"}
+        />
+      )}
+    </>
+  );
+}
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -25,23 +62,10 @@ export default function RootLayout() {
   }
 
   return (
-    <>
-      {Platform.OS === "ios" ? (
-        <StatusBar
-          backgroundColor={"transparent"}
-          showHideTransition={"fade"}
-          animated={true}
-          barStyle={"default"}
-          translucent={true}
-        />
-      ) : (
-        <StatusBar
-          backgroundColor={"black"}
-          showHideTransition={"fade"}
-          animated={true}
-          barStyle={"default"}
-        />
-      )}
-    </>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <RootLayoutNav />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
