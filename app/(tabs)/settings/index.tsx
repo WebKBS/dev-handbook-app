@@ -1,10 +1,13 @@
+import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import { Text, View } from "react-native";
 
 const SettingsScreen = () => {
   return (
-    <View>
-      <Text>SettingsScreen</Text>
-    </View>
+    <SafeAreaViewScreen>
+      <View>
+        <Text>SettingsScreen</Text>
+      </View>
+    </SafeAreaViewScreen>
   );
 };
 

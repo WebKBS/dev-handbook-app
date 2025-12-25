@@ -1,3 +1,4 @@
+import { useTheme } from "@/providers/ThemeProvider";
 import { StyleSheet, Text, type TextProps } from "react-native";
 
 // 폰트 weight 타입 정의
@@ -16,6 +17,8 @@ export function AppText({
   weight = "regular",
   ...props
 }: TextProps & { weight?: Weight }) {
+  const { theme } = useTheme();
+
   return (
     <Text
       {...props}
@@ -23,6 +26,7 @@ export function AppText({
         styles.base,
         { fontFamily: fontMap[weight], fontWeight: "normal" },
         style,
+        { color: theme.colors.text },
       ]}
     />
   );

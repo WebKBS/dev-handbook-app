@@ -1,10 +1,14 @@
-import { Text, View } from "react-native";
+import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
+import { AppText } from "@/components/text/AppText";
+import { View } from "react-native";
 
 const SearchScreen = () => {
   return (
-    <View>
-      <Text>SearchScreen</Text>
-    </View>
+    <SafeAreaViewScreen>
+      <View>
+        <AppText>SearchScreen</AppText>
+      </View>
+    </SafeAreaViewScreen>
   );
 };
 

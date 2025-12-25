@@ -1,15 +1,13 @@
+import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function BookmarkScreen() {
   const { theme } = useTheme();
 
   return (
-    <SafeAreaView
-      style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
-    >
+    <SafeAreaViewScreen>
       <View style={styles.container}>
         <View
           style={[
@@ -33,14 +31,11 @@ export default function BookmarkScreen() {
           </AppText>
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaViewScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     padding: 20,

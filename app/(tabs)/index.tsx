@@ -1,19 +1,12 @@
+import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const { mode, theme, toggleMode } = useTheme();
 
   return (
-    <SafeAreaView
-      style={[
-        styles.safeArea,
-        {
-          backgroundColor: theme.colors.background,
-        },
-      ]}
-    >
+    <SafeAreaViewScreen>
       <ScrollView
         contentContainerStyle={[
           styles.container,
@@ -72,7 +65,7 @@ export default function HomeScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeAreaViewScreen>
   );
 }
 
