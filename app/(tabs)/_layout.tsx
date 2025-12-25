@@ -11,7 +11,7 @@ export default function TabLayout() {
       }}
       tintColor={theme.colors.accent}
     >
-      <NativeTabs.Trigger name="index">
+      <NativeTabs.Trigger name="home">
         <Label
           selectedStyle={{
             color: theme.colors.accent,
