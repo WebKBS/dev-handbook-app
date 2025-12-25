@@ -1,4 +1,6 @@
+import { queryClient } from "@/libs/tanstack/tanstack-query";
 import { ThemeProvider, useTheme } from "@/providers/ThemeProvider";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -61,7 +63,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <RootLayoutNav />
+      <QueryClientProvider client={queryClient}>
+        <RootLayoutNav />
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }
