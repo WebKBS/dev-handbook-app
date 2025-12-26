@@ -35,7 +35,7 @@ function RootLayoutNav() {
   }, [fontsReady, manifestReady]);
 
   // 둘 다 준비되기 전에는 화면 렌더 자체를 막아서 깜빡임 방지
-  if (!fontsReady || !manifestReady) return null;
+  // if (!fontsReady || !manifestReady) return <ErrorState />;
 
   return (
     <>
