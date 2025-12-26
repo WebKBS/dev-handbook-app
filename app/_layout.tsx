@@ -1,4 +1,4 @@
-import { useRootManifest } from "@/hooks/services/useRootManifest";
+import { useDomain } from "@/hooks/services/useDomain";
 import { queryClient } from "@/libs/tanstack-query";
 import { ThemeProvider, useTheme } from "@/providers/ThemeProvider";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -22,10 +22,10 @@ function RootLayoutNav() {
     "Pretendard-Regular": require("../assets/fonts/Pretendard-Regular.otf"),
   });
 
-  const { isPending, error: manifestError } = useRootManifest();
+  const { isPending, error: domainError } = useDomain();
 
   const fontsReady = fontsLoaded || !!fontError;
-  const manifestReady = !isPending || !!manifestError;
+  const manifestReady = !isPending || !!domainError;
 
   useEffect(() => {
     if (!hideOnceRef.current && fontsReady && manifestReady) {

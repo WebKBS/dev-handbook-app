@@ -1,5 +1,6 @@
 import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
-import { useRootManifest } from "@/hooks/services/useRootManifest";
+import ErrorState from "@/components/state/ErrorState";
+import { useDomain } from "@/hooks/services/useDomain";
 import { useTheme } from "@/providers/ThemeProvider";
 import { focusManager } from "@tanstack/query-core";
 import { Link } from "expo-router";
@@ -25,7 +26,7 @@ function onAppStateChange(status: AppStateStatus) {
 export default function HomeScreen() {
   const { mode, theme, toggleMode } = useTheme();
 
-  const { data, isPending, error } = useRootManifest();
+  const { data, isPending, error, refetch } = useDomain();
 
   useEffect(() => {
     // 앱 화면 상태 변화 이벤트 리스너 등록
@@ -54,18 +55,10 @@ export default function HomeScreen() {
   if (error) {
     return (
       <SafeAreaViewScreen>
-        <View
-          style={[
-            styles.container,
-            { backgroundColor: theme.colors.background },
-          ]}
-        >
-          <Text
-            style={[styles.errorText, { color: theme.colors.accentStrong }]}
-          >
-            오류가 발생했습니다: {(error as Error).message}
-          </Text>
-        </View>
+        <ErrorState
+          message={(error as Error).message}
+          onRetry={() => refetch()}
+        />
       </SafeAreaViewScreen>
     );
   }
