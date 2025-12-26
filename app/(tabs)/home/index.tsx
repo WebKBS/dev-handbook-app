@@ -32,6 +32,12 @@ export default function HomeScreen() {
     return () => subscription.remove();
   }, []);
 
+  if (isPending && !data) {
+    // 초기 로딩 중에는 아무것도 렌더링하지 않음
+    // TODO: 스켈레톤 UI 추가 고려
+    return null;
+  }
+
   if (error) {
     return (
       <SafeAreaViewScreen>

@@ -1,6 +1,7 @@
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import { DomainResponseData } from "@/services/content/domain";
+import { Image } from "expo-image";
 import { Pressable, StyleSheet, View } from "react-native";
 
 interface HomeScreenContainerProps {
@@ -40,9 +41,6 @@ const HomeScreenContainer = ({ data }: HomeScreenContainerProps) => {
               학습 현황
             </AppText>
           </View>
-          <AppText style={[styles.timestamp, { color: theme.colors.muted }]}>
-            {new Date().toLocaleDateString()}
-          </AppText>
         </View>
         <AppText
           weight="extrabold"
@@ -74,6 +72,8 @@ const HomeScreenContainer = ({ data }: HomeScreenContainerProps) => {
           const countLabel = item?.count ?? 0;
           const updatedLabel = item?.latestUpdatedAt ?? "---- -- --";
 
+          console.log(item.image);
+
           return (
             <Pressable
               key={item?.domain ?? `skeleton-${index}`}
@@ -89,19 +89,15 @@ const HomeScreenContainer = ({ data }: HomeScreenContainerProps) => {
               disabled={isSkeleton}
             >
               <View style={styles.cardTop}>
-                <View
-                  style={[
-                    styles.iconWrap,
-                    { backgroundColor: theme.colors.codeBg },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.iconDot,
-                      { backgroundColor: theme.colors.accent },
-                    ]}
-                  />
-                </View>
+                <Image
+                  source={item.image}
+                  contentFit="contain"
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: 4,
+                  }}
+                />
                 <AppText
                   weight="semibold"
                   style={[styles.cardTitle, { color: theme.colors.text }]}
@@ -140,10 +136,6 @@ const HomeScreenContainer = ({ data }: HomeScreenContainerProps) => {
 export default HomeScreenContainer;
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-
   hero: {
     padding: 18,
     borderRadius: 16,

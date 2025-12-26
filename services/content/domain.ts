@@ -5,6 +5,7 @@ export interface DomainResponseData {
     domain: string;
     count: number;
     latestUpdatedAt: string;
+    image: string;
   }[];
 }
 
