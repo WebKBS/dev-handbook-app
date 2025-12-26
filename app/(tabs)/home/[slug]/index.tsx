@@ -1,4 +1,3 @@
-import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
@@ -54,131 +53,117 @@ const HtmlScreen = () => {
     .sort((a, b) => a.order - b.order);
 
   return (
-    <SafeAreaViewScreen>
-      <ScrollView
-        contentContainerStyle={[
-          styles.container,
-          { backgroundColor: theme.colors.background },
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: theme.colors.background },
+      ]}
+      showsVerticalScrollIndicator={false}
+    >
+      <View
+        style={[
+          styles.hero,
+          {
+            backgroundColor: theme.colors.surface,
+            borderColor: theme.colors.border,
+            shadowColor: theme.colors.shadow,
+          },
         ]}
-        showsVerticalScrollIndicator={false}
       >
-        <View
-          style={[
-            styles.hero,
-            {
-              backgroundColor: theme.colors.surface,
-              borderColor: theme.colors.border,
-              shadowColor: theme.colors.shadow,
-            },
-          ]}
+        <AppText
+          weight="extrabold"
+          style={[styles.heroTitle, { color: theme.colors.text }]}
         >
-          <AppText
-            weight="extrabold"
-            style={[styles.heroTitle, { color: theme.colors.text }]}
-          >
-            구조를 만드는 언어, HTML
-          </AppText>
-          <AppText style={[styles.heroSubtitle, { color: theme.colors.muted }]}>
-            웹의 뼈대를 만드는 태그부터 시맨틱 마크업까지, 입문자를 위한 핵심
-            가이드.
-          </AppText>
-        </View>
+          구조를 만드는 언어, HTML
+        </AppText>
+        <AppText style={[styles.heroSubtitle, { color: theme.colors.muted }]}>
+          웹의 뼈대를 만드는 태그부터 시맨틱 마크업까지, 입문자를 위한 핵심
+          가이드.
+        </AppText>
+      </View>
 
-        <View style={styles.listHeader}>
-          <AppText
-            weight="bold"
-            style={[styles.sectionTitle, { color: theme.colors.text }]}
-          >
-            학습 카드
-          </AppText>
-          <AppText
-            style={[styles.sectionCaption, { color: theme.colors.muted }]}
-          >
-            기본 개념부터 순서대로 따라가보세요.
-          </AppText>
-        </View>
+      <View style={styles.listHeader}>
+        <AppText
+          weight="bold"
+          style={[styles.sectionTitle, { color: theme.colors.text }]}
+        >
+          학습 카드
+        </AppText>
+        <AppText style={[styles.sectionCaption, { color: theme.colors.muted }]}>
+          기본 개념부터 순서대로 따라가보세요.
+        </AppText>
+      </View>
 
-        <View style={styles.cardGrid}>
-          {htmlItems.map((item) => (
-            <View
-              key={item.id}
-              style={[
-                styles.card,
-                {
-                  backgroundColor: theme.colors.surface,
-                  borderColor: theme.colors.border,
-                  shadowColor: theme.colors.shadow,
-                },
-              ]}
-            >
-              <Image
-                source={item.coverImage}
-                style={[styles.cover, { backgroundColor: theme.colors.card }]}
-                contentFit="contain"
-              />
-              <View style={styles.cardBody}>
-                <AppText
-                  weight="semibold"
-                  style={[styles.cardTitle, { color: theme.colors.text }]}
-                >
-                  {item.title}
-                </AppText>
-                <AppText
-                  style={[
-                    styles.cardDescription,
-                    { color: theme.colors.muted },
-                  ]}
-                  numberOfLines={3}
-                >
-                  {item.description}
-                </AppText>
-                <View style={styles.metaRow}>
-                  <View style={styles.tagRow}>
-                    {item.tags.map((tag) => (
-                      <View
-                        key={tag}
-                        style={[
-                          styles.tag,
-                          {
-                            backgroundColor: theme.colors.card,
-                            borderColor: theme.colors.border,
-                          },
-                        ]}
-                      >
-                        <AppText
-                          weight="medium"
-                          style={[
-                            styles.tagText,
-                            { color: theme.colors.accentStrong },
-                          ]}
-                        >
-                          #{tag}
-                        </AppText>
-                      </View>
-                    ))}
-                  </View>
-                  <View style={styles.updatedRow}>
-                    <Feather
-                      name="clock"
-                      size={14}
-                      color={theme.colors.muted}
-                    />
-                    <AppText
+      <View style={styles.cardGrid}>
+        {htmlItems.map((item) => (
+          <View
+            key={item.id}
+            style={[
+              styles.card,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.border,
+                shadowColor: theme.colors.shadow,
+              },
+            ]}
+          >
+            <Image
+              source={item.coverImage}
+              style={[styles.cover, { backgroundColor: theme.colors.card }]}
+              contentFit="contain"
+            />
+            <View style={styles.cardBody}>
+              <AppText
+                weight="semibold"
+                style={[styles.cardTitle, { color: theme.colors.text }]}
+              >
+                {item.title}
+              </AppText>
+              <AppText
+                style={[styles.cardDescription, { color: theme.colors.muted }]}
+                numberOfLines={3}
+              >
+                {item.description}
+              </AppText>
+              <View style={styles.metaRow}>
+                <View style={styles.tagRow}>
+                  {item.tags.map((tag) => (
+                    <View
+                      key={tag}
                       style={[
-                        styles.updatedText,
-                        { color: theme.colors.muted },
+                        styles.tag,
+                        {
+                          backgroundColor: theme.colors.card,
+                          borderColor: theme.colors.border,
+                        },
                       ]}
                     >
-                      {item.updatedAt}
-                    </AppText>
-                  </View>
+                      <AppText
+                        weight="medium"
+                        style={[
+                          styles.tagText,
+                          { color: theme.colors.accentStrong },
+                        ]}
+                      >
+                        #{tag}
+                      </AppText>
+                    </View>
+                  ))}
+                </View>
+                <View style={styles.updatedRow}>
+                  <Feather name="clock" size={14} color={theme.colors.muted} />
+                  <AppText
+                    style={[styles.updatedText, { color: theme.colors.muted }]}
+                  >
+                    {item.updatedAt}
+                  </AppText>
                 </View>
               </View>
             </View>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaViewScreen>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -186,9 +171,10 @@ export default HtmlScreen;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingHorizontal: 20,
-    paddingBottom: 24,
-    paddingTop: 12,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
   hero: {
     padding: 18,
