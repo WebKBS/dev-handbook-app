@@ -1,13 +1,38 @@
 import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import { useRootManifest } from "@/hooks/services/useRootManifest";
 import { useTheme } from "@/providers/ThemeProvider";
+import { focusManager } from "@tanstack/query-core";
 import { Link } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect } from "react";
+import {
+  AppState,
+  AppStateStatus,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+// 앱 상태 변화에 따라 focusManager의 포커스 상태를 업데이트합니다.
+function onAppStateChange(status: AppStateStatus) {
+  if (Platform.OS !== "web") {
+    focusManager.setFocused(status === "active");
+  }
+}
 
 export default function HomeScreen() {
   const { mode, theme, toggleMode } = useTheme();
 
   const { data, isPending, error } = useRootManifest();
+
+  useEffect(() => {
+    // 앱 화면 상태 변화 이벤트 리스너 등록
+    const subscription = AppState.addEventListener("change", onAppStateChange);
+
+    return () => subscription.remove();
+  }, []);
 
   if (isPending) {
     return (
