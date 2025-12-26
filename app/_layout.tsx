@@ -1,4 +1,4 @@
-import { queryClient } from "@/libs/tanstack/tanstack-query";
+import { queryClient } from "@/libs/tanstack-query";
 import { ThemeProvider, useTheme } from "@/providers/ThemeProvider";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
