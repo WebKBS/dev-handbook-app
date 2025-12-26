@@ -1,17 +1,19 @@
 import { useTheme } from "@/providers/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, useRouter } from "expo-router";
+import { Stack, usePathname, useRouter } from "expo-router";
 import { Pressable } from "react-native";
 
 const HomeLayout = () => {
   const { theme } = useTheme();
   const router = useRouter();
+  const pathname = usePathname();
+  const title = pathname.split("/")[2] || "";
 
   return (
     <Stack
       screenOptions={{
         // iOS 네이티브 느낌 (큰 타이틀)
-        headerLargeTitle: true,
+        // headerLargeTitle: true,
 
         headerTitleStyle: {
           color: theme.colors.text,
@@ -19,6 +21,13 @@ const HomeLayout = () => {
         },
         headerTintColor: theme.colors.accent,
         contentStyle: { backgroundColor: theme.colors.background },
+
+        // 안드로이드 스타일
+        headerStyle: {
+          backgroundColor: theme.colors.background,
+        },
+        // 텍스트 위치
+        headerTitleAlign: "center",
       }}
     >
       <Stack.Screen
@@ -28,9 +37,9 @@ const HomeLayout = () => {
         }}
       />
       <Stack.Screen
-        name="html/index"
+        name="[slug]/index"
         options={{
-          title: "HTML",
+          title: title.toUpperCase(),
           headerLeft: () => (
             <Pressable
               onPress={() => {

@@ -11,6 +11,8 @@ export default function TabLayout() {
         color: theme.colors.tabInactive,
       }}
       tintColor={theme.colors.accent}
+      // 안드로이드 스타일
+      backgroundColor={theme.colors.background}
     >
       <NativeTabs.Trigger name="home">
         <Label

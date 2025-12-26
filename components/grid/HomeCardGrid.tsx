@@ -2,6 +2,7 @@ import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import { DomainResponseData } from "@/services/content/domain";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
 interface HomeCardGridProps {
@@ -10,6 +11,7 @@ interface HomeCardGridProps {
 
 const HomeCardGrid = ({ data }: HomeCardGridProps) => {
   const { theme } = useTheme();
+  const router = useRouter();
 
   return (
     <View style={styles.cardGrid}>
@@ -30,6 +32,10 @@ const HomeCardGrid = ({ data }: HomeCardGridProps) => {
                 opacity: isSkeleton ? 0.6 : 1,
               },
             ]}
+            onPress={() => {
+              if (isSkeleton) return;
+              router.navigate(`/home/${item.domain}`);
+            }}
             disabled={isSkeleton}
           >
             <View style={styles.cardTop}>

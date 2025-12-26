@@ -2,7 +2,14 @@ import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import Constants from "expo-constants";
-import { Pressable, ScrollView, StyleSheet, Switch, View } from "react-native";
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  View,
+} from "react-native";
 
 const SettingsScreen = () => {
   const { mode, theme, toggleMode } = useTheme();
@@ -91,7 +98,13 @@ const SettingsScreen = () => {
               }}
               thumbColor={theme.colors.surface}
               ios_backgroundColor={theme.colors.border}
-              style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+              style={
+                Platform.OS === "ios"
+                  ? {
+                      transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
+                    }
+                  : {}
+              }
             />
           </Pressable>
 
