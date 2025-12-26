@@ -1,10 +1,51 @@
 import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
+import { useRootManifest } from "@/hooks/services/useRootManifest";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function HomeScreen() {
   const { mode, theme, toggleMode } = useTheme();
+
+  const { data, isPending, error } = useRootManifest();
+
+  if (isPending) {
+    return (
+      <SafeAreaViewScreen>
+        <View
+          style={[
+            styles.container,
+            { backgroundColor: theme.colors.background },
+          ]}
+        >
+          <Text style={[styles.errorText, { color: theme.colors.muted }]}>
+            Loading...
+          </Text>
+        </View>
+      </SafeAreaViewScreen>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaViewScreen>
+        <View
+          style={[
+            styles.container,
+            { backgroundColor: theme.colors.background },
+          ]}
+        >
+          <Text
+            style={[styles.errorText, { color: theme.colors.accentStrong }]}
+          >
+            오류가 발생했습니다: {(error as Error).message}
+          </Text>
+        </View>
+      </SafeAreaViewScreen>
+    );
+  }
+
+  console.log(data);
 
   return (
     <SafeAreaViewScreen>
