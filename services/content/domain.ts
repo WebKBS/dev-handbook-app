@@ -1,6 +1,6 @@
 import { axiosInstance } from "@/libs/axios";
 
-interface DomainResponse {
+export interface DomainResponseData {
   items: {
     domain: string;
     count: number;
@@ -8,7 +8,7 @@ interface DomainResponse {
   }[];
 }
 
-export const getDomain = async (): Promise<DomainResponse> => {
+export const getDomain = async (): Promise<DomainResponseData> => {
   const response = await axiosInstance.get("/api/service/content/domains");
   return response.data;
 };

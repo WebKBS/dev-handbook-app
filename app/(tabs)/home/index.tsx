@@ -1,5 +1,6 @@
 import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import ErrorState from "@/components/state/ErrorState";
+import HomeScreenContainer from "@/containers/home/HomeScreenContainer";
 import { useDomain } from "@/hooks/services/useDomain";
 import { useTheme } from "@/providers/ThemeProvider";
 import { focusManager } from "@tanstack/query-core";
@@ -20,7 +21,7 @@ function onAppStateChange(status: AppStateStatus) {
 }
 
 export default function HomeScreen() {
-  const { mode, theme, toggleMode } = useTheme();
+  const { theme } = useTheme();
 
   const { data, isPending, error, refetch } = useDomain();
 
@@ -51,33 +52,15 @@ export default function HomeScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* html */}
+        <HomeScreenContainer data={data} />
       </ScrollView>
     </SafeAreaViewScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   container: {
     paddingHorizontal: 20,
     paddingBottom: 24,
-  },
-  hero: {
-    padding: 20,
-    borderRadius: 18,
-    borderWidth: 1,
-    marginBottom: 20,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.16,
-    shadowRadius: 16,
-    elevation: 6,
-  },
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
   },
 });
