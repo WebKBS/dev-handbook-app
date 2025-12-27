@@ -1,7 +1,7 @@
 import { useTheme } from "@/providers/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, usePathname, useRouter } from "expo-router";
-import { Pressable } from "react-native";
+import { Platform, Pressable } from "react-native";
 
 const HomeLayout = () => {
   const { theme } = useTheme();
@@ -13,7 +13,7 @@ const HomeLayout = () => {
     <Stack
       screenOptions={{
         // iOS 네이티브 느낌 (큰 타이틀)
-        // headerLargeTitle: true,
+        headerLargeTitle: true,
 
         headerTitleStyle: {
           color: theme.colors.text,
@@ -23,9 +23,11 @@ const HomeLayout = () => {
         contentStyle: { backgroundColor: theme.colors.background },
 
         // 안드로이드 스타일
-        headerStyle: {
-          backgroundColor: theme.colors.background,
-        },
+        headerStyle:
+          Platform.OS === "android"
+            ? { backgroundColor: theme.colors.background }
+            : undefined,
+
         // 텍스트 위치
         headerTitleAlign: "center",
       }}

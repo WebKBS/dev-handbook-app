@@ -37,7 +37,7 @@ const HomeScreenContainer = ({ data }: HomeScreenContainerProps) => {
               style={[styles.pillDot, { backgroundColor: theme.colors.accent }]}
             />
             <AppText weight="semibold" style={{ color: theme.colors.accent }}>
-              학습 현황
+              학습
             </AppText>
           </View>
         </View>
