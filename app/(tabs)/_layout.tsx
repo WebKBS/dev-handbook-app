@@ -7,22 +7,24 @@ export default function TabLayout() {
   return (
     <NativeTabs
       minimizeBehavior="onScrollDown"
-      labelStyle={{ color: theme.colors.tabInactive }}
-      tintColor={theme.colors.accent}
       backgroundColor={theme.colors.background}
-      // 안드로이드는 이걸로 "기본/선택" 아이콘 색도 같이 잡아주는 편이 안전합니다.
+      tintColor={theme.colors.accent}
+      labelStyle={{
+        default: { color: theme.colors.tabInactive },
+        selected: { color: theme.colors.accent },
+      }}
       iconColor={{
         default: theme.colors.tabInactive,
         selected: theme.colors.accent,
       }}
+      // 안드로이드 active 배경(알약 모양) 색
+      indicatorColor={theme.colors.border ?? theme.colors.tabInactive}
+      // 눌렀을 때 퍼지는 물결 색도 조절하고 싶으면
     >
       <NativeTabs.Trigger name="home">
-        <Label selectedStyle={{ color: theme.colors.accent }}>학습</Label>
+        <Label>학습</Label>
         <Icon
-          sf={{
-            default: "book",
-            selected: "book.fill",
-          }}
+          sf={{ default: "book", selected: "book.fill" }}
           androidSrc={{
             default: require("@/assets/tabs/book.png"),
             selected: require("@/assets/tabs/book.png"),
@@ -33,10 +35,7 @@ export default function TabLayout() {
       <NativeTabs.Trigger name="search/index" role="search">
         <Label>검색</Label>
         <Icon
-          sf={{
-            default: "magnifyingglass",
-            selected: "magnifyingglass",
-          }}
+          sf={{ default: "magnifyingglass", selected: "magnifyingglass" }}
           androidSrc={{
             default: require("@/assets/tabs/search.png"),
             selected: require("@/assets/tabs/search.png"),
@@ -45,12 +44,9 @@ export default function TabLayout() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="bookmark/index">
-        <Label selectedStyle={{ color: theme.colors.accent }}>북마크</Label>
+        <Label>북마크</Label>
         <Icon
-          sf={{
-            default: "bookmark",
-            selected: "bookmark.fill",
-          }}
+          sf={{ default: "bookmark", selected: "bookmark.fill" }}
           androidSrc={{
             default: require("@/assets/tabs/bookmark.png"),
             selected: require("@/assets/tabs/bookmark.png"),
@@ -59,12 +55,9 @@ export default function TabLayout() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings/index">
-        <Label selectedStyle={{ color: theme.colors.accent }}>설정</Label>
+        <Label>설정</Label>
         <Icon
-          sf={{
-            default: "gearshape",
-            selected: "gearshape.fill",
-          }}
+          sf={{ default: "gearshape", selected: "gearshape.fill" }}
           androidSrc={{
             default: require("@/assets/tabs/settings.png"),
             selected: require("@/assets/tabs/settings.png"),
