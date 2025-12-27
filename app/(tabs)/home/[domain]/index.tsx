@@ -5,7 +5,8 @@ import { useTheme } from "@/providers/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const dataset = {
   version: 1,
@@ -52,6 +53,7 @@ const dataset = {
 const HtmlScreen = () => {
   const { theme } = useTheme();
   const { domain } = useLocalSearchParams<{ domain: DomainType }>();
+  const { bottom } = useSafeAreaInsets();
 
   console.log("Slug param:", domain);
 
@@ -63,7 +65,10 @@ const HtmlScreen = () => {
     <ScrollView
       contentContainerStyle={[
         styles.container,
-        { backgroundColor: theme.colors.background },
+        {
+          backgroundColor: theme.colors.background,
+          paddingBottom: 40 + (Platform.OS === "android" ? bottom + 64 : 0),
+        },
       ]}
       showsVerticalScrollIndicator={false}
     >
@@ -160,7 +165,7 @@ export default HtmlScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 40,
