@@ -1,7 +1,9 @@
 import { AppText } from "@/components/text/AppText";
+import { DomainType } from "@/constants/domain";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useLocalSearchParams } from "expo-router";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 const dataset = {
@@ -48,6 +50,10 @@ const dataset = {
 
 const HtmlScreen = () => {
   const { theme } = useTheme();
+  const { domain } = useLocalSearchParams<{ domain: DomainType }>();
+
+  console.log("Slug param:", domain);
+
   const htmlItems = dataset.items
     .filter((item) => item.domain === "html")
     .sort((a, b) => a.order - b.order);

@@ -1,13 +1,14 @@
+import { DomainType } from "@/constants/domain";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, usePathname, useRouter } from "expo-router";
+import { Stack, useGlobalSearchParams, useRouter } from "expo-router";
 import { Platform, Pressable } from "react-native";
 
 const HomeLayout = () => {
   const { theme } = useTheme();
   const router = useRouter();
-  const pathname = usePathname();
-  const title = pathname.split("/")[2] || "";
+
+  const { domain } = useGlobalSearchParams<{ domain: DomainType }>();
 
   return (
     <Stack
@@ -39,9 +40,9 @@ const HomeLayout = () => {
         }}
       />
       <Stack.Screen
-        name="[slug]/index"
+        name="[domain]/index"
         options={{
-          title: title.toUpperCase(),
+          title: domain?.toUpperCase(),
           headerLeft: () => (
             <Pressable
               onPress={() => {
