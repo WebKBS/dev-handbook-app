@@ -1,5 +1,6 @@
+import DomainHeroCard from "@/components/card/DomainHeroCard";
 import { AppText } from "@/components/text/AppText";
-import { DomainType } from "@/constants/domain";
+import { DomainHeroContent, DomainType } from "@/constants/domain";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -66,28 +67,10 @@ const HtmlScreen = () => {
       ]}
       showsVerticalScrollIndicator={false}
     >
-      <View
-        style={[
-          styles.hero,
-          {
-            backgroundColor: theme.colors.surface,
-            borderColor: theme.colors.border,
-            shadowColor: theme.colors.shadow,
-          },
-        ]}
-      >
-        <AppText
-          weight="extrabold"
-          style={[styles.heroTitle, { color: theme.colors.text }]}
-        >
-          구조를 만드는 언어, HTML
-        </AppText>
-        <AppText style={[styles.heroSubtitle, { color: theme.colors.muted }]}>
-          웹의 뼈대를 만드는 태그부터 시맨틱 마크업까지, 입문자를 위한 핵심
-          가이드.
-        </AppText>
-      </View>
-
+      <DomainHeroCard
+        title={DomainHeroContent[domain].title}
+        subtitle={DomainHeroContent[domain].subtitle}
+      />
       <View style={styles.listHeader}>
         <AppText
           weight="bold"
@@ -182,25 +165,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 40,
   },
-  hero: {
-    padding: 18,
-    borderRadius: 16,
-    borderWidth: 1,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.12,
-    shadowRadius: 18,
-    elevation: 4,
-    gap: 10,
-  },
 
-  heroTitle: {
-    fontSize: 22,
-    lineHeight: 30,
-  },
-  heroSubtitle: {
-    fontSize: 14,
-    lineHeight: 22,
-  },
   listHeader: {
     marginTop: 16,
     marginBottom: 8,
