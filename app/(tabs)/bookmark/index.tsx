@@ -1,14 +1,17 @@
 import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 export default function BookmarkScreen() {
   const { theme } = useTheme();
 
   return (
     <SafeAreaViewScreen>
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentInsetAdjustmentBehavior={"automatic"}
+      >
         <View
           style={[
             styles.card,
@@ -30,7 +33,7 @@ export default function BookmarkScreen() {
             마크다운 기반 콘텐츠와 연동해보세요.
           </AppText>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaViewScreen>
   );
 }

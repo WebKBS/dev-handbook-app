@@ -4,7 +4,8 @@ import { DomainHeroContent, DomainType } from "@/constants/domain";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLayoutEffect } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -55,6 +56,15 @@ const HtmlScreen = () => {
   const { domain } = useLocalSearchParams<{ domain: DomainType }>();
   const { bottom } = useSafeAreaInsets();
 
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      title: domain?.toUpperCase(),
+    });
+  }, [navigation, domain]);
+
   console.log("Slug param:", domain);
 
   const htmlItems = dataset.items
@@ -70,6 +80,7 @@ const HtmlScreen = () => {
           paddingBottom: 40 + (Platform.OS === "android" ? bottom + 64 : 0),
         },
       ]}
+      contentInsetAdjustmentBehavior={"automatic"}
       showsVerticalScrollIndicator={false}
     >
       <DomainHeroCard

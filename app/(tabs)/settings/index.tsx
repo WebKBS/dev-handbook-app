@@ -46,6 +46,7 @@ const SettingsScreen = () => {
           styles.container,
           { backgroundColor: theme.colors.background },
         ]}
+        contentInsetAdjustmentBehavior={"automatic"}
       >
         <View
           style={[

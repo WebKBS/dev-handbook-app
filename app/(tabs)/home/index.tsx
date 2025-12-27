@@ -56,6 +56,7 @@ export default function HomeScreen() {
           styles.container,
           { backgroundColor: theme.colors.background },
         ]}
+        contentInsetAdjustmentBehavior={"automatic"}
         showsVerticalScrollIndicator={false}
       >
         <HomeScreenContainer data={data} />
