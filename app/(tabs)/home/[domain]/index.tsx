@@ -1,55 +1,16 @@
 import DomainHeroCard from "@/components/card/DomainHeroCard";
+import ErrorState from "@/components/state/ErrorState";
 import { AppText } from "@/components/text/AppText";
 import { DomainHeroContent, DomainType } from "@/constants/domain";
 import { useTheme } from "@/providers/ThemeProvider";
+import { getDomainManifest } from "@/services/content/domain-manifest";
 import { Feather } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const dataset = {
-  version: 1,
-  generatedAt: "2025-12-24T05:58:42.329Z",
-  items: [
-    {
-      id: "css/what-is-css",
-      domain: "css",
-      slug: "what-is-css",
-      title: "CSS란 무엇인가?",
-      description:
-        "CSS의 기본 개념과 역할, 필요성, 적용 방법, 동작 원리 등을 간략히 설명합니다.",
-      tags: ["css", "style"],
-      updatedAt: "2025-12-22",
-      coverImage: "https://cdn.depos.kr/assets/covers/css.svg",
-      order: 1,
-    },
-    {
-      id: "html/what-is-html",
-      domain: "html",
-      slug: "what-is-html",
-      title: "HTML이란 무엇인가",
-      description: "HTML의 정의, 역할, 핵심 구성요소를 기초부터 정리합니다.",
-      tags: ["html", "markup"],
-      updatedAt: "2025-12-21",
-      coverImage: "https://cdn.depos.kr/assets/covers/html.svg",
-      order: 1,
-    },
-    {
-      id: "html/what-is-markup-language",
-      domain: "html",
-      slug: "what-is-markup-language",
-      title: "Markup Language란 무엇인가",
-      description:
-        "마크업 언어의 정의와 HTML에서 마크업이 어떤 의미를 가지는지 기초부터 정리합니다.",
-      tags: ["html", "markup"],
-      updatedAt: "2025-12-21",
-      coverImage: "https://cdn.depos.kr/assets/covers/html.svg",
-      order: 2,
-    },
-  ],
-};
 
 const HtmlScreen = () => {
   const { theme } = useTheme();
@@ -65,11 +26,15 @@ const HtmlScreen = () => {
     });
   }, [navigation, domain]);
 
-  console.log("Slug param:", domain);
+  const { data, isPending, error } = useQuery({
+    queryKey: ["domain-manifest", domain],
+    queryFn: () => getDomainManifest({ domain }),
+  });
 
-  const htmlItems = dataset.items
-    .filter((item) => item.domain === "html")
-    .sort((a, b) => a.order - b.order);
+  if (error)
+    return <ErrorState title={"데이터를 불러오는 중 오류가 발생했어요."} />;
+
+  const domainItems = data?.items || [];
 
   return (
     <ScrollView
@@ -100,7 +65,7 @@ const HtmlScreen = () => {
       </View>
 
       <View style={styles.cardGrid}>
-        {htmlItems.map((item) => (
+        {domainItems.map((item) => (
           <View
             key={item.id}
             style={[

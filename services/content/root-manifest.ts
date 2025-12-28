@@ -1,6 +1,6 @@
 import { axiosInstance } from "@/libs/axios";
 
-interface RootManifestResponse {
+export interface RootManifestResponse {
   version: number;
   generatedAt: string;
   items: {
@@ -13,6 +13,7 @@ interface RootManifestResponse {
     updatedAt: string;
     coverImage: string;
     order: number;
+    level: number;
   }[];
 }
 
