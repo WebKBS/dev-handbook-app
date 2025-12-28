@@ -33,7 +33,7 @@ const DomainScreen = () => {
     return <ErrorState title={"데이터를 불러오는 중 오류가 발생했어요."} />;
 
   const domainItems = data?.items || [];
-  const listData = isPending ? new Array(6).fill(null) : domainItems;
+  const listData = isPending ? new Array(4).fill(null) : domainItems;
   const contentPaddingBottom =
     40 + (Platform.OS === "android" ? bottom + 64 : 0);
 
