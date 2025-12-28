@@ -14,7 +14,11 @@ const DomainSlugScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Stack.Screen options={{ title: "Detail" }} />
+      <Stack.Screen
+        options={{
+          title: "",
+        }}
+      />
       <ScrollView contentInsetAdjustmentBehavior={"automatic"}>
         <AppText>Detail</AppText>
       </ScrollView>
