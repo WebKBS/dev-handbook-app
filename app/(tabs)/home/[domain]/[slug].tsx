@@ -1,8 +1,9 @@
-import { AppText } from "@/components/text/AppText";
 import { DomainType } from "@/constants/domain";
+import { MarkdownView } from "@/features/MarkdownView";
+import { getPosts } from "@/services/content/post";
+import { useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 const DomainSlugScreen = () => {
   const { slug, domain } = useLocalSearchParams<{
@@ -10,19 +11,39 @@ const DomainSlugScreen = () => {
     domain: DomainType;
   }>();
 
-  console.log("slug:", slug, domain);
+  const { data, isPending, error } = useQuery({
+    queryKey: ["post", domain, slug],
+    queryFn: () => getPosts({ domain, slug }),
+  });
+
+  const content = data?.content;
+
+  if (!content) {
+    return (
+      <View style={styles.container}>
+        <Stack.Screen
+          options={{
+            title: "",
+          }}
+        />
+        <ScrollView contentInsetAdjustmentBehavior={"automatic"}>
+          <MarkdownView markdown={"# 콘텐츠를 불러올 수 없습니다."} />
+        </ScrollView>
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Stack.Screen
         options={{
           title: "",
         }}
       />
       <ScrollView contentInsetAdjustmentBehavior={"automatic"}>
-        <AppText>Detail</AppText>
+        <MarkdownView markdown={content} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
