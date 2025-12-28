@@ -62,7 +62,7 @@ export const themes: Record<ThemeMode, Theme> = {
       accent: palette.accent,
       accentStrong: palette.accentDeep,
       border: palette.pebble,
-      codeBg: "rgba(15, 23, 42, 0.07)",
+      codeBg: "rgba(15, 23, 42, 0.05)",
       codeText: palette.ink,
       tabInactive: palette.ash,
       shadow: "rgba(15, 23, 42, 0.08)",

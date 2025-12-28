@@ -43,6 +43,14 @@ const DomainSlugScreen = () => {
       <Stack.Screen
         options={{
           title: "",
+          headerLargeTitle: false,
+          headerTintColor: theme.colors.accent,
+          headerStyle: {
+            backgroundColor: theme.colors.background,
+          },
+          contentStyle: {
+            backgroundColor: theme.colors.background,
+          },
         }}
       />
       <ScrollView

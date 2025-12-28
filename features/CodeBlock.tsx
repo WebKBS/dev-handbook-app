@@ -26,13 +26,12 @@ function normalizeLanguage(language?: string) {
 }
 
 /**
- * ✅ highlight.js(hljs) 토큰 클래스에 대응하는 스타일 맵
+ * highlight.js(hljs) 토큰 클래스에 대응하는 스타일 맵
  * - react-native-syntax-highlighter (highlighter="hljs")에서 잘 먹음
  * - colors에 맞춰 “대충 예쁘게”가 아니라, 문서 앱처럼 톤 맞추는 게 목표
  */
 function createHljsTheme(colors: ThemeColors) {
   const baseText = colors.codeText ?? colors.text;
-  const bg = colors.codeBg ?? colors.surface;
   const muted = colors.muted;
 
   // 포인트 컬러는 theme.accent를 기반으로 과하지 않게 분기
@@ -97,7 +96,7 @@ export default function CodeBlock({
   const themed = useMemo(() => createStyles(theme.colors), [theme.colors]);
   const lang = useMemo(() => normalizeLanguage(language), [language]);
 
-  // ✅ 내부 하이라이트 테마
+  // 내부 하이라이트 테마
   const hljsTheme = useMemo(
     () => createHljsTheme(theme.colors),
     [theme.colors],
@@ -117,7 +116,7 @@ export default function CodeBlock({
         <SyntaxHighlighter
           language={lang}
           highlighter="hljs"
-          style={hljsTheme as any} // ✅ 핵심: 내부 토큰 색 적용
+          style={hljsTheme}
           showLineNumbers={showLineNumbers}
           wrapLongLines={false}
           customStyle={[styles.syntaxCustom, themed.syntaxCustom] as any}
@@ -144,15 +143,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginVertical: 12,
     overflow: "hidden",
-    ...Platform.select({
-      ios: {
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        shadowOffset: { width: 0, height: 6 },
-      },
-      android: { elevation: 1 },
-      default: {},
-    }),
   },
   header: {
     paddingHorizontal: 12,
@@ -175,7 +165,7 @@ const styles = StyleSheet.create({
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
-      backgroundColor: colors.codeBg ?? colors.surface,
+      backgroundColor: colors.codeBg,
       borderColor: colors.border,
     },
     header: {

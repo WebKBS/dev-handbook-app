@@ -2,7 +2,7 @@ import { AppText } from "@/components/text/AppText";
 import CodeBlock from "@/features/CodeBlock";
 import { Theme, useTheme } from "@/providers/ThemeProvider";
 import React, { useMemo } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import Markdown from "react-native-markdown-display";
 
 type Props = { markdown: string };
@@ -57,7 +57,9 @@ export function MarkdownView({ markdown }: Props) {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.tableScrollContent}
           >
-            <View style={styles.tableWrap}>{children}</View>
+            <View style={[styles.markdown.table, styles.tableWrap]}>
+              {children}
+            </View>
           </ScrollView>
         );
       },
@@ -66,6 +68,7 @@ export function MarkdownView({ markdown }: Props) {
     styles.inlineCode,
     styles.blockquoteBox,
     styles.tableWrap,
+    styles.markdown.table,
     styles.tableScrollContent,
   ]);
 
@@ -143,17 +146,25 @@ const createStyles = (theme: Theme) => {
       marginVertical: 12,
     },
     thead: { backgroundColor: theme.colors.surface },
-    tr: { borderBottomWidth: 1, borderBottomColor: theme.colors.border },
+    tr: {
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+      flexDirection: "row",
+    },
     th: {
       paddingVertical: 10,
       paddingHorizontal: 10,
       color: theme.colors.text,
       fontWeight: "800",
+      flex: 1,
     },
     td: {
       paddingVertical: 10,
       paddingHorizontal: 10,
       color: theme.colors.text,
+      flex: 1,
+      maxWidth: 160,
+      minWidth: 160,
     },
   });
 
@@ -189,8 +200,9 @@ const createStyles = (theme: Theme) => {
       paddingRight: 8, // 끝이 딱 붙어 보이는 것 방지
     },
     tableWrap: {
-      // 테이블이 최소 화면폭은 차지하도록
-      minWidth: "100%",
+      // 테이블이 최소 화면폭은 차지하도록 숫자 픽셀로 강제
+      minWidth: Dimensions.get("window").width,
+      flexShrink: 0,
     },
   });
 
