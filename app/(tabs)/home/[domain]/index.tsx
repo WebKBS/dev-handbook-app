@@ -33,14 +33,21 @@ const DomainScreen = () => {
     return <ErrorState title={"데이터를 불러오는 중 오류가 발생했어요."} />;
 
   const domainItems = data?.items || [];
+  const listData = isPending ? new Array(6).fill(null) : domainItems;
   const contentPaddingBottom =
     40 + (Platform.OS === "android" ? bottom + 64 : 0);
 
   return (
     <FlatList
-      data={domainItems}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <DomainItemCard item={item} />}
+      data={listData}
+      keyExtractor={(item, index) => item?.id ?? `skeleton-${index}`}
+      renderItem={({ item }) => (
+        <DomainItemCard
+          item={item ?? undefined}
+          isSkeleton={!item}
+          href={item ? `/home/${domain}/${item.slug}` : undefined}
+        />
+      )}
       ListHeaderComponent={<DomainScreenHeader domain={domain} />}
       contentContainerStyle={[
         styles.container,
