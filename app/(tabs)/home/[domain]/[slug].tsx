@@ -1,10 +1,12 @@
+import NonTitleStackScreen from "@/components/stack/NonTitleStackScreen";
+import ErrorState from "@/components/state/ErrorState";
 import { DomainType } from "@/constants/domain";
 import { MarkdownView } from "@/features/MarkdownView";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getPosts } from "@/services/content/post";
 import { useQuery } from "@tanstack/react-query";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
 const DomainSlugScreen = () => {
   const { slug, domain } = useLocalSearchParams<{
@@ -13,21 +15,40 @@ const DomainSlugScreen = () => {
   }>();
 
   const { theme } = useTheme();
-  const { data, isPending, error } = useQuery({
+  const { data, isPending, error, refetch } = useQuery({
     queryKey: ["post", domain, slug],
     queryFn: () => getPosts({ domain, slug }),
   });
 
   const content = data?.content;
 
+  if (isPending) {
+    return (
+      <View style={styles.centered}>
+        <NonTitleStackScreen />
+        <ActivityIndicator size="large" color={theme.colors.accent} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <NonTitleStackScreen />
+        <ErrorState
+          title="콘텐츠를 불러오는 중에 오류가 발생했습니다."
+          onRetry={() => {
+            refetch();
+          }}
+        />
+      </View>
+    );
+  }
+
   if (!content) {
     return (
       <View style={styles.container}>
-        <Stack.Screen
-          options={{
-            title: "",
-          }}
-        />
+        <NonTitleStackScreen />
         <ScrollView
           contentInsetAdjustmentBehavior={"automatic"}
           style={styles.scrollViewContent}
@@ -40,19 +61,7 @@ const DomainSlugScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: "",
-          headerLargeTitle: false,
-          headerTintColor: theme.colors.accent,
-          headerStyle: {
-            backgroundColor: theme.colors.background,
-          },
-          contentStyle: {
-            backgroundColor: theme.colors.background,
-          },
-        }}
-      />
+      <NonTitleStackScreen />
       <ScrollView
         contentInsetAdjustmentBehavior={"automatic"}
         style={styles.scrollViewContent}
@@ -69,8 +78,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
   scrollViewContent: {
     paddingHorizontal: 20,
     paddingBottom: 20,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.05)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  errorTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    marginBottom: 6,
+  },
+  errorText: {
+    fontSize: 14,
+    textAlign: "center",
+    lineHeight: 20,
   },
 });

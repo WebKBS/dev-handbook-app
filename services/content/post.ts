@@ -26,6 +26,7 @@ export const getPosts = async ({
   domain,
   slug,
 }: PostParams): Promise<PostsResponse> => {
+  throw new Error("Method not implemented.");
   const response = await axiosInstance.get(
     `/api/service/content/posts/${domain}/${slug}`,
   );
