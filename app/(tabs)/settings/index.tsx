@@ -46,6 +46,7 @@ const SettingsScreen = () => {
           styles.container,
           { backgroundColor: theme.colors.background },
         ]}
+        contentInsetAdjustmentBehavior={"automatic"}
       >
         <View
           style={[
@@ -277,16 +278,14 @@ export default SettingsScreen;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    paddingBottom: 28,
-    paddingTop: 12,
+    padding: 20,
+    gap: 16,
   },
 
   card: {
     borderRadius: 16,
     padding: 18,
     borderWidth: 1,
-    marginTop: 14,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.1,
     shadowRadius: 14,

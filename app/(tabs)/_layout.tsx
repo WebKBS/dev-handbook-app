@@ -7,7 +7,7 @@ export default function TabLayout() {
   return (
     <NativeTabs
       minimizeBehavior="onScrollDown"
-      backgroundColor={theme.colors.background}
+      backgroundColor={"transparent"}
       tintColor={theme.colors.accent}
       labelStyle={{
         default: { color: theme.colors.tabInactive },
@@ -19,7 +19,6 @@ export default function TabLayout() {
       }}
       // 안드로이드 active 배경(알약 모양) 색
       indicatorColor={theme.colors.border ?? theme.colors.tabInactive}
-      // 눌렀을 때 퍼지는 물결 색도 조절하고 싶으면
     >
       <NativeTabs.Trigger name="home">
         <Label>학습</Label>

@@ -56,6 +56,7 @@ export default function HomeScreen() {
           styles.container,
           { backgroundColor: theme.colors.background },
         ]}
+        contentInsetAdjustmentBehavior={"automatic"}
         showsVerticalScrollIndicator={false}
       >
         <HomeScreenContainer data={data} />
@@ -66,7 +67,6 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
+    padding: 20,
   },
 });
