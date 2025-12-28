@@ -16,8 +16,6 @@ const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
 
   const skeletonColor = { backgroundColor: theme.colors.card };
 
-  const tagLabel = item?.tags?.[0];
-
   const CardContent = (
     <Pressable
       style={[
@@ -34,11 +32,24 @@ const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
     >
       <View
         style={[
-          styles.accentBar,
-          { backgroundColor: theme.colors.accentStrong },
+          styles.cardContent,
+          isSkeleton
+            ? { opacity: 0.7 }
+            : {
+                opacity: 1,
+                backgroundColor:
+                  theme.mode === "dark"
+                    ? "rgba(255,255,255,0.92)"
+                    : theme.colors.surface,
+              },
         ]}
-      />
-      <View style={styles.cardContent}>
+      >
+        <View
+          style={[
+            styles.accentBar,
+            { backgroundColor: theme.colors.accentStrong },
+          ]}
+        />
         <View style={styles.textContent}>
           {isSkeleton ? (
             <>
@@ -74,64 +85,13 @@ const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
               </AppText>
             </>
           )}
-
-          <View style={styles.footerRow}>
-            {isSkeleton ? (
-              <View
-                style={[
-                  styles.skeletonBox,
-                  skeletonColor,
-                  { width: 80, height: 18, borderRadius: 10 },
-                ]}
-              />
-            ) : tagLabel ? (
-              <View
-                style={[
-                  styles.tagChip,
-                  {
-                    backgroundColor: theme.colors.surface,
-                    borderColor: theme.colors.border,
-                  },
-                ]}
-              >
-                <AppText
-                  weight="medium"
-                  style={[styles.tagText, { color: theme.colors.accentStrong }]}
-                >
-                  #{tagLabel}
-                </AppText>
-              </View>
-            ) : (
-              <View />
-            )}
-
-            <View style={styles.updatedRow}>
-              {isSkeleton ? (
-                <View
-                  style={[
-                    styles.skeletonBox,
-                    skeletonColor,
-                    { width: 70, height: 14, borderRadius: 8 },
-                  ]}
-                />
-              ) : (
-                <>
-                  <Feather name="clock" size={13} color={theme.colors.muted} />
-                  <AppText
-                    style={[styles.updatedText, { color: theme.colors.muted }]}
-                  >
-                    {item?.updatedAt}
-                  </AppText>
-                </>
-              )}
-            </View>
-          </View>
         </View>
 
         {!isSkeleton ? (
           <View
             style={[
               styles.ctaCircle,
+              styles.ctaPosition,
               { backgroundColor: theme.colors.surface },
             ]}
           >
@@ -170,15 +130,28 @@ export default DomainItemCard;
 const styles = StyleSheet.create({
   cardWrapper: {
     marginBottom: 12,
-    borderRadius: 12,
+    borderRadius: 14,
     overflow: "hidden",
     borderWidth: 1,
+    padding: 6,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 1,
     position: "relative",
   },
+
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    borderRadius: 8,
+    position: "relative",
+    overflow: "hidden",
+  },
+
   accentBar: {
     position: "absolute",
     left: 0,
@@ -186,14 +159,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: 4,
     opacity: 0.9,
-  },
-  cardContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    minHeight: 96,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
+    zIndex: 1,
   },
 
   textContent: {
@@ -210,32 +176,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     letterSpacing: -0.1,
   },
-  footerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 8,
-    gap: 12,
-  },
-  tagChip: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  tagText: {
-    fontSize: 12,
-    letterSpacing: -0.1,
-  },
-  updatedRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  updatedText: {
-    fontSize: 12,
-    letterSpacing: -0.1,
-  },
+
   ctaCircle: {
     width: 34,
     height: 34,
@@ -246,6 +187,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 6,
+  },
+  ctaPosition: {
+    position: "absolute",
+    top: 10,
+    right: 10,
   },
   skeletonBox: {
     backgroundColor: "#E0E0E0",

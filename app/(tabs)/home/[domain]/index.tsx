@@ -67,6 +67,7 @@ export default DomainScreen;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+    gap: 12,
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 40,
