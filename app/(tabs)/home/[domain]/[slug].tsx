@@ -2,6 +2,7 @@ import NonTitleStackScreen from "@/components/stack/NonTitleStackScreen";
 import ErrorState from "@/components/state/ErrorState";
 import { DomainType } from "@/constants/domain";
 import { MarkdownView } from "@/features/MarkdownView";
+import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getPosts } from "@/services/content/post";
 import { useQuery } from "@tanstack/react-query";
@@ -21,6 +22,8 @@ const DomainSlugScreen = () => {
   });
 
   const content = data?.content;
+
+  const contentPaddingBottom = useContentPaddingBotton();
 
   if (isPending) {
     return (
@@ -60,7 +63,7 @@ const DomainSlugScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: contentPaddingBottom }]}>
       <NonTitleStackScreen />
       <ScrollView
         contentInsetAdjustmentBehavior={"automatic"}
