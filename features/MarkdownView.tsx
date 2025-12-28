@@ -2,21 +2,15 @@ import { AppText } from "@/components/text/AppText";
 import CodeBlock from "@/features/CodeBlock";
 import { Theme, useTheme } from "@/providers/ThemeProvider";
 import React, { useMemo } from "react";
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Markdown from "react-native-markdown-display";
 
-type Props = {
-  markdown: string;
-};
+type Props = { markdown: string };
 
 function extractFenceLanguage(node: any): string | undefined {
-  // markdown-it 토큰에서 언어 정보가 node.info / node.sourceInfo 쪽에 들어오는 경우가 많음
   const info = node?.info ?? node?.attributes?.info ?? node?.sourceInfo ?? "";
-
   const raw = String(info).trim();
   if (!raw) return undefined;
-
-  // ```ts {1,3} 같은 형태면 첫 토큰만 언어로 사용
   return raw.split(/\s+/)[0];
 }
 
@@ -26,20 +20,17 @@ export function MarkdownView({ markdown }: Props) {
 
   const rules = useMemo(() => {
     return {
-      // ```lang fenced block
       fence: (node: any) => {
         const language = extractFenceLanguage(node);
         const code = node?.content ?? "";
         return <CodeBlock key={node.key} code={code} language={language} />;
       },
 
-      // 4스페이스 들여쓰기 코드블럭
       code_block: (node: any) => {
         const code = node?.content ?? "";
         return <CodeBlock key={node.key} code={code} language="text" />;
       },
 
-      // 인라인 코드
       code_inline: (node: any) => {
         const txt = node?.content ?? "";
         return (
@@ -48,51 +39,166 @@ export function MarkdownView({ markdown }: Props) {
           </AppText>
         );
       },
-    };
-  }, [styles.inlineCode]);
 
-  return <Markdown rules={rules}>{markdown}</Markdown>;
+      blockquote: (node: any, children: any) => {
+        return (
+          <View key={node.key} style={styles.blockquoteBox}>
+            {children}
+          </View>
+        );
+      },
+
+      // 테이블 가로 스크롤
+      table: (node: any, children: any) => {
+        return (
+          <ScrollView
+            key={node.key}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tableScrollContent}
+          >
+            <View style={styles.tableWrap}>{children}</View>
+          </ScrollView>
+        );
+      },
+    };
+  }, [
+    styles.inlineCode,
+    styles.blockquoteBox,
+    styles.tableWrap,
+    styles.tableScrollContent,
+  ]);
+
+  return (
+    <Markdown rules={rules} style={styles.markdown}>
+      {markdown}
+    </Markdown>
+  );
 }
 
 const createStyles = (theme: Theme) => {
+  const markdown = StyleSheet.create({
+    body: {
+      color: theme.colors.text,
+      fontSize: 15,
+      lineHeight: 23,
+    },
+
+    heading1: {
+      color: theme.colors.text,
+      fontSize: 28,
+      lineHeight: 34,
+      marginTop: 18,
+      marginBottom: 10,
+      fontWeight: "800",
+    },
+    heading2: {
+      color: theme.colors.text,
+      fontSize: 22,
+      lineHeight: 28,
+      marginTop: 16,
+      marginBottom: 8,
+      fontWeight: "800",
+    },
+    heading3: {
+      color: theme.colors.text,
+      fontSize: 18,
+      lineHeight: 24,
+      marginTop: 14,
+      marginBottom: 6,
+      fontWeight: "700",
+    },
+
+    paragraph: {
+      marginTop: 6,
+      marginBottom: 10,
+      color: theme.colors.text,
+    },
+
+    strong: { fontWeight: "800", color: theme.colors.text },
+    link: {
+      color: theme.colors.accent,
+      textDecorationLine: "underline",
+      textDecorationColor: theme.colors.accent,
+    },
+
+    bullet_list: { marginVertical: 8, paddingLeft: 2 },
+    ordered_list: { marginVertical: 8, paddingLeft: 2 },
+    list_item: { marginVertical: 3 },
+    bullet_list_icon: { color: theme.colors.muted },
+    ordered_list_icon: { color: theme.colors.muted },
+
+    hr: {
+      height: 1,
+      backgroundColor: theme.colors.border,
+      marginVertical: 14,
+    },
+
+    // 테이블 자체 스타일 (테두리/패딩)
+    table: {
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: 12,
+      overflow: "hidden",
+      marginVertical: 12,
+    },
+    thead: { backgroundColor: theme.colors.surface },
+    tr: { borderBottomWidth: 1, borderBottomColor: theme.colors.border },
+    th: {
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      color: theme.colors.text,
+      fontWeight: "800",
+    },
+    td: {
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      color: theme.colors.text,
+    },
+  });
+
   const inlineCode = StyleSheet.create({
     inlineCode: {
       fontFamily: "monospace",
       fontSize: 13,
-      paddingHorizontal: 6,
-      paddingVertical: 2,
+      paddingHorizontal: 7,
+      paddingVertical: 3,
       borderRadius: 8,
       borderWidth: 1,
-      backgroundColor: theme.colors.card,
+      backgroundColor: theme.colors.codeBg ?? theme.colors.surface,
       borderColor: theme.colors.border,
-      color: theme.colors.codeText,
+      color: theme.colors.codeText ?? theme.colors.text,
     },
   });
 
-  const markdownStyles = StyleSheet.create({
-    body: {
-      fontSize: 15,
-      lineHeight: 22,
-      color: theme.colors.text,
+  const blockquote = StyleSheet.create({
+    blockquoteBox: {
+      borderLeftWidth: 3,
+      borderLeftColor: theme.colors.accent,
+      backgroundColor: theme.colors.surface,
+      borderRadius: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      marginVertical: 10,
     },
-    heading1: {
-      fontSize: 26,
-      marginTop: 12,
-      marginBottom: 6,
-      color: theme.colors.text,
-    },
-    heading2: {
-      fontSize: 20,
-      marginTop: 12,
-      marginBottom: 6,
-      color: theme.colors.text,
-    },
-    paragraph: { marginTop: 6, marginBottom: 6, color: theme.colors.text },
-    bullet_list: { marginVertical: 6 },
-    ordered_list: { marginVertical: 6 },
-    strong: { color: theme.colors.text },
-    link: { color: theme.colors.accent },
   });
 
-  return { inlineCode: inlineCode.inlineCode, markdownStyles };
+  // table scroll wrapper
+  const tableScroll = StyleSheet.create({
+    tableScrollContent: {
+      paddingRight: 8, // 끝이 딱 붙어 보이는 것 방지
+    },
+    tableWrap: {
+      // 테이블이 최소 화면폭은 차지하도록
+      minWidth: "100%",
+    },
+  });
+
+  return {
+    markdown,
+    inlineCode: inlineCode.inlineCode,
+    blockquoteBox: blockquote.blockquoteBox,
+    tableScrollContent: tableScroll.tableScrollContent,
+    tableWrap: tableScroll.tableWrap,
+  };
 };

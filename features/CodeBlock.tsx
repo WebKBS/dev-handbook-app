@@ -6,7 +6,7 @@ import SyntaxHighlighter from "react-native-syntax-highlighter";
 
 type Props = {
   code: string;
-  language?: string; // "ts", "js", "bash" 등
+  language?: string;
   showLineNumbers?: boolean;
 };
 
@@ -18,12 +18,73 @@ const monoFont = Platform.select({
 
 function normalizeLanguage(language?: string) {
   const l = (language ?? "").trim().toLowerCase();
-  if (!l) return "text"; //  언어가 없으면 text로 강제
-  // 필요하면 alias 추가
+  if (!l) return "text";
   if (l === "typescript") return "ts";
   if (l === "javascript") return "js";
   if (l === "shell") return "bash";
   return l;
+}
+
+/**
+ * ✅ highlight.js(hljs) 토큰 클래스에 대응하는 스타일 맵
+ * - react-native-syntax-highlighter (highlighter="hljs")에서 잘 먹음
+ * - colors에 맞춰 “대충 예쁘게”가 아니라, 문서 앱처럼 톤 맞추는 게 목표
+ */
+function createHljsTheme(colors: ThemeColors) {
+  const baseText = colors.codeText ?? colors.text;
+  const bg = colors.codeBg ?? colors.surface;
+  const muted = colors.muted;
+
+  // 포인트 컬러는 theme.accent를 기반으로 과하지 않게 분기
+  const accent = colors.accent;
+
+  return {
+    hljs: {
+      color: baseText,
+      backgroundColor: "transparent",
+    },
+
+    // 키워드/타입/예약어
+    "hljs-keyword": { color: accent, fontWeight: "700" },
+    "hljs-built_in": { color: accent },
+    "hljs-type": { color: accent },
+
+    // 문자열/템플릿
+    "hljs-string": { color: baseText },
+    "hljs-template-string": { color: baseText },
+
+    // 숫자/불리언/리터럴
+    "hljs-number": { color: baseText },
+    "hljs-literal": { color: baseText },
+
+    // 함수/클래스/타이틀
+    "hljs-title": { color: baseText, fontWeight: "700" },
+    "hljs-function": { color: baseText },
+    "hljs-class": { color: baseText, fontWeight: "700" },
+
+    // 속성/프로퍼티
+    "hljs-attr": { color: baseText },
+    "hljs-attribute": { color: baseText },
+    "hljs-property": { color: baseText },
+
+    // 주석
+    "hljs-comment": { color: muted },
+
+    // 태그/선택자(HTML/CSS 계열)
+    "hljs-tag": { color: accent },
+    "hljs-name": { color: accent },
+    "hljs-selector-tag": { color: accent },
+    "hljs-selector-class": { color: accent },
+    "hljs-selector-id": { color: accent },
+
+    // 메타/심볼
+    "hljs-meta": { color: muted },
+    "hljs-symbol": { color: muted },
+
+    // 강조
+    "hljs-emphasis": { fontStyle: "italic" },
+    "hljs-strong": { fontWeight: "800" },
+  } as const;
 }
 
 export default function CodeBlock({
@@ -32,39 +93,41 @@ export default function CodeBlock({
   showLineNumbers = false,
 }: Props) {
   const { theme } = useTheme();
-  const themedStyles = useMemo(
-    () => createStyles(theme.colors),
-    [theme.colors],
-  );
+
+  const themed = useMemo(() => createStyles(theme.colors), [theme.colors]);
   const lang = useMemo(() => normalizeLanguage(language), [language]);
 
+  // ✅ 내부 하이라이트 테마
+  const hljsTheme = useMemo(
+    () => createHljsTheme(theme.colors),
+    [theme.colors],
+  );
+
   return (
-    <View style={[styles.container, themedStyles.container]}>
-      {/* 언어 라벨(항상 표시) */}
-      <View style={[styles.header, themedStyles.header]}>
-        <AppText style={[styles.langLabel, themedStyles.langLabel]}>
-          {lang}
-        </AppText>
+    <View style={[styles.container, themed.container]}>
+      <View style={[styles.header, themed.header]}>
+        <AppText style={[styles.langLabel, themed.langLabel]}>{lang}</AppText>
       </View>
 
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[styles.scroll, themedStyles.scroll]}
+        contentContainerStyle={[styles.scroll]}
       >
         <SyntaxHighlighter
           language={lang}
           highlighter="hljs"
+          style={hljsTheme as any} // ✅ 핵심: 내부 토큰 색 적용
           showLineNumbers={showLineNumbers}
           wrapLongLines={false}
-          customStyle={[styles.syntaxCustom, themedStyles.syntaxCustom] as any}
+          customStyle={[styles.syntaxCustom, themed.syntaxCustom] as any}
           CodeTag={AppText}
           PreTag={AppText}
           codeTagProps={{
             style: {
               fontFamily: monoFont,
               fontSize: 13,
-              lineHeight: 18,
+              lineHeight: 19,
             },
           }}
         >
@@ -77,19 +140,29 @@ export default function CodeBlock({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
-    marginVertical: 10,
+    marginVertical: 12,
     overflow: "hidden",
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 6 },
+      },
+      android: { elevation: 1 },
+      default: {},
+    }),
   },
   header: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
     borderBottomWidth: 1,
   },
   langLabel: {
     fontFamily: monoFont,
     fontSize: 12,
+    letterSpacing: 0.2,
   },
   scroll: { padding: 12 },
   syntaxCustom: {
@@ -102,7 +175,7 @@ const styles = StyleSheet.create({
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
-      backgroundColor: colors.card,
+      backgroundColor: colors.codeBg ?? colors.surface,
       borderColor: colors.border,
     },
     header: {
@@ -111,9 +184,6 @@ const createStyles = (colors: ThemeColors) =>
     },
     langLabel: {
       color: colors.muted,
-    },
-    scroll: {
-      backgroundColor: colors.surface,
     },
     syntaxCustom: {
       color: colors.codeText ?? colors.text,
