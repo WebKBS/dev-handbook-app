@@ -4,15 +4,16 @@ import { AppText } from "@/components/text/AppText";
 import { DomainHeroContent, DomainType } from "@/constants/domain";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getDomainManifest } from "@/services/content/domain-manifest";
+import { RootManifestResponse } from "@/services/content/root-manifest";
 import { Feather } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect } from "react";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import { FlatList, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const HtmlScreen = () => {
+const DomainScreen = () => {
   const { theme } = useTheme();
   const { domain } = useLocalSearchParams<{ domain: DomainType }>();
   const { bottom } = useSafeAreaInsets();
@@ -35,19 +36,11 @@ const HtmlScreen = () => {
     return <ErrorState title={"데이터를 불러오는 중 오류가 발생했어요."} />;
 
   const domainItems = data?.items || [];
+  const contentPaddingBottom =
+    40 + (Platform.OS === "android" ? bottom + 64 : 0);
 
-  return (
-    <ScrollView
-      contentContainerStyle={[
-        styles.container,
-        {
-          backgroundColor: theme.colors.background,
-          paddingBottom: 40 + (Platform.OS === "android" ? bottom + 64 : 0),
-        },
-      ]}
-      contentInsetAdjustmentBehavior={"automatic"}
-      showsVerticalScrollIndicator={false}
-    >
+  const renderListHeader = () => (
+    <View>
       <DomainHeroCard
         title={DomainHeroContent[domain].title}
         subtitle={DomainHeroContent[domain].subtitle}
@@ -63,81 +56,93 @@ const HtmlScreen = () => {
           기본 개념부터 순서대로 따라가보세요.
         </AppText>
       </View>
+    </View>
+  );
 
-      <View style={styles.cardGrid}>
-        {domainItems.map((item) => (
-          <View
-            key={item.id}
-            style={[
-              styles.card,
-              {
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-                shadowColor: theme.colors.shadow,
-              },
-            ]}
-          >
-            <Image
-              source={item.coverImage}
-              style={[styles.cover, { backgroundColor: theme.colors.card }]}
-              contentFit="contain"
-            />
-            <View style={styles.cardBody}>
-              <AppText
-                weight="semibold"
-                style={[styles.cardTitle, { color: theme.colors.text }]}
+  const renderItem = ({
+    item,
+  }: {
+    item: RootManifestResponse["items"][number];
+  }) => (
+    <View
+      style={[
+        styles.cardWrapper,
+        { shadowColor: theme.colors.shadow, borderColor: theme.colors.border },
+      ]}
+    >
+      <Image
+        source={item.coverImage}
+        style={[styles.cover, { backgroundColor: theme.colors.card }]}
+        contentFit="contain"
+      />
+      <View style={styles.cardBody}>
+        <AppText
+          weight="semibold"
+          style={[styles.cardTitle, { color: theme.colors.text }]}
+        >
+          {item.title}
+        </AppText>
+        <AppText
+          style={[styles.cardDescription, { color: theme.colors.muted }]}
+          numberOfLines={3}
+        >
+          {item.description}
+        </AppText>
+        <View style={styles.metaRow}>
+          <View style={styles.tagRow}>
+            {item.tags.map((tag) => (
+              <View
+                key={tag}
+                style={[
+                  styles.tag,
+                  {
+                    backgroundColor: theme.colors.card,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
               >
-                {item.title}
-              </AppText>
-              <AppText
-                style={[styles.cardDescription, { color: theme.colors.muted }]}
-                numberOfLines={3}
-              >
-                {item.description}
-              </AppText>
-              <View style={styles.metaRow}>
-                <View style={styles.tagRow}>
-                  {item.tags.map((tag) => (
-                    <View
-                      key={tag}
-                      style={[
-                        styles.tag,
-                        {
-                          backgroundColor: theme.colors.card,
-                          borderColor: theme.colors.border,
-                        },
-                      ]}
-                    >
-                      <AppText
-                        weight="medium"
-                        style={[
-                          styles.tagText,
-                          { color: theme.colors.accentStrong },
-                        ]}
-                      >
-                        #{tag}
-                      </AppText>
-                    </View>
-                  ))}
-                </View>
-                <View style={styles.updatedRow}>
-                  <Feather name="clock" size={14} color={theme.colors.muted} />
-                  <AppText
-                    style={[styles.updatedText, { color: theme.colors.muted }]}
-                  >
-                    {item.updatedAt}
-                  </AppText>
-                </View>
+                <AppText
+                  weight="medium"
+                  style={[styles.tagText, { color: theme.colors.accentStrong }]}
+                >
+                  #{tag}
+                </AppText>
               </View>
-            </View>
+            ))}
           </View>
-        ))}
+          <View style={styles.updatedRow}>
+            <Feather name="clock" size={14} color={theme.colors.muted} />
+            <AppText
+              style={[styles.updatedText, { color: theme.colors.muted }]}
+            >
+              {item.updatedAt}
+            </AppText>
+          </View>
+        </View>
       </View>
-    </ScrollView>
+    </View>
+  );
+
+  return (
+    <FlatList
+      data={domainItems}
+      keyExtractor={(item) => item.id}
+      renderItem={renderItem}
+      ListHeaderComponent={renderListHeader}
+      contentContainerStyle={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.background,
+          paddingBottom: contentPaddingBottom,
+        },
+      ]}
+      contentInsetAdjustmentBehavior={"automatic"}
+      showsVerticalScrollIndicator={false}
+    />
   );
 };
 
-export default HtmlScreen;
+export default DomainScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -159,10 +164,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
-  cardGrid: {
-    gap: 12,
-  },
-  card: {
+  cardWrapper: {
+    marginBottom: 12,
     borderRadius: 16,
     borderWidth: 1,
     overflow: "hidden",
