@@ -29,7 +29,7 @@ const DomainSlugScreen = () => {
     return (
       <View style={styles.centered}>
         <NonTitleStackScreen />
-        <ActivityIndicator size="large" color={theme.colors.accent} />
+        <ActivityIndicator size="small" color={theme.colors.accent} />
       </View>
     );
   }
@@ -40,8 +40,8 @@ const DomainSlugScreen = () => {
         <NonTitleStackScreen />
         <ErrorState
           title="콘텐츠를 불러오는 중에 오류가 발생했습니다."
-          onRetry={() => {
-            refetch();
+          onRetry={async () => {
+            await refetch();
           }}
         />
       </View>
