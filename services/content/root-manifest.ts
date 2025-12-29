@@ -1,3 +1,4 @@
+import { DomainType } from "@/constants/domain";
 import { axiosInstance } from "@/libs/axios";
 
 export interface RootManifestResponse {
@@ -5,7 +6,7 @@ export interface RootManifestResponse {
   generatedAt: string;
   items: {
     id: string;
-    domain: string;
+    domain: DomainType;
     slug: string;
     title: string;
     description: string;

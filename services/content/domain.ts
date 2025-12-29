@@ -1,8 +1,9 @@
+import { DomainType } from "@/constants/domain";
 import { axiosInstance } from "@/libs/axios";
 
 export interface DomainResponseData {
   items: {
-    domain: string;
+    domain: DomainType;
     count: number;
     latestUpdatedAt: string;
     image: string;

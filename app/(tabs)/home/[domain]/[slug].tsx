@@ -1,8 +1,13 @@
-import { AppText } from "@/components/text/AppText";
+import NonTitleStackScreen from "@/components/stack/NonTitleStackScreen";
+import ErrorState from "@/components/state/ErrorState";
 import { DomainType } from "@/constants/domain";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { MarkdownView } from "@/features/MarkdownView";
+import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
+import { useTheme } from "@/providers/ThemeProvider";
+import { getPosts } from "@/services/content/post";
+import { useQuery } from "@tanstack/react-query";
+import { useLocalSearchParams } from "expo-router";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
 const DomainSlugScreen = () => {
   const { slug, domain } = useLocalSearchParams<{
@@ -10,19 +15,63 @@ const DomainSlugScreen = () => {
     domain: DomainType;
   }>();
 
-  console.log("slug:", slug, domain);
+  const { theme } = useTheme();
+  const { data, isPending, error, refetch } = useQuery({
+    queryKey: ["post", domain, slug],
+    queryFn: () => getPosts({ domain, slug }),
+  });
+
+  const content = data?.content;
+
+  const contentPaddingBottom = useContentPaddingBotton();
+
+  if (isPending) {
+    return (
+      <View style={styles.centered}>
+        <NonTitleStackScreen />
+        <ActivityIndicator size="small" color={theme.colors.accent} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <NonTitleStackScreen />
+        <ErrorState
+          title="콘텐츠를 불러오는 중에 오류가 발생했습니다."
+          onRetry={async () => {
+            await refetch();
+          }}
+        />
+      </View>
+    );
+  }
+
+  if (!content) {
+    return (
+      <View style={styles.container}>
+        <NonTitleStackScreen />
+        <ScrollView
+          contentInsetAdjustmentBehavior={"automatic"}
+          style={styles.scrollViewContent}
+        >
+          <MarkdownView markdown={"# 콘텐츠를 불러올 수 없습니다."} />
+        </ScrollView>
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: "",
-        }}
-      />
-      <ScrollView contentInsetAdjustmentBehavior={"automatic"}>
-        <AppText>Detail</AppText>
+    <View style={[styles.container, { paddingBottom: contentPaddingBottom }]}>
+      <NonTitleStackScreen />
+      <ScrollView
+        contentInsetAdjustmentBehavior={"automatic"}
+        style={styles.scrollViewContent}
+      >
+        <MarkdownView markdown={content} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -31,6 +80,31 @@ export default DomainSlugScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+  },
+  centered: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  scrollViewContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.05)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  errorTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    marginBottom: 6,
+  },
+  errorText: {
+    fontSize: 14,
+    textAlign: "center",
+    lineHeight: 20,
   },
 });

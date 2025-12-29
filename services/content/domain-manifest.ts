@@ -1,12 +1,13 @@
+import { DomainType } from "@/constants/domain";
 import { axiosInstance } from "@/libs/axios";
 import { RootManifestResponse } from "@/services/content/root-manifest";
 
 interface DomainManifestResponse extends RootManifestResponse {
-  domain: string;
+  domain: DomainType;
 }
 
 interface DomainManifestItem {
-  domain: string;
+  domain: DomainType;
 }
 
 export const getDomainManifest = async ({
