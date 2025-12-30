@@ -1,3 +1,4 @@
+import { dbName } from "@/db";
 import { useDomain } from "@/hooks/services/useDomain";
 import { queryClient } from "@/libs/tanstack-query";
 import { ThemeProvider, useTheme } from "@/providers/ThemeProvider";
@@ -5,6 +6,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { SQLiteProvider } from "expo-sqlite";
 import { useEffect, useRef } from "react";
 import { Platform, StatusBar } from "react-native";
 
@@ -70,9 +72,11 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <RootLayoutNav />
-      </QueryClientProvider>
+      <SQLiteProvider databaseName={dbName}>
+        <QueryClientProvider client={queryClient}>
+          <RootLayoutNav />
+        </QueryClientProvider>
+      </SQLiteProvider>
     </ThemeProvider>
   );
 }

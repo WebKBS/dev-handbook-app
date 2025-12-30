@@ -1,7 +1,7 @@
 import NonTitleStackScreen from "@/components/stack/NonTitleStackScreen";
 import ErrorState from "@/components/state/ErrorState";
 import { DomainType } from "@/constants/domain";
-import { MarkdownView } from "@/features/MarkdownView";
+import { MarkdownView } from "@/features/markdown/MarkdownView";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getPosts } from "@/services/content/post";
