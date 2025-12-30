@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { createBookmarks, deleteBookmark } from "@/db/queries/bookmark";
 import { bookmarkTable } from "@/db/schema/bookmark.table";
 import { Ionicons } from "@expo/vector-icons";
 import { eq } from "drizzle-orm";
@@ -46,18 +47,15 @@ const BookmarkButton = ({
     try {
       if (next) {
         // 없으면 추가
-        await db
-          .insert(bookmarkTable)
-          .values({
-            slug: slug,
-            title: title,
-            domain: domain,
-            description: description ?? null,
-          })
-          .onConflictDoNothing(); // 중복 삽입 방지
+        await createBookmarks({
+          slug,
+          title,
+          domain,
+          description,
+        });
       } else {
         //  있으면 삭제
-        await db.delete(bookmarkTable).where(eq(bookmarkTable.slug, slug));
+        await deleteBookmark(slug);
       }
 
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
