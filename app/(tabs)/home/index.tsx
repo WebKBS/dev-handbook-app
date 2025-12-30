@@ -5,6 +5,8 @@ import FavoriteButton from "@/features/button/FavoriteButton";
 import { useDomain } from "@/hooks/services/useDomain";
 import { useTheme } from "@/providers/ThemeProvider";
 import { focusManager } from "@tanstack/query-core";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+import { useSQLiteContext } from "expo-sqlite";
 import { useEffect } from "react";
 import {
   AppState,
@@ -22,6 +24,8 @@ function onAppStateChange(status: AppStateStatus) {
 }
 
 export default function HomeScreen() {
+  const dbContext = useSQLiteContext();
+  useDrizzleStudio(dbContext);
   const { theme } = useTheme();
 
   const { data, isPending, error, refetch } = useDomain();
