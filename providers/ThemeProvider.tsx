@@ -14,10 +14,13 @@ export type ThemeColors = {
   background: string;
   surface: string;
   card: string;
+  cardBg: string;
   text: string;
   muted: string;
   accent: string;
   accentStrong: string;
+  accentSubtle: string;
+  headerBg: string;
   border: string;
   codeBg: string;
   codeText: string;
@@ -57,10 +60,13 @@ export const themes: Record<ThemeMode, Theme> = {
       background: palette.cloud,
       surface: "#ffffff",
       card: "#f4f6fb",
+      cardBg: "#ffffff",
       text: palette.ink,
       muted: palette.mutedLight,
       accent: palette.accent,
       accentStrong: palette.accentDeep,
+      accentSubtle: "rgba(14, 165, 233, 0.08)",
+      headerBg: "rgba(255,255,255,0.9)",
       border: palette.pebble,
       codeBg: "rgba(15, 23, 42, 0.05)",
       codeText: palette.ink,
@@ -74,10 +80,13 @@ export const themes: Record<ThemeMode, Theme> = {
       background: palette.ink,
       surface: palette.midnight,
       card: palette.slate,
+      cardBg: palette.midnight,
       text: "#e5e7eb",
       muted: palette.ash,
       accent: palette.accentBright,
       accentStrong: palette.accent,
+      accentSubtle: "rgba(56, 189, 248, 0.1)",
+      headerBg: "rgba(18, 18, 18, 0.9)",
       border: "#1f2937",
       codeBg: "rgba(255, 255, 255, 0.05)",
       codeText: "#e5e7eb",

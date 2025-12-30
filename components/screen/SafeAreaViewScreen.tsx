@@ -13,7 +13,6 @@ const SafeAreaViewScreen = ({ children }: SafeAreaViewScreenProps) => {
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
-      edges={["top"]}
     >
       {children}
     </SafeAreaView>
