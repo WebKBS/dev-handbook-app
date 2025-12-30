@@ -1,5 +1,5 @@
 import { AppText } from "@/components/text/AppText";
-import CodeBlock from "@/features/CodeBlock";
+import CodeBlock from "@/features/markdown/CodeBlock";
 import { Theme, useTheme } from "@/providers/ThemeProvider";
 import React, { useMemo } from "react";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
