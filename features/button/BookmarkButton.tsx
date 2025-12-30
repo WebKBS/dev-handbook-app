@@ -3,6 +3,7 @@ import { bookmarkTable } from "@/db/schema/bookmark.table";
 import { Ionicons } from "@expo/vector-icons";
 import { eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import * as Haptics from "expo-haptics";
 import { startTransition, useOptimistic } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
@@ -61,6 +62,8 @@ const BookmarkButton = ({
         //  있으면 삭제
         await db.delete(bookmarkTable).where(eq(bookmarkTable.id, id));
       }
+
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } catch (err) {
       console.error("Error toggling bookmark:", err);
     }
@@ -81,11 +84,7 @@ export default BookmarkButton;
 
 const styles = StyleSheet.create({
   bookmarkButton: {
-    position: "absolute",
-    top: 8,
-    right: 8,
     backgroundColor: "rgba(0, 0, 0, 0.3)",
-    borderRadius: 20,
     padding: 6,
   },
 });

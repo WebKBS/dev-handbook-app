@@ -1,12 +1,13 @@
 import NonTitleStackScreen from "@/components/stack/NonTitleStackScreen";
 import ErrorState from "@/components/state/ErrorState";
 import { DomainType } from "@/constants/domain";
+import BookmarkButton from "@/features/button/BookmarkButton";
 import { MarkdownView } from "@/features/markdown/MarkdownView";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getPosts } from "@/services/content/post";
 import { useQuery } from "@tanstack/react-query";
-import { useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
 const DomainSlugScreen = () => {
@@ -22,6 +23,7 @@ const DomainSlugScreen = () => {
   });
 
   const content = data?.content;
+  const meta = data?.meta;
 
   const contentPaddingBottom = useContentPaddingBotton();
 
@@ -48,7 +50,7 @@ const DomainSlugScreen = () => {
     );
   }
 
-  if (!content) {
+  if (!content || !meta) {
     return (
       <View style={styles.container}>
         <NonTitleStackScreen />
@@ -63,15 +65,30 @@ const DomainSlugScreen = () => {
   }
 
   return (
-    <View style={[styles.container, { paddingBottom: contentPaddingBottom }]}>
-      <NonTitleStackScreen />
-      <ScrollView
-        contentInsetAdjustmentBehavior={"automatic"}
-        style={styles.scrollViewContent}
-      >
-        <MarkdownView markdown={content} />
-      </ScrollView>
-    </View>
+    <>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <BookmarkButton
+              domain={domain}
+              slug={slug}
+              title={meta.title}
+              id={meta.id}
+              description={meta?.description}
+            />
+          ),
+        }}
+      />
+      <View style={[styles.container, { paddingBottom: contentPaddingBottom }]}>
+        <NonTitleStackScreen />
+        <ScrollView
+          contentInsetAdjustmentBehavior={"automatic"}
+          style={styles.scrollViewContent}
+        >
+          <MarkdownView markdown={content} />
+        </ScrollView>
+      </View>
+    </>
   );
 };
 

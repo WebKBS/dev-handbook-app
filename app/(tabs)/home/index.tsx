@@ -1,7 +1,6 @@
 import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import ErrorState from "@/components/state/ErrorState";
 import HomeScreenContainer from "@/containers/home/HomeScreenContainer";
-import BookmarkButton from "@/features/button/BookmarkButton";
 import { useDomain } from "@/hooks/services/useDomain";
 import { useTheme } from "@/providers/ThemeProvider";
 import { focusManager } from "@tanstack/query-core";
@@ -66,12 +65,6 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <HomeScreenContainer data={data} />
-        <BookmarkButton
-          id={"test-id"}
-          title={"Test Favorite"}
-          slug={"test-favorite"}
-          domain={"example.com"}
-        />
       </ScrollView>
     </SafeAreaViewScreen>
   );
