@@ -8,4 +8,4 @@ export const bookmarkTable = sqliteTable("bookmark", {
   description: text("description"),
 });
 
-export type Favorite = typeof bookmarkTable.$inferSelect;
+export type Bookmark = typeof bookmarkTable.$inferSelect;

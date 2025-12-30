@@ -1,39 +1,103 @@
+import BookmarkItemCard from "@/components/card/BookmarkItemCard";
 import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
+import EmptyState from "@/components/state/EmptyState";
 import { AppText } from "@/components/text/AppText";
+import { getBookmarkBySlug } from "@/db/queries/bookmark";
+import type { Bookmark } from "@/db/schema/bookmark.table";
 import { useTheme } from "@/providers/ThemeProvider";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { SectionList, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function BookmarkScreen() {
+  const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  // 오류 방지: data가 undefined일 경우를 대비해 기본값 [] 설정
+  const { data } = useLiveQuery(getBookmarkBySlug());
+  const bookmarks: Bookmark[] = data ?? [];
+
+  const isEmpty = bookmarks.length === 0;
+
+  const groupToSections = (items: Bookmark[]) => {
+    const grouped = items.reduce<Record<string, Bookmark[]>>((acc, item) => {
+      const domain = item.domain ?? "기타";
+      (acc[domain] ??= []).push(item);
+      return acc;
+    }, {});
+
+    return Object.entries(grouped).map(([title, data]) => ({ title, data }));
+  };
+
+  const sections = groupToSections(bookmarks);
+
+  const isSkeleton = !data;
 
   return (
     <SafeAreaViewScreen>
-      <ScrollView
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item.slug}
         style={styles.container}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: insets.bottom + 20 },
+        ]}
         contentInsetAdjustmentBehavior={"automatic"}
-      >
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: theme.colors.surface,
-              borderColor: theme.colors.border,
-              shadowColor: theme.colors.shadow,
-            },
-          ]}
-        >
-          <AppText
-            weight={"bold"}
-            style={[styles.title, { color: theme.colors.text }]}
+        stickySectionHeadersEnabled
+        ListHeaderComponent={
+          <View style={styles.pageHeader}>
+            <AppText
+              weight="extrabold"
+              style={[styles.pageTitle, { color: theme.colors.text }]}
+            >
+              북마크
+            </AppText>
+            {!isEmpty && (
+              <AppText style={{ color: theme.colors.muted }}>
+                총 {bookmarks.length}개의 저장됨
+              </AppText>
+            )}
+          </View>
+        }
+        ListEmptyComponent={<EmptyState />}
+        renderSectionHeader={({ section }) => (
+          <View
+            style={[
+              styles.domainHeader,
+              { backgroundColor: theme.colors.background },
+            ]}
           >
-            북마크가 비어 있습니다
-          </AppText>
-          <AppText style={[styles.description, { color: theme.colors.muted }]}>
-            이후 저장할 페이지나 섹션이 생기면 같은 테마로 표시될 예정입니다.
-            마크다운 기반 콘텐츠와 연동해보세요.
-          </AppText>
-        </View>
-      </ScrollView>
+            <View
+              style={[
+                styles.domainPill,
+                {
+                  backgroundColor: theme.colors.accentSubtle,
+                  borderColor: theme.colors.border,
+                },
+              ]}
+            >
+              <AppText
+                weight="bold"
+                style={[
+                  styles.domainText,
+                  { color: theme.colors.accentStrong },
+                ]}
+              >
+                {section.title.toUpperCase()}
+              </AppText>
+            </View>
+            <View style={styles.headerLine} />
+          </View>
+        )}
+        renderItem={({ item }) => (
+          <BookmarkItemCard
+            item={item}
+            href={`/bookmark`}
+            isSkeleton={isSkeleton}
+          />
+        )}
+        SectionSeparatorComponent={() => <View style={{ height: 10 }} />}
+      />
     </SafeAreaViewScreen>
   );
 }
@@ -41,23 +105,38 @@ export default function BookmarkScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
   },
-  card: {
-    borderRadius: 16,
-    padding: 18,
+  content: {
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  pageHeader: {
+    marginTop: 20,
+  },
+  pageTitle: {
+    fontSize: 28,
+  },
+
+  // 섹션 헤더 스타일
+  domainHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    gap: 12,
+  },
+  domainPill: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
     borderWidth: 1,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.12,
-    shadowRadius: 18,
-    elevation: 4,
   },
-  title: {
-    fontSize: 20,
-    marginBottom: 10,
+  domainText: {
+    fontSize: 12,
+    letterSpacing: 0.5,
   },
-  description: {
-    fontSize: 15,
-    lineHeight: 22,
+  headerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "rgba(150,150,150,0.1)",
   },
 });

@@ -1,17 +1,21 @@
 import { AppText } from "@/components/text/AppText";
+import { Bookmark } from "@/db/schema/bookmark.table";
 import { useTheme } from "@/providers/ThemeProvider";
-import { RootManifestResponse } from "@/services/content/root-manifest";
 import { Feather } from "@expo/vector-icons";
 import { Link, LinkProps } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
-interface DomainItemCardProps {
-  item?: RootManifestResponse["items"][number];
+interface BookmarkItemCardProps {
+  item?: Bookmark;
   isSkeleton?: boolean;
   href?: LinkProps["href"];
 }
 
-const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
+const BookmarkItemCard = ({
+  item,
+  isSkeleton,
+  href,
+}: BookmarkItemCardProps) => {
   const { theme } = useTheme();
 
   const skeletonColor = { backgroundColor: theme.colors.card };
@@ -125,7 +129,7 @@ const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
   return CardContent;
 };
 
-export default DomainItemCard;
+export default BookmarkItemCard;
 
 const styles = StyleSheet.create({
   cardWrapper: {
