@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1767008919004,
-      "tag": "0000_create_favorite_table",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1767074721854,
-      "tag": "0001_numerous_ender_wiggin",
+      "when": 1767080894641,
+      "tag": "0000_dear_songbird",
       "breakpoints": true
     }
   ]

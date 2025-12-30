@@ -8,7 +8,6 @@ import { startTransition, useOptimistic } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 interface BookmarkButtonProps {
-  id: string;
   // 실제 앱에서는 아래 3개도 props로 받는 걸 추천
   slug: string;
   title: string;
@@ -17,7 +16,6 @@ interface BookmarkButtonProps {
 }
 
 const BookmarkButton = ({
-  id,
   slug,
   title,
   description,
@@ -26,7 +24,7 @@ const BookmarkButton = ({
   const bookmarkQuery = db
     .select()
     .from(bookmarkTable)
-    .where(eq(bookmarkTable.id, id));
+    .where(eq(bookmarkTable.slug, slug));
 
   const { data } = useLiveQuery(bookmarkQuery);
 
@@ -51,7 +49,6 @@ const BookmarkButton = ({
         await db
           .insert(bookmarkTable)
           .values({
-            id,
             slug: slug,
             title: title,
             domain: domain,
@@ -60,7 +57,7 @@ const BookmarkButton = ({
           .onConflictDoNothing(); // 중복 삽입 방지
       } else {
         //  있으면 삭제
-        await db.delete(bookmarkTable).where(eq(bookmarkTable.id, id));
+        await db.delete(bookmarkTable).where(eq(bookmarkTable.slug, slug));
       }
 
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

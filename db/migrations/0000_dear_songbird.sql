@@ -1,9 +1,9 @@
 CREATE TABLE `bookmark` (
-	`id` text PRIMARY KEY NOT NULL,
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`slug` text NOT NULL,
 	`title` text NOT NULL,
 	`domain` text NOT NULL,
 	`description` text
 );
 --> statement-breakpoint
-DROP TABLE `favorite`;
+CREATE UNIQUE INDEX `bookmark_slug_unique` ON `bookmark` (`slug`);
