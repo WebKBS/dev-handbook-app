@@ -18,7 +18,7 @@ import {
 export default function BookmarkScreen() {
   const { theme, mode } = useTheme();
   const { data } = useLiveQuery(getBookmarkBySlug());
-  const bookmarks: Favorite[] = data;
+  const bookmarks: Favorite[] = data ?? [];
   const isEmpty = bookmarks.length === 0;
   const accentTint =
     mode === "dark" ? "rgba(56,189,248,0.14)" : "rgba(14,165,233,0.12)";
@@ -150,105 +150,52 @@ export default function BookmarkScreen() {
   }
 
   return (
-    <SafeAreaViewScreen>
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => item.slug}
-        style={styles.container}
-        contentContainerStyle={styles.content}
-        stickySectionHeadersEnabled={false}
-        contentInsetAdjustmentBehavior="automatic"
-        ListHeaderComponent={
-          <View style={styles.listHeader}>
+    <>
+      <SafeAreaViewScreen>
+        <SectionList
+          sections={sections}
+          keyExtractor={(item) => item.slug}
+          style={styles.container}
+          contentContainerStyle={styles.content}
+          stickySectionHeadersEnabled
+          contentInsetAdjustmentBehavior="automatic"
+          renderSectionHeader={({ section }) => (
             <View
               style={[
-                styles.heroCard,
-                {
-                  backgroundColor: theme.colors.surface,
-                  borderColor: theme.colors.border,
-                  shadowColor: theme.colors.shadow,
-                },
+                styles.domainHeader,
+                { backgroundColor: theme.colors.background },
               ]}
             >
-              <View style={styles.heroBadgeRow}>
-                <View
-                  style={[
-                    styles.heroBadge,
-                    {
-                      backgroundColor: accentTint,
-                      borderColor: theme.colors.border,
-                    },
-                  ]}
-                >
-                  <Feather
-                    name="bookmark"
-                    size={14}
-                    color={theme.colors.accentStrong}
-                  />
-                  <AppText
-                    weight="semibold"
-                    style={[
-                      styles.badgeText,
-                      { color: theme.colors.accentStrong },
-                    ]}
-                  >
-                    BOOKMARKS
-                  </AppText>
-                </View>
-                <View
-                  style={[
-                    styles.countPill,
-                    {
-                      backgroundColor: cardTint,
-                      borderColor: theme.colors.border,
-                    },
-                  ]}
-                >
-                  <Feather
-                    name="circle"
-                    size={10}
-                    color={theme.colors.accentStrong}
-                  />
-                  <AppText
-                    weight="semibold"
-                    style={[styles.countText, { color: theme.colors.text }]}
-                  >
-                    {bookmarks.length}개 저장됨
-                  </AppText>
-                </View>
-              </View>
-              <AppText
-                weight={"extrabold"}
-                style={[styles.heroTitle, { color: theme.colors.text }]}
-              >
-                다시 보고 싶은 섹션을 한곳에서
-              </AppText>
-              <AppText
-                style={[styles.heroSubtitle, { color: theme.colors.muted }]}
-              >
-                도메인 별로 깔끔하게 정리된 북마크입니다. 탭하면 바로 해당
-                콘텐츠로 이동해요.
-              </AppText>
-            </View>
-
-            <View style={styles.sectionHeader}>
-              <AppText
-                weight="semibold"
-                style={[styles.sectionTitle, { color: theme.colors.text }]}
-              >
-                내 북마크
-              </AppText>
               <View
                 style={[
-                  styles.sectionBadge,
+                  styles.domainPill,
                   {
                     backgroundColor: accentTint,
                     borderColor: theme.colors.border,
                   },
                 ]}
               >
+                <AppText
+                  weight="semibold"
+                  style={[
+                    styles.domainText,
+                    { color: theme.colors.accentStrong },
+                  ]}
+                >
+                  {section.title.toUpperCase()}
+                </AppText>
+              </View>
+              <View
+                style={[
+                  styles.sectionBadge,
+                  {
+                    backgroundColor: cardTint,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
+              >
                 <Feather
-                  name="list"
+                  name="hash"
                   size={14}
                   color={theme.colors.accentStrong}
                 />
@@ -256,111 +203,69 @@ export default function BookmarkScreen() {
                   weight="semibold"
                   style={[
                     styles.sectionBadgeText,
-                    { color: theme.colors.accentStrong },
+                    { color: theme.colors.text },
                   ]}
                 >
-                  {bookmarks.length}개
+                  {section.data.length}개
                 </AppText>
               </View>
             </View>
-          </View>
-        }
-        ListHeaderComponentStyle={styles.listHeaderSpacing}
-        renderSectionHeader={({ section }) => (
-          <View style={styles.domainHeader}>
-            <View
-              style={[
-                styles.domainPill,
-                {
-                  backgroundColor: accentTint,
-                  borderColor: theme.colors.border,
-                },
-              ]}
-            >
-              <AppText
-                weight="semibold"
+          )}
+          renderItem={({ item }) => (
+            <Link href={`/home/${item.domain}/${item.slug}`} asChild>
+              <Pressable
                 style={[
-                  styles.domainText,
-                  { color: theme.colors.accentStrong },
+                  styles.card,
+                  {
+                    backgroundColor: cardTint,
+                    borderColor: theme.colors.border,
+                    shadowColor: theme.colors.shadow,
+                  },
                 ]}
+                android_ripple={{ color: theme.colors.border }}
               >
-                {section.title.toUpperCase()}
-              </AppText>
-            </View>
-            <View
-              style={[
-                styles.sectionBadge,
-                { backgroundColor: cardTint, borderColor: theme.colors.border },
-              ]}
-            >
-              <Feather
-                name="hash"
-                size={14}
-                color={theme.colors.accentStrong}
-              />
-              <AppText
-                weight="semibold"
-                style={[styles.sectionBadgeText, { color: theme.colors.text }]}
-              >
-                {section.data.length}개
-              </AppText>
-            </View>
-          </View>
-        )}
-        renderItem={({ item }) => (
-          <Link href={`/home/${item.domain}/${item.slug}`} asChild>
-            <Pressable
-              style={[
-                styles.card,
-                {
-                  backgroundColor: cardTint,
-                  borderColor: theme.colors.border,
-                  shadowColor: theme.colors.shadow,
-                },
-              ]}
-              android_ripple={{ color: theme.colors.border }}
-            >
-              <View style={styles.cardHeader}>
-                <AppText
-                  weight={"bold"}
-                  style={[styles.title, { color: theme.colors.text }]}
-                  numberOfLines={2}
-                >
-                  {item.title}
-                </AppText>
-                <View
-                  style={[
-                    styles.arrowCircle,
-                    {
-                      backgroundColor: theme.colors.surface,
-                      borderColor: theme.colors.border,
-                    },
-                  ]}
-                >
-                  <Feather
-                    name="arrow-up-right"
-                    size={16}
-                    color={theme.colors.accentStrong}
-                  />
+                <View style={styles.cardHeader}>
+                  <AppText
+                    weight={"bold"}
+                    style={[styles.title, { color: theme.colors.text }]}
+                    numberOfLines={2}
+                  >
+                    {item.title}
+                  </AppText>
+                  <View
+                    style={[
+                      styles.arrowCircle,
+                      {
+                        backgroundColor: theme.colors.surface,
+                        borderColor: theme.colors.border,
+                      },
+                    ]}
+                  >
+                    <Feather
+                      name="arrow-up-right"
+                      size={16}
+                      color={theme.colors.accentStrong}
+                    />
+                  </View>
                 </View>
-              </View>
-              {item.description ? (
-                <AppText
-                  style={[styles.description, { color: theme.colors.muted }]}
-                  numberOfLines={3}
-                >
-                  {item.description}
-                </AppText>
-              ) : null}
-            </Pressable>
-          </Link>
-        )}
-        ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-        SectionSeparatorComponent={() => (
-          <View style={styles.sectionSeparator} />
-        )}
-      />
-    </SafeAreaViewScreen>
+                {item.description ? (
+                  <AppText
+                    style={[styles.description, { color: theme.colors.muted }]}
+                    numberOfLines={3}
+                  >
+                    {item.description}
+                  </AppText>
+                ) : null}
+              </Pressable>
+            </Link>
+          )}
+          ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+          SectionSeparatorComponent={() => (
+            <View style={styles.sectionSeparator} />
+          )}
+        />
+      </SafeAreaViewScreen>
+    </>
   );
 }
 
@@ -372,12 +277,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 32,
     gap: 16,
-  },
-  listHeader: {
-    gap: 16,
-  },
-  listHeaderSpacing: {
-    marginBottom: 10,
   },
   card: {
     borderRadius: 18,
@@ -443,32 +342,11 @@ const styles = StyleSheet.create({
   tipText: {
     fontSize: 13,
   },
-  countPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  countText: {
-    fontSize: 13,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 4,
-  },
   domainHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 17,
   },
   sectionBadge: {
     flexDirection: "row",
