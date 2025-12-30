@@ -42,7 +42,7 @@ export default function TabLayout() {
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="bookmark/index">
+      <NativeTabs.Trigger name="bookmark">
         <Label>북마크</Label>
         <Icon
           sf={{ default: "bookmark", selected: "bookmark.fill" }}
