@@ -16,68 +16,89 @@ const quickLinks = [
 const RecommendCardList = () => {
   const { theme } = useTheme();
   return (
-    <View style={styles.cardGrid}>
-      {quickLinks.map((item) => (
-        <View
-          key={item.title}
-          style={[
-            styles.quickCard,
-            {
-              backgroundColor: theme.colors.cardBg,
-              borderColor: theme.colors.border,
-              shadowColor: theme.colors.shadow,
-            },
-          ]}
+    <>
+      <View style={styles.sectionHeader}>
+        <AppText
+          weight="semibold"
+          style={[styles.sectionTitle, { color: theme.colors.text }]}
         >
+          추천 핸드북
+        </AppText>
+        <Feather name="star" size={16} color={theme.colors.accentStrong} />
+      </View>
+
+      <View style={styles.cardGrid}>
+        {quickLinks.map((item) => (
           <View
+            key={item.title}
             style={[
-              styles.quickIcon,
+              styles.quickCard,
               {
-                backgroundColor: theme.colors.accentSubtle,
+                backgroundColor: theme.colors.cardBg,
                 borderColor: theme.colors.border,
+                shadowColor: theme.colors.shadow,
               },
             ]}
           >
-            <Feather
-              name={item.icon as any}
-              size={16}
-              color={theme.colors.accentStrong}
-            />
-          </View>
-          <AppText
-            weight="bold"
-            style={[styles.quickTitle, { color: theme.colors.text }]}
-          >
-            {item.title}
-          </AppText>
-          <AppText
-            style={[styles.quickDesc, { color: theme.colors.muted }]}
-            numberOfLines={2}
-          >
-            {item.desc}
-          </AppText>
-          <View style={styles.quickFooter}>
-            <AppText
-              weight="semibold"
-              style={[styles.quickCta, { color: theme.colors.accentStrong }]}
+            <View
+              style={[
+                styles.quickIcon,
+                {
+                  backgroundColor: theme.colors.accentSubtle,
+                  borderColor: theme.colors.border,
+                },
+              ]}
             >
-              바로 열기
+              <Feather
+                name={item.icon as any}
+                size={16}
+                color={theme.colors.accentStrong}
+              />
+            </View>
+            <AppText
+              weight="bold"
+              style={[styles.quickTitle, { color: theme.colors.text }]}
+            >
+              {item.title}
             </AppText>
-            <Feather
-              name="arrow-up-right"
-              size={16}
-              color={theme.colors.accentStrong}
-            />
+            <AppText
+              style={[styles.quickDesc, { color: theme.colors.muted }]}
+              numberOfLines={2}
+            >
+              {item.desc}
+            </AppText>
+            <View style={styles.quickFooter}>
+              <AppText
+                weight="semibold"
+                style={[styles.quickCta, { color: theme.colors.accentStrong }]}
+              >
+                바로 열기
+              </AppText>
+              <Feather
+                name="arrow-up-right"
+                size={16}
+                color={theme.colors.accentStrong}
+              />
+            </View>
           </View>
-        </View>
-      ))}
-    </View>
+        ))}
+      </View>
+    </>
   );
 };
 
 export default RecommendCardList;
 
 const styles = StyleSheet.create({
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  sectionTitle: {
+    fontSize: 16,
+  },
+
   cardGrid: {
     flexDirection: "row",
     flexWrap: "wrap",

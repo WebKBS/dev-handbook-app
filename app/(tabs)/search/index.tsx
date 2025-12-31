@@ -1,4 +1,3 @@
-import RecommendCardList from "@/components/card/RecommendCardList";
 import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
@@ -251,18 +250,8 @@ const SearchScreen = () => {
           ))}
         </View>
 
-        <View style={styles.sectionHeader}>
-          <AppText
-            weight="semibold"
-            style={[styles.sectionTitle, { color: theme.colors.text }]}
-          >
-            추천 핸드북
-          </AppText>
-          <Feather name="star" size={16} color={theme.colors.accentStrong} />
-        </View>
-
         {/* 추천 카드 리스트 컴포넌트 */}
-        <RecommendCardList />
+        {/*<RecommendCardList />*/}
 
         <View style={styles.sectionHeader}>
           <AppText
