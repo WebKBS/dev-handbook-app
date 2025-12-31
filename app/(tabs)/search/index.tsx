@@ -1,7 +1,9 @@
 import SearchListCard from "@/components/card/SearchListCard";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
+import { getSearch } from "@/services/content/search";
 import { Feather } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo, useState } from "react";
 import {
@@ -64,6 +66,17 @@ const SearchScreen = () => {
   const navigation = useNavigation();
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+
+  const { data } = useQuery({
+    queryKey: ["searchDocs", query],
+    queryFn: () =>
+      getSearch({
+        domain: "",
+        q: query,
+      }),
+  });
+
+  console.log("Search data:", data);
 
   const handleHeaderSearch = (e: NativeSyntheticEvent<{ text: string }>) => {
     setQuery(e.nativeEvent.text);
