@@ -1,4 +1,5 @@
 import BookmarkItemCard from "@/components/card/BookmarkItemCard";
+import BookmarkScreenHeader from "@/components/header/BookmarkScreenHeader";
 import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import EmptyState from "@/components/state/EmptyState";
 import { AppText } from "@/components/text/AppText";
@@ -45,19 +46,7 @@ export default function BookmarkScreen() {
         contentInsetAdjustmentBehavior={"automatic"}
         stickySectionHeadersEnabled
         ListHeaderComponent={
-          <View style={styles.pageHeader}>
-            <AppText
-              weight="extrabold"
-              style={[styles.pageTitle, { color: theme.colors.text }]}
-            >
-              북마크
-            </AppText>
-            {!isEmpty && (
-              <AppText style={{ color: theme.colors.muted }}>
-                총 {bookmarks.length}개의 저장됨
-              </AppText>
-            )}
-          </View>
+          <BookmarkScreenHeader bookmarks={bookmarks} isEmpty={isEmpty} />
         }
         ListEmptyComponent={<EmptyState />}
         renderSectionHeader={({ section }) => (
@@ -109,12 +98,6 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 20,
     gap: 12,
-  },
-  pageHeader: {
-    marginTop: 20,
-  },
-  pageTitle: {
-    fontSize: 28,
   },
 
   // 섹션 헤더 스타일

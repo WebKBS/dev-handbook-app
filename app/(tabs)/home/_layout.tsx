@@ -47,6 +47,9 @@ const HomeLayout = () => {
             // animation: "none",
             headerShown: false,
             title: domain?.toUpperCase(),
+            headerStyle: {
+              backgroundColor: theme.colors.background,
+            },
             headerLeft: () => (
               <Pressable
                 onPress={() => {

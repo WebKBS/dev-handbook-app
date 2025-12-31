@@ -73,7 +73,6 @@ const DomainSlugScreen = () => {
               domain={domain}
               slug={slug}
               title={meta.title}
-              id={meta.id}
               description={meta?.description}
             />
           ),
