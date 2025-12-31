@@ -33,6 +33,7 @@ const SearchLayout = () => {
           name="index"
           options={{
             title: "Search",
+            headerShown: false,
             // headerSearchBarOptions: {
             //   placement: "automatic",
             //   placeholder: "검색",
