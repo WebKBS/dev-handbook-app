@@ -1,11 +1,10 @@
-import { AppText } from "@/components/text/AppText";
-import { View } from "react-native";
+import DomainSlugScreenContainer from "@/containers/home/DomainSlugScreenContainer";
 
 const DomainSlugScreen = () => {
   return (
-    <View>
-      <AppText>DomainSlugScreen</AppText>
-    </View>
+    <>
+      <DomainSlugScreenContainer />
+    </>
   );
 };
 
