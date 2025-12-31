@@ -1,7 +1,5 @@
-import { AppText } from "@/components/text/AppText";
+import ScreenHeroCard from "@/components/card/ScreenHeroCard";
 import { Bookmark } from "@/db/schema/bookmark.table";
-import { useTheme } from "@/providers/ThemeProvider";
-import { StyleSheet, View } from "react-native";
 
 interface BookmarkScreenHeaderProps {
   bookmarks: Bookmark[];
@@ -12,32 +10,17 @@ const BookmarkListHeader = ({
   bookmarks,
   isEmpty,
 }: BookmarkScreenHeaderProps) => {
-  const { theme } = useTheme();
+  if (isEmpty) {
+    return null;
+  }
 
   return (
-    <View style={styles.pageHeader}>
-      <AppText
-        weight="extrabold"
-        style={[styles.pageTitle, { color: theme.colors.text }]}
-      >
-        북마크
-      </AppText>
-      {!isEmpty && (
-        <AppText style={{ color: theme.colors.muted }}>
-          총 {bookmarks.length}개의 저장됨
-        </AppText>
-      )}
-    </View>
+    <ScreenHeroCard
+      label="북마크"
+      title={"북마크 모음"}
+      subtitle={`총 ${bookmarks.length}개의 핸드북을 북마크했어요.`}
+    />
   );
 };
 
 export default BookmarkListHeader;
-
-export const styles = StyleSheet.create({
-  pageHeader: {
-    marginTop: 20,
-  },
-  pageTitle: {
-    fontSize: 28,
-  },
-});

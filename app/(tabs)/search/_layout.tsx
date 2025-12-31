@@ -32,8 +32,8 @@ const SearchLayout = () => {
         <Stack.Screen
           name="index"
           options={{
-            title: "Search",
-            headerShown: false,
+            title: "검색",
+            headerShown: true,
             // headerSearchBarOptions: {
             //   placement: "automatic",
             //   placeholder: "검색",

@@ -39,6 +39,7 @@ export default HomeScreenContainer;
 
 const styles = StyleSheet.create({
   sectionHeader: {
+    marginTop: 20,
     marginBottom: 10,
     gap: 4,
   },
