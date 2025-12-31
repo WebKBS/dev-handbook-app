@@ -21,17 +21,15 @@ import {
 import {
   ActivityIndicator,
   FlatList,
-  Keyboard,
   NativeSyntheticEvent,
   Platform,
   Pressable,
   StyleSheet,
   TextInput,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 
-const DEBOUNCE_MS = 400; // 보통 300~500ms 추천
+const DEBOUNCE_MS = 500;
 
 /**
  * Debounce hook
@@ -60,7 +58,7 @@ const SearchScreen = () => {
   const trimmedQuery = debouncedQuery.trim();
 
   // (선택) 1글자 검색 호출 방지. 원치 않으면 1로 바꾸거나 제거.
-  const MIN_LENGTH = 2;
+  const MIN_LENGTH = 1;
   const canSearch = trimmedQuery.length >= MIN_LENGTH;
 
   //  iOS 헤더 검색바 이벤트 핸들러: useCallback으로 고정 (setOptions 안정화)
@@ -79,8 +77,6 @@ const SearchScreen = () => {
         placement: "automatic",
         placeholder: "검색",
         onChangeText: handleHeaderSearch,
-        onFocus: () => {},
-        onBlur: () => {},
       },
     });
   }, [navigation, handleHeaderSearch]);
@@ -93,7 +89,7 @@ const SearchScreen = () => {
           domain: "",
           q: trimmedQuery,
           page: pageParam as number,
-          // ✅ getSearch가 fetch 기반이라면 signal을 받아 abort 가능하게 만들 수 있음
+          // getSearch가 fetch 기반이라면 signal을 받아 abort 가능하게 만들 수 있음
           // getSearch 쪽 타입이 안 받으면 제거해도 됨.
           signal,
         } as any),
@@ -104,11 +100,9 @@ const SearchScreen = () => {
       },
       initialPageParam: 1,
       enabled: canSearch,
-      // ✅ 캐시 전략 (원하면 조정)
+      // 캐시 전략 (원하면 조정)
       staleTime: 30_000, // 30초 동안은 동일 검색어 재진입 시 호출 억제
       gcTime: 5 * 60_000,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
     });
 
   // 검색 결과 가공은 useMemo로 안정화(렌더마다 재계산 방지)
@@ -231,32 +225,31 @@ const SearchScreen = () => {
     canSearch && !isLoading ? () => <SearchEmptyResult /> : null;
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <FlatList
-        data={searchResults}
-        keyExtractor={(item) => item.id ?? item.title}
-        renderItem={renderItem}
-        ListHeaderComponent={renderHeader}
-        ListHeaderComponentStyle={styles.listHeaderSpacing}
-        ListEmptyComponent={renderEmptyComponent}
-        ListFooterComponent={renderFooter}
-        ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-        contentContainerStyle={[
-          styles.container,
-          { backgroundColor: theme.colors.background },
-        ]}
-        style={{ backgroundColor: theme.colors.background }}
-        contentInsetAdjustmentBehavior={"automatic"}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-        onEndReached={() => {
-          if (!canSearch || !hasNextPage || isFetchingNextPage) return;
-          fetchNextPage();
-        }}
-        onEndReachedThreshold={0.6}
-        removeClippedSubviews
-      />
-    </TouchableWithoutFeedback>
+    <FlatList
+      data={searchResults}
+      keyExtractor={(item) => item.id ?? item.title}
+      renderItem={renderItem}
+      ListHeaderComponent={renderHeader}
+      ListHeaderComponentStyle={styles.listHeaderSpacing}
+      ListEmptyComponent={renderEmptyComponent}
+      ListFooterComponent={renderFooter}
+      ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: theme.colors.background },
+      ]}
+      style={{ backgroundColor: theme.colors.background }}
+      keyboardDismissMode="on-drag"
+      contentInsetAdjustmentBehavior={"automatic"}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      onEndReached={() => {
+        if (!canSearch || !hasNextPage || isFetchingNextPage) return;
+        fetchNextPage();
+      }}
+      onEndReachedThreshold={0.6}
+      removeClippedSubviews
+    />
   );
 };
 
