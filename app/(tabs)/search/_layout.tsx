@@ -1,3 +1,4 @@
+import BackButton from "@/features/button/BackButton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Stack } from "expo-router";
 import { Platform, View } from "react-native";
@@ -6,7 +7,6 @@ const SearchLayout = () => {
   const { theme } = useTheme();
 
   return (
-    // 배경색을 테마에 맞게 설정
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <Stack
         screenOptions={{
@@ -33,12 +33,8 @@ const SearchLayout = () => {
           name="index"
           options={{
             title: "검색",
-            headerShown: true,
-            // headerSearchBarOptions: {
-            //   placement: "automatic",
-            //   placeholder: "검색",
-            //   onChangeText: () => {},
-            // },
+            headerShown: false,
+            headerLeft: () => <BackButton />,
           }}
         />
       </Stack>
