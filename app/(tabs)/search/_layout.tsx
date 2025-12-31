@@ -1,4 +1,3 @@
-import BackButton from "@/features/button/BackButton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Stack } from "expo-router";
 import { Platform, View } from "react-native";
@@ -34,7 +33,6 @@ const SearchLayout = () => {
           options={{
             title: "검색",
             headerShown: false,
-            headerLeft: () => <BackButton />,
           }}
         />
       </Stack>

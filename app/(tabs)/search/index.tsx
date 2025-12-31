@@ -1,69 +1,69 @@
-import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
+import SearchListCard from "@/components/card/SearchListCard";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo, useState } from "react";
 import {
+  Keyboard,
   NativeSyntheticEvent,
   Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
+
+const docs = [
+  {
+    title: "React Query 베스트 프랙티스",
+    desc: "캐싱, Suspense, 무한 스크롤 패턴 정리",
+    category: "Frontend",
+    domain: "web",
+    tags: ["react", "state", "cache"],
+    icon: "layers",
+  },
+  {
+    title: "Drizzle 스키마 가이드",
+    desc: "SQLite 환경에서의 스키마 설계와 마이그레이션",
+    category: "API",
+    domain: "backend",
+    tags: ["drizzle", "sqlite", "orm"],
+    icon: "database",
+  },
+  {
+    title: "CI/CD 체크리스트",
+    desc: "테스트, 빌드, 배포 파이프라인 기본 세팅",
+    category: "DevOps",
+    domain: "ops",
+    tags: ["ci", "cd", "github actions"],
+    icon: "git-commit",
+  },
+  {
+    title: "디자인 토큰 정리",
+    desc: "Typography, spacing, color 토큰 구조",
+    category: "Frontend",
+    domain: "design",
+    tags: ["design tokens", "ui", "guideline"],
+    icon: "droplet",
+  },
+  {
+    title: "테스트 전략 101",
+    desc: "단위/통합/엔드투엔드 테스트 우선순위",
+    category: "Testing",
+    domain: "quality",
+    tags: ["testing", "coverage", "playwright"],
+    icon: "check-circle",
+  },
+];
 
 const SearchScreen = () => {
   const { theme } = useTheme();
   const navigation = useNavigation();
   const [query, setQuery] = useState("");
-
-  const docs = useMemo(
-    () => [
-      {
-        title: "React Query 베스트 프랙티스",
-        desc: "캐싱, Suspense, 무한 스크롤 패턴 정리",
-        category: "Frontend",
-        domain: "web",
-        tags: ["react", "state", "cache"],
-        icon: "layers",
-      },
-      {
-        title: "Drizzle 스키마 가이드",
-        desc: "SQLite 환경에서의 스키마 설계와 마이그레이션",
-        category: "API",
-        domain: "backend",
-        tags: ["drizzle", "sqlite", "orm"],
-        icon: "database",
-      },
-      {
-        title: "CI/CD 체크리스트",
-        desc: "테스트, 빌드, 배포 파이프라인 기본 세팅",
-        category: "DevOps",
-        domain: "ops",
-        tags: ["ci", "cd", "github actions"],
-        icon: "git-commit",
-      },
-      {
-        title: "디자인 토큰 정리",
-        desc: "Typography, spacing, color 토큰 구조",
-        category: "Frontend",
-        domain: "design",
-        tags: ["design tokens", "ui", "guideline"],
-        icon: "droplet",
-      },
-      {
-        title: "테스트 전략 101",
-        desc: "단위/통합/엔드투엔드 테스트 우선순위",
-        category: "Testing",
-        domain: "quality",
-        tags: ["testing", "coverage", "playwright"],
-        icon: "check-circle",
-      },
-    ],
-    [],
-  );
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleHeaderSearch = (e: NativeSyntheticEvent<{ text: string }>) => {
     setQuery(e.nativeEvent.text);
@@ -73,11 +73,16 @@ const SearchScreen = () => {
     // iOS에서만 헤더 검색바 설정
     navigation.setOptions({
       headerShown: true,
-      title: "가이드 검색",
       headerSearchBarOptions: {
         placement: "automatic",
-        placeholder: "가이드 검색",
+        placeholder: "검색",
         onChangeText: handleHeaderSearch,
+        onFocus: () => {
+          setIsFocused(true);
+        },
+        onBlur: () => {
+          setIsFocused(false);
+        },
       },
     });
   }, [navigation]);
@@ -93,10 +98,10 @@ const SearchScreen = () => {
         doc.tags.some((tag) => tag.toLowerCase().includes(q))
       );
     });
-  }, [docs, query]);
+  }, [query]);
 
   return (
-    <SafeAreaViewScreen>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <ScrollView
         contentContainerStyle={[
           styles.container,
@@ -179,9 +184,9 @@ const SearchScreen = () => {
           </View>
         )}
 
-        {/*<SearchListCard filteredDocs={filteredDocs} />*/}
+        <SearchListCard filteredDocs={filteredDocs} />
       </ScrollView>
-    </SafeAreaViewScreen>
+    </TouchableWithoutFeedback>
   );
 };
 
