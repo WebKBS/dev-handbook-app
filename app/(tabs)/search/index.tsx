@@ -11,11 +11,12 @@ import { Feather } from "@expo/vector-icons";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useNavigation } from "expo-router";
 import {
+  startTransition,
+  useCallback,
   useEffect,
   useLayoutEffect,
-  useRef,
+  useMemo,
   useState,
-  useTransition,
 } from "react";
 import {
   ActivityIndicator,
@@ -30,70 +31,89 @@ import {
   View,
 } from "react-native";
 
-const THROTTLE_MS = 3000;
+const DEBOUNCE_MS = 400; // 보통 300~500ms 추천
 
-const useThrottle = (value: string, delay: number) => {
-  const [throttledValue, setThrottledValue] = useState(value);
-  const lastExecutedRef = useRef(0);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+/**
+ * Debounce hook
+ * - 입력이 "멈춘 뒤" delay(ms) 후에만 값이 반영됨
+ * - 검색/자동완성에 throttle보다 더 적합
+ */
+const useDebounce = (value: string, delay: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
-    const now = Date.now();
-    const remaining = delay - (now - lastExecutedRef.current);
-
-    if (remaining <= 0) {
-      lastExecutedRef.current = now;
-      setThrottledValue(value);
-    } else {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      timeoutRef.current = setTimeout(() => {
-        lastExecutedRef.current = Date.now();
-        setThrottledValue(value);
-        timeoutRef.current = null;
-      }, remaining);
-    }
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
+    const t = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(t);
   }, [value, delay]);
 
-  return throttledValue;
+  return debouncedValue;
 };
 
 const SearchScreen = () => {
   const { theme } = useTheme();
   const navigation = useNavigation();
-  const [query, setQuery] = useState("");
-  const [, startTransition] = useTransition();
 
-  const throttledQuery = useThrottle(query, THROTTLE_MS);
-  const trimmedQuery = throttledQuery.trim();
+  const [query, setQuery] = useState("");
+
+  // debounce 적용
+  const debouncedQuery = useDebounce(query, DEBOUNCE_MS);
+  const trimmedQuery = debouncedQuery.trim();
+
+  // (선택) 1글자 검색 호출 방지. 원치 않으면 1로 바꾸거나 제거.
+  const MIN_LENGTH = 2;
+  const canSearch = trimmedQuery.length >= MIN_LENGTH;
+
+  //  iOS 헤더 검색바 이벤트 핸들러: useCallback으로 고정 (setOptions 안정화)
+  const handleHeaderSearch = useCallback(
+    (e: NativeSyntheticEvent<{ text: string }>) => {
+      const nextValue = e.nativeEvent.text;
+      startTransition(() => setQuery(nextValue));
+    },
+    [],
+  );
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      headerSearchBarOptions: {
+        placement: "automatic",
+        placeholder: "검색",
+        onChangeText: handleHeaderSearch,
+        onFocus: () => {},
+        onBlur: () => {},
+      },
+    });
+  }, [navigation, handleHeaderSearch]);
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery<SearchResponse>({
       queryKey: ["searchDocs", trimmedQuery],
-      queryFn: ({ pageParam = 1 }) =>
+      queryFn: ({ pageParam = 1, signal }) =>
         getSearch({
           domain: "",
           q: trimmedQuery,
           page: pageParam as number,
-        }),
+          // ✅ getSearch가 fetch 기반이라면 signal을 받아 abort 가능하게 만들 수 있음
+          // getSearch 쪽 타입이 안 받으면 제거해도 됨.
+          signal,
+        } as any),
       getNextPageParam: (lastPage) => {
         const totalPages = Math.ceil(lastPage.total / lastPage.pageSize);
         const nextPage = lastPage.page + 1;
         return nextPage <= totalPages ? nextPage : undefined;
       },
       initialPageParam: 1,
-      enabled: trimmedQuery.length > 0,
+      enabled: canSearch,
+      // ✅ 캐시 전략 (원하면 조정)
+      staleTime: 30_000, // 30초 동안은 동일 검색어 재진입 시 호출 억제
+      gcTime: 5 * 60_000,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     });
 
-  const searchResults: SearchResult[] = (() => {
-    if (!trimmedQuery) return [];
+  // 검색 결과 가공은 useMemo로 안정화(렌더마다 재계산 방지)
+  const searchResults: SearchResult[] = useMemo(() => {
+    if (!canSearch) return [];
     if (!data?.pages) return [];
 
     return data.pages.flatMap((page) =>
@@ -108,27 +128,7 @@ const SearchScreen = () => {
         tags: item.tags ?? [],
       })),
     );
-  })();
-
-  const handleHeaderSearch = (e: NativeSyntheticEvent<{ text: string }>) => {
-    const nextValue = e.nativeEvent.text;
-    startTransition(() => {
-      setQuery(nextValue);
-    });
-  };
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: true,
-      headerSearchBarOptions: {
-        placement: "automatic",
-        placeholder: "검색",
-        onChangeText: handleHeaderSearch,
-        onFocus: () => {},
-        onBlur: () => {},
-      },
-    });
-  }, [handleHeaderSearch, navigation]);
+  }, [canSearch, data?.pages]);
 
   const renderHeader = () => (
     <View style={styles.headerContainer}>
@@ -199,13 +199,7 @@ const SearchScreen = () => {
                 returnKeyType="search"
               />
               {query.length > 0 && (
-                <Pressable
-                  onPress={() =>
-                    startTransition(() => {
-                      setQuery("");
-                    })
-                  }
-                >
+                <Pressable onPress={() => startTransition(() => setQuery(""))}>
                   <Feather name="x" size={16} color={theme.colors.muted} />
                 </Pressable>
               )}
@@ -223,9 +217,7 @@ const SearchScreen = () => {
   );
 
   const renderFooter = () => {
-    const shouldShowLoader =
-      (isLoading && trimmedQuery.length > 0) || isFetchingNextPage;
-
+    const shouldShowLoader = (isLoading && canSearch) || isFetchingNextPage;
     if (!shouldShowLoader) return null;
 
     return (
@@ -236,7 +228,7 @@ const SearchScreen = () => {
   };
 
   const renderEmptyComponent =
-    trimmedQuery.length > 0 && !isLoading ? () => <SearchEmptyResult /> : null;
+    canSearch && !isLoading ? () => <SearchEmptyResult /> : null;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -258,7 +250,7 @@ const SearchScreen = () => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         onEndReached={() => {
-          if (!trimmedQuery || !hasNextPage || isFetchingNextPage) return;
+          if (!canSearch || !hasNextPage || isFetchingNextPage) return;
           fetchNextPage();
         }}
         onEndReachedThreshold={0.6}
