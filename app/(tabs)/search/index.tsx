@@ -1,204 +1,269 @@
-import SearchListCard from "@/components/card/SearchListCard";
+import {
+  SearchEmptyResult,
+  SearchResult,
+  SearchResultCard,
+  SearchResultHeader,
+} from "@/components/card/SearchListCard";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
-import { getSearch } from "@/services/content/search";
+import { getSearch, SearchResponse } from "@/services/content/search";
 import { Feather } from "@expo/vector-icons";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useNavigation } from "expo-router";
-import { useLayoutEffect, useMemo, useState } from "react";
 import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
+import {
+  ActivityIndicator,
+  FlatList,
   Keyboard,
   NativeSyntheticEvent,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   TextInput,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 
-const docs = [
-  {
-    title: "React Query 베스트 프랙티스",
-    desc: "캐싱, Suspense, 무한 스크롤 패턴 정리",
-    category: "Frontend",
-    domain: "web",
-    tags: ["react", "state", "cache"],
-    icon: "layers",
-  },
-  {
-    title: "Drizzle 스키마 가이드",
-    desc: "SQLite 환경에서의 스키마 설계와 마이그레이션",
-    category: "API",
-    domain: "backend",
-    tags: ["drizzle", "sqlite", "orm"],
-    icon: "database",
-  },
-  {
-    title: "CI/CD 체크리스트",
-    desc: "테스트, 빌드, 배포 파이프라인 기본 세팅",
-    category: "DevOps",
-    domain: "ops",
-    tags: ["ci", "cd", "github actions"],
-    icon: "git-commit",
-  },
-  {
-    title: "디자인 토큰 정리",
-    desc: "Typography, spacing, color 토큰 구조",
-    category: "Frontend",
-    domain: "design",
-    tags: ["design tokens", "ui", "guideline"],
-    icon: "droplet",
-  },
-  {
-    title: "테스트 전략 101",
-    desc: "단위/통합/엔드투엔드 테스트 우선순위",
-    category: "Testing",
-    domain: "quality",
-    tags: ["testing", "coverage", "playwright"],
-    icon: "check-circle",
-  },
-];
+const THROTTLE_MS = 3000;
+
+const useThrottle = (value: string, delay: number) => {
+  const [throttledValue, setThrottledValue] = useState(value);
+  const lastExecutedRef = useRef(0);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const now = Date.now();
+    const remaining = delay - (now - lastExecutedRef.current);
+
+    if (remaining <= 0) {
+      lastExecutedRef.current = now;
+      setThrottledValue(value);
+    } else {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        lastExecutedRef.current = Date.now();
+        setThrottledValue(value);
+        timeoutRef.current = null;
+      }, remaining);
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [value, delay]);
+
+  return throttledValue;
+};
 
 const SearchScreen = () => {
   const { theme } = useTheme();
   const navigation = useNavigation();
   const [query, setQuery] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
+  const [, startTransition] = useTransition();
 
-  const { data } = useQuery({
-    queryKey: ["searchDocs", query],
-    queryFn: () =>
-      getSearch({
-        domain: "",
-        q: query,
-      }),
-  });
+  const throttledQuery = useThrottle(query, THROTTLE_MS);
+  const trimmedQuery = throttledQuery.trim();
 
-  console.log("Search data:", data);
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery<SearchResponse>({
+      queryKey: ["searchDocs", trimmedQuery],
+      queryFn: ({ pageParam = 1 }) =>
+        getSearch({
+          domain: "",
+          q: trimmedQuery,
+          page: pageParam as number,
+        }),
+      getNextPageParam: (lastPage) => {
+        const totalPages = Math.ceil(lastPage.total / lastPage.pageSize);
+        const nextPage = lastPage.page + 1;
+        return nextPage <= totalPages ? nextPage : undefined;
+      },
+      initialPageParam: 1,
+      enabled: trimmedQuery.length > 0,
+    });
+
+  const searchResults: SearchResult[] = (() => {
+    if (!trimmedQuery) return [];
+    if (!data?.pages) return [];
+
+    return data.pages.flatMap((page) =>
+      page.items.map((item) => ({
+        id: item.id,
+        title: item.title,
+        desc: item.description,
+        category: item.domain
+          ? item.domain.charAt(0).toUpperCase() + item.domain.slice(1)
+          : "",
+        icon: "file-text" as const,
+        tags: item.tags ?? [],
+      })),
+    );
+  })();
 
   const handleHeaderSearch = (e: NativeSyntheticEvent<{ text: string }>) => {
-    setQuery(e.nativeEvent.text);
+    const nextValue = e.nativeEvent.text;
+    startTransition(() => {
+      setQuery(nextValue);
+    });
   };
 
   useLayoutEffect(() => {
-    // iOS에서만 헤더 검색바 설정
     navigation.setOptions({
       headerShown: true,
       headerSearchBarOptions: {
         placement: "automatic",
         placeholder: "검색",
         onChangeText: handleHeaderSearch,
-        onFocus: () => {
-          setIsFocused(true);
-        },
-        onBlur: () => {
-          setIsFocused(false);
-        },
+        onFocus: () => {},
+        onBlur: () => {},
       },
     });
-  }, [navigation]);
+  }, [handleHeaderSearch, navigation]);
 
-  const filteredDocs = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return docs;
+  const renderHeader = () => (
+    <View style={styles.headerContainer}>
+      {(Platform.OS === "android" || trimmedQuery.length === 0) && (
+        <View
+          style={[
+            styles.hero,
+            {
+              backgroundColor: theme.colors.cardBg,
+              borderColor: theme.colors.border,
+              shadowColor: theme.colors.shadow,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.heroBadge,
+              {
+                backgroundColor: theme.colors.accentSubtle,
+                borderColor: theme.colors.border,
+              },
+            ]}
+          >
+            <Feather
+              name="search"
+              size={14}
+              color={theme.colors.accentStrong}
+            />
+            <AppText
+              weight="semibold"
+              style={[styles.badgeText, { color: theme.colors.accentStrong }]}
+            >
+              SEARCH
+            </AppText>
+          </View>
 
-    return docs.filter((doc) => {
-      return (
-        doc.title.toLowerCase().includes(q) ||
-        doc.desc.toLowerCase().includes(q) ||
-        doc.tags.some((tag) => tag.toLowerCase().includes(q))
-      );
-    });
-  }, [query]);
+          <AppText
+            weight="extrabold"
+            style={[styles.heroTitle, { color: theme.colors.text }]}
+          >
+            원하는 가이드를 바로 찾으세요
+          </AppText>
+          <AppText style={[styles.heroDesc, { color: theme.colors.muted }]}>
+            키워드, 도메인, 문제 상황을 입력하면 연관된 핸드북을 추천합니다.
+          </AppText>
+
+          {Platform.OS === "android" && (
+            <View
+              style={[
+                styles.searchInput,
+                {
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.colors.surface,
+                },
+              ]}
+            >
+              <Feather name="search" size={18} color={theme.colors.muted} />
+              <TextInput
+                placeholder="예: 상태관리 비교, 배포 파이프라인"
+                placeholderTextColor={theme.colors.muted}
+                style={[styles.inputField, { color: theme.colors.text }]}
+                value={query}
+                onChangeText={(text) =>
+                  startTransition(() => {
+                    setQuery(text);
+                  })
+                }
+                returnKeyType="search"
+              />
+              {query.length > 0 && (
+                <Pressable
+                  onPress={() =>
+                    startTransition(() => {
+                      setQuery("");
+                    })
+                  }
+                >
+                  <Feather name="x" size={16} color={theme.colors.muted} />
+                </Pressable>
+              )}
+            </View>
+          )}
+        </View>
+      )}
+
+      <SearchResultHeader count={searchResults.length} />
+    </View>
+  );
+
+  const renderItem = ({ item }: { item: SearchResult }) => (
+    <SearchResultCard doc={item} />
+  );
+
+  const renderFooter = () => {
+    const shouldShowLoader =
+      (isLoading && trimmedQuery.length > 0) || isFetchingNextPage;
+
+    if (!shouldShowLoader) return null;
+
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator color={theme.colors.accentStrong} />
+      </View>
+    );
+  };
+
+  const renderEmptyComponent =
+    trimmedQuery.length > 0 && !isLoading ? () => <SearchEmptyResult /> : null;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <ScrollView
+      <FlatList
+        data={searchResults}
+        keyExtractor={(item) => item.id ?? item.title}
+        renderItem={renderItem}
+        ListHeaderComponent={renderHeader}
+        ListHeaderComponentStyle={styles.listHeaderSpacing}
+        ListEmptyComponent={renderEmptyComponent}
+        ListFooterComponent={renderFooter}
+        ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
         contentContainerStyle={[
           styles.container,
           { backgroundColor: theme.colors.background },
         ]}
+        style={{ backgroundColor: theme.colors.background }}
         contentInsetAdjustmentBehavior={"automatic"}
         showsVerticalScrollIndicator={false}
-      >
-        {/* Android에서는 항상 표시, iOS에서는 검색 전에만 표시 */}
-        {(Platform.OS === "android" || query.length === 0) && (
-          <View
-            style={[
-              styles.hero,
-              {
-                backgroundColor: theme.colors.cardBg,
-                borderColor: theme.colors.border,
-                shadowColor: theme.colors.shadow,
-              },
-            ]}
-          >
-            <View
-              style={[
-                styles.heroBadge,
-                {
-                  backgroundColor: theme.colors.accentSubtle,
-                  borderColor: theme.colors.border,
-                },
-              ]}
-            >
-              <Feather
-                name="search"
-                size={14}
-                color={theme.colors.accentStrong}
-              />
-              <AppText
-                weight="semibold"
-                style={[styles.badgeText, { color: theme.colors.accentStrong }]}
-              >
-                SEARCH
-              </AppText>
-            </View>
-
-            <AppText
-              weight="extrabold"
-              style={[styles.heroTitle, { color: theme.colors.text }]}
-            >
-              원하는 가이드를 바로 찾으세요
-            </AppText>
-            <AppText style={[styles.heroDesc, { color: theme.colors.muted }]}>
-              키워드, 도메인, 문제 상황을 입력하면 연관된 핸드북을 추천합니다.
-            </AppText>
-
-            {/* Android에서만 검색 입력창 표시 */}
-            {Platform.OS === "android" && (
-              <View
-                style={[
-                  styles.searchInput,
-                  {
-                    borderColor: theme.colors.border,
-                    backgroundColor: theme.colors.surface,
-                  },
-                ]}
-              >
-                <Feather name="search" size={18} color={theme.colors.muted} />
-                <TextInput
-                  placeholder="예: 상태관리 비교, 배포 파이프라인"
-                  placeholderTextColor={theme.colors.muted}
-                  style={[styles.inputField, { color: theme.colors.text }]}
-                  value={query}
-                  onChangeText={setQuery}
-                  returnKeyType="search"
-                />
-                {query.length > 0 && (
-                  <Pressable onPress={() => setQuery("")}>
-                    <Feather name="x" size={16} color={theme.colors.muted} />
-                  </Pressable>
-                )}
-              </View>
-            )}
-          </View>
-        )}
-
-        <SearchListCard filteredDocs={filteredDocs} />
-      </ScrollView>
+        keyboardShouldPersistTaps="handled"
+        onEndReached={() => {
+          if (!trimmedQuery || !hasNextPage || isFetchingNextPage) return;
+          fetchNextPage();
+        }}
+        onEndReachedThreshold={0.6}
+        removeClippedSubviews
+      />
     </TouchableWithoutFeedback>
   );
 };
@@ -208,8 +273,13 @@ export default SearchScreen;
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    gap: 20,
     paddingBottom: 32,
+  },
+  listHeaderSpacing: {
+    marginBottom: 20,
+  },
+  headerContainer: {
+    gap: 20,
   },
   hero: {
     borderRadius: 18,
@@ -256,5 +326,11 @@ const styles = StyleSheet.create({
   inputField: {
     flex: 1,
     fontSize: 15,
+  },
+  itemSeparator: {
+    height: 12,
+  },
+  footerLoader: {
+    paddingVertical: 12,
   },
 });

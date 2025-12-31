@@ -3,140 +3,159 @@ import { useTheme } from "@/providers/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 
+export type SearchResult = {
+  id?: string;
+  title: string;
+  desc: string;
+  category: string;
+  icon: string;
+  tags: string[];
+};
+
 interface SearchListCardProps {
-  filteredDocs: {
-    title: string;
-    desc: string;
-    category: string;
-    icon: string;
-    tags: string[];
-  }[];
+  filteredDocs: SearchResult[];
 }
+
+export const SearchResultHeader = ({ count }: { count: number }) => {
+  const { theme } = useTheme();
+  return (
+    <View style={styles.sectionHeader}>
+      <AppText
+        weight="semibold"
+        style={[styles.sectionTitle, { color: theme.colors.text }]}
+      >
+        검색 결과
+      </AppText>
+      <AppText style={{ color: theme.colors.muted }}>{count}건</AppText>
+    </View>
+  );
+};
+
+export const SearchEmptyResult = () => {
+  const { theme } = useTheme();
+  return (
+    <View
+      style={[
+        styles.emptyResult,
+        {
+          borderColor: theme.colors.border,
+          backgroundColor: theme.colors.cardBg,
+        },
+      ]}
+    >
+      <Feather name="search" size={16} color={theme.colors.muted} />
+      <AppText style={{ color: theme.colors.muted }}>
+        결과가 없습니다. 다른 키워드를 시도해 보세요.
+      </AppText>
+    </View>
+  );
+};
+
+export const SearchResultCard = ({ doc }: { doc: SearchResult }) => {
+  const { theme, mode } = useTheme();
+  return (
+    <View
+      style={[
+        styles.resultCard,
+        {
+          backgroundColor: theme.colors.cardBg,
+          borderColor: theme.colors.border,
+          shadowColor: theme.colors.shadow,
+        },
+      ]}
+    >
+      <View style={styles.resultHeader}>
+        <View
+          style={[
+            styles.resultIcon,
+            {
+              backgroundColor: theme.colors.accentSubtle,
+              borderColor: theme.colors.border,
+            },
+          ]}
+        >
+          <Feather
+            name={doc.icon as any}
+            size={14}
+            color={theme.colors.accentStrong}
+          />
+        </View>
+        <AppText
+          weight="semibold"
+          style={[styles.resultCategory, { color: theme.colors.muted }]}
+        >
+          {doc.category}
+        </AppText>
+      </View>
+
+      <AppText
+        weight="bold"
+        style={[styles.resultTitle, { color: theme.colors.text }]}
+        numberOfLines={2}
+      >
+        {doc.title}
+      </AppText>
+      <AppText
+        style={[styles.resultDesc, { color: theme.colors.muted }]}
+        numberOfLines={2}
+      >
+        {doc.desc}
+      </AppText>
+
+      <View style={styles.tagRow}>
+        {doc.tags.map((tag) => (
+          <View
+            key={tag}
+            style={[
+              styles.tagChip,
+              {
+                borderColor: theme.colors.border,
+                backgroundColor:
+                  mode === "dark"
+                    ? theme.colors.card
+                    : theme.colors.accentSubtle,
+              },
+            ]}
+          >
+            <AppText style={[styles.tagText, { color: theme.colors.text }]}>
+              #{tag}
+            </AppText>
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.resultFooter}>
+        <AppText
+          weight="semibold"
+          style={[styles.resultLink, { color: theme.colors.accentStrong }]}
+        >
+          문서로 이동
+        </AppText>
+        <Feather
+          name="arrow-up-right"
+          size={16}
+          color={theme.colors.accentStrong}
+        />
+      </View>
+    </View>
+  );
+};
 
 const SearchListCard = ({ filteredDocs }: SearchListCardProps) => {
   const { theme, mode } = useTheme();
   return (
     <>
-      <View style={styles.sectionHeader}>
-        <AppText
-          weight="semibold"
-          style={[styles.sectionTitle, { color: theme.colors.text }]}
-        >
-          검색 결과
-        </AppText>
-        <AppText style={{ color: theme.colors.muted }}>
-          {filteredDocs.length}건
-        </AppText>
-      </View>
+      <SearchResultHeader count={filteredDocs.length} />
 
       {filteredDocs.length === 0 ? (
-        <View
-          style={[
-            styles.emptyResult,
-            {
-              borderColor: theme.colors.border,
-              backgroundColor: theme.colors.cardBg,
-            },
-          ]}
-        >
-          <Feather name="search" size={16} color={theme.colors.muted} />
-          <AppText style={{ color: theme.colors.muted }}>
-            결과가 없습니다. 다른 키워드를 시도해 보세요.
-          </AppText>
-        </View>
+        <SearchEmptyResult />
       ) : (
         <View style={styles.resultList}>
           {filteredDocs.map((doc) => (
-            <View
-              key={doc.title}
-              style={[
-                styles.resultCard,
-                {
-                  backgroundColor: theme.colors.cardBg,
-                  borderColor: theme.colors.border,
-                  shadowColor: theme.colors.shadow,
-                },
-              ]}
-            >
-              <View style={styles.resultHeader}>
-                <View
-                  style={[
-                    styles.resultIcon,
-                    {
-                      backgroundColor: theme.colors.accentSubtle,
-                      borderColor: theme.colors.border,
-                    },
-                  ]}
-                >
-                  <Feather
-                    name={doc.icon as any}
-                    size={14}
-                    color={theme.colors.accentStrong}
-                  />
-                </View>
-                <AppText
-                  weight="semibold"
-                  style={[styles.resultCategory, { color: theme.colors.muted }]}
-                >
-                  {doc.category}
-                </AppText>
-              </View>
-
-              <AppText
-                weight="bold"
-                style={[styles.resultTitle, { color: theme.colors.text }]}
-                numberOfLines={2}
-              >
-                {doc.title}
-              </AppText>
-              <AppText
-                style={[styles.resultDesc, { color: theme.colors.muted }]}
-                numberOfLines={2}
-              >
-                {doc.desc}
-              </AppText>
-
-              <View style={styles.tagRow}>
-                {doc.tags.map((tag) => (
-                  <View
-                    key={tag}
-                    style={[
-                      styles.tagChip,
-                      {
-                        borderColor: theme.colors.border,
-                        backgroundColor:
-                          mode === "dark"
-                            ? theme.colors.card
-                            : theme.colors.accentSubtle,
-                      },
-                    ]}
-                  >
-                    <AppText
-                      style={[styles.tagText, { color: theme.colors.text }]}
-                    >
-                      #{tag}
-                    </AppText>
-                  </View>
-                ))}
-              </View>
-
-              <View style={styles.resultFooter}>
-                <AppText
-                  weight="semibold"
-                  style={[
-                    styles.resultLink,
-                    { color: theme.colors.accentStrong },
-                  ]}
-                >
-                  문서로 이동
-                </AppText>
-                <Feather
-                  name="arrow-up-right"
-                  size={16}
-                  color={theme.colors.accentStrong}
-                />
-              </View>
-            </View>
+            <SearchResultCard
+              key={doc.id ?? doc.title}
+              doc={{ ...doc, id: doc.id ?? doc.title }}
+            />
           ))}
         </View>
       )}
