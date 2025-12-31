@@ -53,6 +53,7 @@ function RootLayoutNav() {
         }}
       >
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="detail" />
       </Stack>
       {Platform.OS === "ios" ? (
         <StatusBar

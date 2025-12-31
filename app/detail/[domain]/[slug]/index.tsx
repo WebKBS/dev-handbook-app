@@ -1,7 +1,11 @@
 import DomainSlugScreenContainer from "@/containers/home/DomainSlugScreenContainer";
 
 const DomainSlugScreen = () => {
-  return <DomainSlugScreenContainer />;
+  return (
+    <>
+      <DomainSlugScreenContainer />
+    </>
+  );
 };
 
 export default DomainSlugScreen;

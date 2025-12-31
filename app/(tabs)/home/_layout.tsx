@@ -1,12 +1,11 @@
 import { DomainType } from "@/constants/domain";
+import BackButton from "@/features/button/BackButton";
 import { useTheme } from "@/providers/ThemeProvider";
-import { Ionicons } from "@expo/vector-icons";
-import { Stack, useGlobalSearchParams, useRouter } from "expo-router";
-import { Platform, Pressable, View } from "react-native";
+import { Stack, useGlobalSearchParams } from "expo-router";
+import { Platform, View } from "react-native";
 
 const HomeLayout = () => {
   const { theme } = useTheme();
-  const router = useRouter();
 
   const { domain } = useGlobalSearchParams<{ domain: DomainType }>();
 
@@ -47,21 +46,7 @@ const HomeLayout = () => {
             // animation: "none",
             headerShown: false,
             title: domain?.toUpperCase(),
-            headerLeft: () => (
-              <Pressable
-                onPress={() => {
-                  router.back();
-                }}
-                hitSlop={10}
-              >
-                {/*hitSlop은 터치 영역을 확장해주는 속성입니다. */}
-                <Ionicons
-                  name="chevron-back"
-                  size={24}
-                  color={theme.colors.text}
-                />
-              </Pressable>
-            ),
+            headerLeft: () => <BackButton />,
           }}
         />
       </Stack>
