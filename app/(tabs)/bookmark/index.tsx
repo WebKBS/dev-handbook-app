@@ -1,18 +1,16 @@
 import BookmarkItemCard from "@/components/card/BookmarkItemCard";
-import BookmarkScreenHeader from "@/components/header/BookmarkScreenHeader";
+import BookmarkListHeader from "@/components/header/BookmarkListHeader";
+import BookmarkSectionHeader from "@/components/header/BookmarkSectionHeader";
 import SafeAreaViewScreen from "@/components/screen/SafeAreaViewScreen";
 import EmptyState from "@/components/state/EmptyState";
-import { AppText } from "@/components/text/AppText";
 import { getBookmarkBySlug } from "@/db/queries/bookmark";
 import type { Bookmark } from "@/db/schema/bookmark.table";
-import { useTheme } from "@/providers/ThemeProvider";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { SectionList, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function BookmarkScreen() {
   const insets = useSafeAreaInsets();
-  const { theme } = useTheme();
   // 오류 방지: data가 undefined일 경우를 대비해 기본값 [] 설정
   const { data } = useLiveQuery(getBookmarkBySlug());
   const bookmarks: Bookmark[] = data ?? [];
@@ -46,37 +44,11 @@ export default function BookmarkScreen() {
         contentInsetAdjustmentBehavior={"automatic"}
         stickySectionHeadersEnabled
         ListHeaderComponent={
-          <BookmarkScreenHeader bookmarks={bookmarks} isEmpty={isEmpty} />
+          <BookmarkListHeader bookmarks={bookmarks} isEmpty={isEmpty} />
         }
         ListEmptyComponent={<EmptyState />}
         renderSectionHeader={({ section }) => (
-          <View
-            style={[
-              styles.domainHeader,
-              { backgroundColor: theme.colors.background },
-            ]}
-          >
-            <View
-              style={[
-                styles.domainPill,
-                {
-                  backgroundColor: theme.colors.accentSubtle,
-                  borderColor: theme.colors.border,
-                },
-              ]}
-            >
-              <AppText
-                weight="bold"
-                style={[
-                  styles.domainText,
-                  { color: theme.colors.accentStrong },
-                ]}
-              >
-                {section.title.toUpperCase()}
-              </AppText>
-            </View>
-            <View style={styles.headerLine} />
-          </View>
+          <BookmarkSectionHeader section={section} />
         )}
         renderItem={({ item }) => (
           <BookmarkItemCard
@@ -98,28 +70,5 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 20,
     gap: 12,
-  },
-
-  // 섹션 헤더 스타일
-  domainHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    gap: 12,
-  },
-  domainPill: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-  },
-  domainText: {
-    fontSize: 12,
-    letterSpacing: 0.5,
-  },
-  headerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "rgba(150,150,150,0.1)",
   },
 });

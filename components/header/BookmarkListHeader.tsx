@@ -8,7 +8,7 @@ interface BookmarkScreenHeaderProps {
   isEmpty: boolean;
 }
 
-const BookmarkScreenHeader = ({
+const BookmarkListHeader = ({
   bookmarks,
   isEmpty,
 }: BookmarkScreenHeaderProps) => {
@@ -31,7 +31,7 @@ const BookmarkScreenHeader = ({
   );
 };
 
-export default BookmarkScreenHeader;
+export default BookmarkListHeader;
 
 export const styles = StyleSheet.create({
   pageHeader: {
