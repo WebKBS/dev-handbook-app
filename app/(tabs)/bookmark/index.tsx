@@ -6,7 +6,7 @@ import EmptyState from "@/components/state/EmptyState";
 import { getBookmarkBySlug } from "@/db/queries/bookmark";
 import type { Bookmark } from "@/db/schema/bookmark.table";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { SectionList, StyleSheet, View } from "react-native";
+import { SectionList, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function BookmarkScreen() {
@@ -53,11 +53,11 @@ export default function BookmarkScreen() {
         renderItem={({ item }) => (
           <BookmarkItemCard
             item={item}
-            href={`/bookmark`}
+            href={`/detail/${item.domain}/${item.slug}`}
             isSkeleton={isSkeleton}
           />
         )}
-        SectionSeparatorComponent={() => <View style={{ height: 10 }} />}
+        // SectionSeparatorComponent={() => <View style={{ height: 10 }} />}
       />
     </SafeAreaViewScreen>
   );
