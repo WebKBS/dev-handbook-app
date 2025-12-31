@@ -79,7 +79,6 @@ const DomainSlugScreenContainer = () => {
         }}
       />
       <View style={[styles.container, { paddingBottom: contentPaddingBottom }]}>
-        <NonTitleStackScreen />
         <ScrollView
           contentInsetAdjustmentBehavior={"automatic"}
           style={styles.scrollViewContent}

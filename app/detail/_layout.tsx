@@ -18,9 +18,6 @@ const DetailLayout = () => {
           options={{
             // animation: "none",
             title: domain?.toUpperCase(),
-            headerStyle: {
-              backgroundColor: theme.colors.background,
-            },
             headerLeft: () => <BackButton />,
           }}
         />

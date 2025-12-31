@@ -53,7 +53,7 @@ function RootLayoutNav() {
         }}
       >
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="detail/[domain]/[slug]/index" />
+        <Stack.Screen name="detail" />
       </Stack>
       {Platform.OS === "ios" ? (
         <StatusBar
