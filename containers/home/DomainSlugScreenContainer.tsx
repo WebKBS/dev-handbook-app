@@ -24,6 +24,7 @@ const DomainSlugScreenContainer = () => {
 
   const content = data?.content;
   const meta = data?.meta;
+  const references = data?.meta?.references;
 
   const contentPaddingBottom = useContentPaddingBotton();
 

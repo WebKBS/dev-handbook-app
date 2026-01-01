@@ -13,6 +13,11 @@ interface PostsResponse {
     coverImage?: string;
     order: number;
     level: number;
+    references?: {
+      title: string;
+      url: string;
+      note?: string;
+    }[];
   };
   content: string;
 }
