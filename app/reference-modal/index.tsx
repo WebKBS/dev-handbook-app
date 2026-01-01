@@ -4,7 +4,6 @@ import WebView from "react-native-webview";
 
 const ReferenceModal = () => {
   const { url } = useLocalSearchParams();
-  console.log("ReferenceModal url:", url);
   return <WebView style={styles.container} source={{ uri: url as string }} />;
 };
 

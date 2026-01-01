@@ -57,7 +57,7 @@ function RootLayoutNav() {
         <Stack.Screen name="detail" />
 
         <Stack.Screen
-          name="modal/index"
+          name="reference-modal/index"
           options={({ navigation }) => ({
             presentation: "pageSheet",
             animation: "slide_from_bottom",

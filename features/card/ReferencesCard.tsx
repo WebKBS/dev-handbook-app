@@ -3,8 +3,7 @@ import { useTheme } from "@/providers/ThemeProvider";
 import { Reference } from "@/services/content/post";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface ReferencesCardProps {
   referencesList: Reference[];
@@ -14,11 +13,9 @@ const ReferencesCard = ({ referencesList }: ReferencesCardProps) => {
   const { theme } = useTheme();
   const hasReferences = referencesList.length > 0;
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
 
   const handleReferencePress = (url: string) => {
-    // setIsOpen(true);
-    router.push(`/modal?url=${url}`);
+    router.push(`/reference-modal?url=${url}`);
   };
 
   if (!hasReferences) {
@@ -27,21 +24,6 @@ const ReferencesCard = ({ referencesList }: ReferencesCardProps) => {
 
   return (
     <>
-      <Modal
-        visible={isOpen}
-        animationType="slide"
-        presentationStyle={"pageSheet"}
-        onRequestClose={() => setIsOpen(false)}
-      >
-        <View style={[{ backgroundColor: theme.colors.background }]}>
-          <View>
-            <TouchableOpacity onPress={() => setIsOpen(false)}>
-              <Ionicons name="close" size={24} color={theme.colors.text} />
-            </TouchableOpacity>
-            <AppText weight="bold">참고 자료</AppText>
-          </View>
-        </View>
-      </Modal>
       <View style={styles.referenceSection}>
         <View style={styles.referenceHeader}>
           <AppText weight="extrabold" style={styles.referenceTitle}>
