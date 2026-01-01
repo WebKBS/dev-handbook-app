@@ -3,6 +3,7 @@ import migrations from "@/db/migrations/migrations";
 import { useDomain } from "@/hooks/services/useDomain";
 import { queryClient } from "@/libs/tanstack-query";
 import { ThemeProvider, useTheme } from "@/providers/ThemeProvider";
+import { Ionicons } from "@expo/vector-icons";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useFonts } from "expo-font";
@@ -10,7 +11,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SQLiteProvider } from "expo-sqlite";
 import { useEffect, useRef } from "react";
-import { Platform, StatusBar } from "react-native";
+import { Platform, Pressable, StatusBar, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync().then().catch(console.error);
 
@@ -45,7 +46,7 @@ function RootLayoutNav() {
   // if (!fontsReady || !manifestReady) return <ErrorState />;
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -54,6 +55,36 @@ function RootLayoutNav() {
       >
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="detail" />
+
+        <Stack.Screen
+          name="modal/index"
+          options={({ navigation }) => ({
+            presentation: "pageSheet",
+            animation: "slide_from_bottom",
+            headerShown: true,
+            title: "참고 자료",
+            headerStyle: { backgroundColor: theme.colors.background },
+            headerTitleStyle: { color: theme.colors.text },
+            headerTintColor: theme.colors.text,
+            headerShadowVisible: false,
+            headerTitleAlign: "center",
+            headerBackVisible: false,
+
+            headerLeft: () => null,
+
+            headerRight: () => (
+              <Pressable
+                onPress={() => navigation.goBack()}
+                hitSlop={12}
+                style={{
+                  padding: 6,
+                }}
+              >
+                <Ionicons name="close" size={24} color={theme.colors.text} />
+              </Pressable>
+            ),
+          })}
+        />
       </Stack>
       {Platform.OS === "ios" ? (
         <StatusBar
@@ -71,7 +102,7 @@ function RootLayoutNav() {
           barStyle={mode === "dark" ? "light-content" : "dark-content"}
         />
       )}
-    </>
+    </View>
   );
 }
 

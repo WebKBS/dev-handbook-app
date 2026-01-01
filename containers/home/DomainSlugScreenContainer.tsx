@@ -4,20 +4,12 @@ import { DomainType } from "@/constants/domain";
 import BookmarkButton from "@/features/button/BookmarkButton";
 import ReferencesCard from "@/features/card/ReferencesCard";
 import { MarkdownView } from "@/features/markdown/MarkdownView";
-import ReferenceModal from "@/features/modal/ReferenceModal";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getPosts, Reference } from "@/services/content/post";
 import { useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { useCallback, useState } from "react";
-import {
-  ActivityIndicator,
-  Linking,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
 const DomainSlugScreenContainer = () => {
   const { slug, domain } = useLocalSearchParams<{
@@ -35,29 +27,8 @@ const DomainSlugScreenContainer = () => {
   const meta = data?.meta;
   const references = data?.meta?.references;
   const referencesList: Reference[] = references ?? [];
-  const [selectedReference, setSelectedReference] = useState<Reference | null>(
-    null,
-  );
 
   const contentPaddingBottom = useContentPaddingBotton();
-
-  const handleCloseModal = useCallback(() => {
-    setSelectedReference(null);
-  }, []);
-
-  const handleOpenUrl = useCallback(async () => {
-    const url = selectedReference?.url;
-    if (!url) return;
-
-    try {
-      const supported = await Linking.canOpenURL(url);
-      if (supported) {
-        await Linking.openURL(url);
-      }
-    } catch (err) {
-      console.error("Failed to open reference url:", err);
-    }
-  }, [selectedReference]);
 
   if (isPending) {
     return (
@@ -120,16 +91,8 @@ const DomainSlugScreenContainer = () => {
           <MarkdownView markdown={content} />
 
           {/* 참고 링크 */}
-          <ReferencesCard
-            referencesList={referencesList}
-            setSelectedReference={setSelectedReference}
-          />
+          <ReferencesCard referencesList={referencesList} />
         </ScrollView>
-        <ReferenceModal
-          handleCloseModal={handleCloseModal}
-          selectedReference={selectedReference}
-          handleOpenUrl={handleOpenUrl}
-        />
       </View>
     </>
   );
