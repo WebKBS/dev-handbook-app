@@ -16,9 +16,9 @@ const ReferencesCard = ({ referencesList }: ReferencesCardProps) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleReferencePress = () => {
+  const handleReferencePress = (url: string) => {
     // setIsOpen(true);
-    router.push("/modal");
+    router.push(`/modal?url=${url}`);
   };
 
   if (!hasReferences) {
@@ -59,7 +59,7 @@ const ReferencesCard = ({ referencesList }: ReferencesCardProps) => {
           <TouchableOpacity
             key={`${reference.url}-${index}`}
             activeOpacity={0.9}
-            onPress={handleReferencePress}
+            onPress={() => handleReferencePress(reference.url)}
             style={[
               styles.referenceCard,
               {

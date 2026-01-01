@@ -1,12 +1,15 @@
-import { AppText } from "@/components/text/AppText";
-import { View } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { StyleSheet } from "react-native";
+import WebView from "react-native-webview";
 
 const ReferenceModal = () => {
-  return (
-    <View>
-      <AppText>ReferenceModal</AppText>
-    </View>
-  );
+  const { url } = useLocalSearchParams();
+  console.log("ReferenceModal url:", url);
+  return <WebView style={styles.container} source={{ uri: url as string }} />;
 };
 
 export default ReferenceModal;
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+});
