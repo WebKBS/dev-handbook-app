@@ -66,6 +66,7 @@ export default function BookmarkScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 20,
   },
   content: {
     paddingHorizontal: 20,

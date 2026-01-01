@@ -31,7 +31,7 @@ export default function TabLayout() {
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="search/index" role="search">
+      <NativeTabs.Trigger name="search" role="search">
         <Label>검색</Label>
         <Icon
           sf={{ default: "magnifyingglass", selected: "magnifyingglass" }}
