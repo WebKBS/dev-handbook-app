@@ -115,7 +115,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const theme = useMemo(() => themes[mode], [mode]);
 
   const toggleMode = () => {
-    setMode((prev) => (prev === "light" ? "dark" : "light"));
+    setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
   };
 
   const value = useMemo(
