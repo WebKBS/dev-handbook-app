@@ -41,10 +41,7 @@ const BookmarkItemCard = ({
             ? { opacity: 0.7 }
             : {
                 opacity: 1,
-                backgroundColor:
-                  theme.mode === "dark"
-                    ? "rgba(255,255,255,0.92)"
-                    : theme.colors.surface,
+                backgroundColor: theme.colors.cardBg,
               },
         ]}
       >
