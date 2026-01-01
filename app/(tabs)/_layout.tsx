@@ -49,6 +49,16 @@ export default function TabLayout() {
         />
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="map/index">
+        <Label>지도</Label>
+        {Platform.select({
+          ios: <Icon sf="map.fill" />,
+          android: (
+            <Icon src={<VectorIcon family={MaterialIcons} name="map" />} />
+          ),
+        })}
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="bookmark/index">
         <Label>북마크</Label>
         <Icon
@@ -58,16 +68,6 @@ export default function TabLayout() {
             selected: require("@/assets/tabs/bookmark.png"),
           }}
         />
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="map/index">
-        <Label>지도</Label>
-        {Platform.select({
-          ios: <Icon sf="map.fill" />,
-          android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name="map" />} />
-          ),
-        })}
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings/index">
