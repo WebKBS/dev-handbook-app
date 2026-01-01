@@ -24,70 +24,72 @@ const ReferencesCard = ({
     [setSelectedReference],
   );
 
+  if (!hasReferences) {
+    return null;
+  }
+
   return (
     <>
-      {hasReferences ? (
-        <View style={styles.referenceSection}>
-          <View style={styles.referenceHeader}>
-            <AppText weight="extrabold" style={styles.referenceTitle}>
-              참고 자료
-            </AppText>
+      <View style={styles.referenceSection}>
+        <View style={styles.referenceHeader}>
+          <AppText weight="extrabold" style={styles.referenceTitle}>
+            참고 자료
+          </AppText>
+          <AppText
+            weight="medium"
+            style={[styles.referenceCount, { color: theme.colors.muted }]}
+          >
+            {referencesList.length}개 링크
+          </AppText>
+        </View>
+
+        {referencesList.map((reference, index) => (
+          <TouchableOpacity
+            key={`${reference.url}-${index}`}
+            activeOpacity={0.9}
+            onPress={() => handleReferencePress(reference)}
+            style={[
+              styles.referenceCard,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.border,
+                shadowColor: theme.colors.shadow,
+              },
+            ]}
+          >
+            <View style={styles.referenceCardTop}>
+              <AppText weight="bold" style={styles.referenceCardTitle}>
+                {reference.title}
+              </AppText>
+              <Ionicons
+                name="chevron-up"
+                size={18}
+                color={theme.colors.accentStrong}
+              />
+            </View>
+            {reference.note ? (
+              <AppText
+                style={[styles.referenceNote, { color: theme.colors.muted }]}
+                numberOfLines={2}
+              >
+                {reference.note}
+              </AppText>
+            ) : null}
             <AppText
               weight="medium"
-              style={[styles.referenceCount, { color: theme.colors.muted }]}
-            >
-              {referencesList.length}개 링크
-            </AppText>
-          </View>
-
-          {referencesList.map((reference, index) => (
-            <TouchableOpacity
-              key={`${reference.url}-${index}`}
-              activeOpacity={0.9}
-              onPress={() => handleReferencePress(reference)}
+              numberOfLines={1}
               style={[
-                styles.referenceCard,
+                styles.referenceUrl,
                 {
-                  backgroundColor: theme.colors.surface,
-                  borderColor: theme.colors.border,
-                  shadowColor: theme.colors.shadow,
+                  color: theme.colors.accent,
                 },
               ]}
             >
-              <View style={styles.referenceCardTop}>
-                <AppText weight="bold" style={styles.referenceCardTitle}>
-                  {reference.title}
-                </AppText>
-                <Ionicons
-                  name="chevron-up"
-                  size={18}
-                  color={theme.colors.accentStrong}
-                />
-              </View>
-              {reference.note ? (
-                <AppText
-                  style={[styles.referenceNote, { color: theme.colors.muted }]}
-                  numberOfLines={2}
-                >
-                  {reference.note}
-                </AppText>
-              ) : null}
-              <AppText
-                weight="medium"
-                numberOfLines={1}
-                style={[
-                  styles.referenceUrl,
-                  {
-                    color: theme.colors.accent,
-                  },
-                ]}
-              >
-                {reference.url}
-              </AppText>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ) : null}
+              {reference.url}
+            </AppText>
+          </TouchableOpacity>
+        ))}
+      </View>
     </>
   );
 };
