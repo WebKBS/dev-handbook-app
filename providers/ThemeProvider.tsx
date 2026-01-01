@@ -93,7 +93,7 @@ export const themes: Record<ThemeMode, Theme> = {
       tabInactive: "#6b7280",
       shadow: "rgba(8, 15, 26, 0.6)",
     },
-    mode: "light",
+    mode: "dark",
   },
 };
 
