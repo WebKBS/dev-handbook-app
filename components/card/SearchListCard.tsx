@@ -1,5 +1,6 @@
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
+import { replaceDomainText } from "@/utils/replaceDomainText";
 import { Feather } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 
@@ -7,7 +8,7 @@ export type SearchResult = {
   id?: string;
   title: string;
   desc: string;
-  category: string;
+  domain: string;
   icon: string;
   tags: string[];
 };
@@ -52,7 +53,7 @@ export const SearchEmptyResult = () => {
 };
 
 export const SearchResultCard = ({ doc }: { doc: SearchResult }) => {
-  const { theme, mode } = useTheme();
+  const { theme } = useTheme();
   return (
     <View
       style={[
@@ -84,7 +85,7 @@ export const SearchResultCard = ({ doc }: { doc: SearchResult }) => {
           weight="semibold"
           style={[styles.resultCategory, { color: theme.colors.muted }]}
         >
-          {doc.category}
+          {replaceDomainText(doc.domain)}
         </AppText>
       </View>
 
@@ -110,10 +111,7 @@ export const SearchResultCard = ({ doc }: { doc: SearchResult }) => {
               styles.tagChip,
               {
                 borderColor: theme.colors.border,
-                backgroundColor:
-                  mode === "dark"
-                    ? theme.colors.card
-                    : theme.colors.accentSubtle,
+                backgroundColor: theme.colors.cardBg,
               },
             ]}
           >
@@ -142,7 +140,6 @@ export const SearchResultCard = ({ doc }: { doc: SearchResult }) => {
 };
 
 const SearchListCard = ({ filteredDocs }: SearchListCardProps) => {
-  const { theme, mode } = useTheme();
   return (
     <>
       <SearchResultHeader count={filteredDocs.length} />

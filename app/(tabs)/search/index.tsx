@@ -115,9 +115,7 @@ const SearchScreen = () => {
         id: item.id,
         title: item.title,
         desc: item.description,
-        category: item.domain
-          ? item.domain.charAt(0).toUpperCase() + item.domain.slice(1)
-          : "",
+        domain: item.domain,
         icon: "file-text" as const,
         tags: item.tags ?? [],
       })),
@@ -206,9 +204,10 @@ const SearchScreen = () => {
     </View>
   );
 
-  const renderItem = ({ item }: { item: SearchResult }) => (
-    <SearchResultCard doc={item} />
-  );
+  const renderItem = ({ item }: { item: SearchResult }) => {
+    console.log(item);
+    return <SearchResultCard doc={item} />;
+  };
 
   const renderFooter = () => {
     const shouldShowLoader = (isLoading && canSearch) || isFetchingNextPage;
