@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
   },
   domainText: {
     fontSize: 12,
-    letterSpacing: 0.5,
   },
   headerLine: {
     flex: 1,

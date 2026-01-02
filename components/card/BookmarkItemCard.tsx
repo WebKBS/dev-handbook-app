@@ -170,12 +170,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     lineHeight: 22,
-    letterSpacing: -0.3,
   },
   description: {
     fontSize: 13,
     lineHeight: 18,
-    letterSpacing: -0.1,
   },
 
   ctaCircle: {

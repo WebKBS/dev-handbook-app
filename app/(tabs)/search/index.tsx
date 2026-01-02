@@ -288,12 +288,10 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 12,
-    letterSpacing: 1,
   },
   heroTitle: {
     fontSize: 22,
     lineHeight: 30,
-    letterSpacing: -0.3,
   },
   heroDesc: {
     fontSize: 15,
