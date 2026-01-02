@@ -1,9 +1,10 @@
 import { db, dbName } from "@/db";
 import migrations from "@/db/migrations/migrations";
+import HeaderBackButton from "@/features/button/HeaderBackButton";
+import OpenUrlLinkButton from "@/features/button/OpenUrlLinkButton";
 import { useDomain } from "@/hooks/services/useDomain";
 import { queryClient } from "@/libs/tanstack-query";
 import { ThemeProvider, useTheme } from "@/providers/ThemeProvider";
-import { Ionicons } from "@expo/vector-icons";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useFonts } from "expo-font";
@@ -11,7 +12,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SQLiteProvider } from "expo-sqlite";
 import { useEffect, useRef } from "react";
-import { Platform, Pressable, StatusBar, View } from "react-native";
+import { Platform, StatusBar, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync().then().catch(console.error);
 
@@ -70,19 +71,9 @@ function RootLayoutNav() {
             headerTitleAlign: "center",
             headerBackVisible: false,
 
-            headerLeft: () => null,
+            headerLeft: () => <HeaderBackButton navigation={navigation} />,
 
-            headerRight: () => (
-              <Pressable
-                onPress={() => navigation.goBack()}
-                hitSlop={12}
-                style={{
-                  padding: 6,
-                }}
-              >
-                <Ionicons name="close" size={24} color={theme.colors.text} />
-              </Pressable>
-            ),
+            headerRight: () => <OpenUrlLinkButton />,
           })}
         />
       </Stack>

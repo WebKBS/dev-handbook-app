@@ -1,12 +1,5 @@
 import { useTheme } from "@/providers/ThemeProvider";
-import { MaterialIcons } from "@expo/vector-icons";
-import {
-  Icon,
-  Label,
-  NativeTabs,
-  VectorIcon,
-} from "expo-router/unstable-native-tabs";
-import { Platform } from "react-native";
+import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 
 export default function TabLayout() {
   const { theme } = useTheme();
@@ -49,15 +42,15 @@ export default function TabLayout() {
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="map/index">
-        <Label>지도</Label>
-        {Platform.select({
-          ios: <Icon sf="map.fill" />,
-          android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name="map" />} />
-          ),
-        })}
-      </NativeTabs.Trigger>
+      {/*<NativeTabs.Trigger name="map/index">*/}
+      {/*  <Label>지도</Label>*/}
+      {/*  {Platform.select({*/}
+      {/*    ios: <Icon sf="map.fill" />,*/}
+      {/*    android: (*/}
+      {/*      <Icon src={<VectorIcon family={MaterialIcons} name="map" />} />*/}
+      {/*    ),*/}
+      {/*  })}*/}
+      {/*</NativeTabs.Trigger>*/}
 
       <NativeTabs.Trigger name="bookmark/index">
         <Label>북마크</Label>

@@ -59,6 +59,7 @@ const ReferencesCard = ({ referencesList }: ReferencesCardProps) => {
                 name="chevron-up"
                 size={18}
                 color={theme.colors.accentStrong}
+                style={styles.referenceIcon}
               />
             </View>
             {reference.note ? (
@@ -121,9 +122,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 8,
+    paddingRight: 24,
+    position: "relative",
   },
   referenceCardTitle: {
     fontSize: 16,
+  },
+  referenceIcon: {
+    position: "absolute",
+    top: 0,
+    right: 0,
   },
   referenceNote: {
     fontSize: 14,
