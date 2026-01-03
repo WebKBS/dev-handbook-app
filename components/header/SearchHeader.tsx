@@ -1,4 +1,4 @@
-import { SearchResultHeader } from "@/components/card/SearchListCard";
+import SearchResultHeader from "@/components/header/SearchResultHeader";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Feather } from "@expo/vector-icons";

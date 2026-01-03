@@ -1,8 +1,7 @@
-import {
-  SearchEmptyResult,
+import SearchResultCard, {
   SearchResult,
-  SearchResultCard,
-} from "@/components/card/SearchListCard";
+} from "@/components/card/SearchResultCard";
+import SearchEmptyResult from "@/components/empty/SearchEmptyResult";
 import SearchFooter from "@/components/footer/SearchFooter";
 import SearchHeader from "@/components/header/SearchHeader";
 import { useDebounce } from "@/hooks/useDebounce";

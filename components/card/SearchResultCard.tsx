@@ -1,9 +1,17 @@
-import { SearchResult } from "@/components/card/SearchListCard";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import { replaceDomainText } from "@/utils/replaceDomainText";
 import { Feather } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
+
+export type SearchResult = {
+  id?: string;
+  title: string;
+  desc: string;
+  domain: string;
+  icon: string;
+  tags: string[];
+};
 
 interface SearchResultCardProps {
   doc: SearchResult;
@@ -32,11 +40,11 @@ const SearchResultCard = ({ doc }: SearchResultCardProps) => {
             },
           ]}
         >
-          <Feather
-            name={doc.icon as any}
-            size={14}
-            color={theme.colors.accentStrong}
-          />
+          {/*<Image */}
+          {/*  source={doc.faviconUrl}*/}
+          {/*  style={{ width: 16, height: 16 }}*/}
+          {/*  contentFit="contain"*/}
+          {/*/>*/}
         </View>
         <AppText
           weight="semibold"
@@ -96,6 +104,7 @@ const SearchResultCard = ({ doc }: SearchResultCardProps) => {
   );
 };
 export default SearchResultCard;
+
 export const styles = StyleSheet.create({
   resultCard: {
     borderRadius: 16,
