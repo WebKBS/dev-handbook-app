@@ -1,6 +1,7 @@
 import SearchResultHeader from "@/components/header/SearchResultHeader";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
+import { SearchItem } from "@/services/content/search";
 import { Feather } from "@expo/vector-icons";
 import { startTransition } from "react";
 import { Platform, Pressable, StyleSheet, TextInput, View } from "react-native";
@@ -8,7 +9,7 @@ import { Platform, Pressable, StyleSheet, TextInput, View } from "react-native";
 interface SearchHeaderProps {
   query: string;
   setQuery: (query: string) => void;
-  searchResults: any[];
+  searchResults: SearchItem[];
   trimmedQuery: string;
 }
 

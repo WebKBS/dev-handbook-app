@@ -1,11 +1,20 @@
 import { axiosInstance } from "@/libs/axios";
-import { ItemType } from "@/services/content/root-manifest";
+
+export type SearchItem = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  domain: string;
+  tags: string[];
+  coverImage: string;
+};
 
 export interface SearchResponse {
   total: number;
   page: number;
   pageSize: number;
-  items: ItemType[];
+  items: SearchItem[];
 }
 
 interface SearchParams {

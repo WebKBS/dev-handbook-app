@@ -1,12 +1,11 @@
-import SearchResultCard, {
-  SearchResult,
-} from "@/components/card/SearchResultCard";
+import SearchResultCard from "@/components/card/SearchResultCard";
 import SearchEmptyResult from "@/components/empty/SearchEmptyResult";
 import SearchFooter from "@/components/footer/SearchFooter";
 import SearchHeader from "@/components/header/SearchHeader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useSearchInfinityQuery } from "@/hooks/useSearchInfinityQuery";
 import { useTheme } from "@/providers/ThemeProvider";
+import { SearchItem } from "@/services/content/search";
 import { useNavigation } from "expo-router";
 import {
   startTransition,
@@ -59,7 +58,7 @@ const SearchScreen = () => {
     });
 
   // 검색 결과 가공은 useMemo로 안정화(렌더마다 재계산 방지)
-  const searchResults: SearchResult[] = useMemo(() => {
+  const searchResults: SearchItem[] = useMemo(() => {
     if (!canSearch) return [];
     if (!data?.pages) return [];
 
@@ -67,13 +66,15 @@ const SearchScreen = () => {
       page.items.map((item) => ({
         id: item.id,
         title: item.title,
-        desc: item.description,
+        slug: item.slug,
+        description: item.description,
         domain: item.domain,
-        icon: "file-text" as const,
         tags: item.tags ?? [],
+        coverImage: item.coverImage,
       })),
     );
   }, [canSearch, data?.pages]);
+  console.log("data", searchResults);
 
   const renderEmptyComponent =
     canSearch && !isLoading ? () => <SearchEmptyResult /> : null;

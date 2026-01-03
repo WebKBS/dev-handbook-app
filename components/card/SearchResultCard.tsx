@@ -1,20 +1,12 @@
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
+import { SearchItem } from "@/services/content/search";
 import { replaceDomainText } from "@/utils/replaceDomainText";
 import { Feather } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 
-export type SearchResult = {
-  id?: string;
-  title: string;
-  desc: string;
-  domain: string;
-  icon: string;
-  tags: string[];
-};
-
 interface SearchResultCardProps {
-  doc: SearchResult;
+  doc: SearchItem;
 }
 
 const SearchResultCard = ({ doc }: SearchResultCardProps) => {
@@ -65,7 +57,7 @@ const SearchResultCard = ({ doc }: SearchResultCardProps) => {
         style={[styles.resultDesc, { color: theme.colors.muted }]}
         numberOfLines={2}
       >
-        {doc.desc}
+        {doc.description}
       </AppText>
 
       <View style={styles.tagRow}>
