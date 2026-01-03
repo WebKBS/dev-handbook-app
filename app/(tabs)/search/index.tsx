@@ -3,44 +3,22 @@ import {
   SearchResult,
   SearchResultCard,
 } from "@/components/card/SearchListCard";
+import SearchFooter from "@/components/footer/SearchFooter";
 import SearchHeader from "@/components/header/SearchHeader";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useSearchInfinityQuery } from "@/hooks/useSearchInfinityQuery";
 import { useTheme } from "@/providers/ThemeProvider";
-import { getSearch, SearchResponse } from "@/services/content/search";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { useNavigation } from "expo-router";
 import {
   startTransition,
   useCallback,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useState,
 } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  NativeSyntheticEvent,
-  StyleSheet,
-  View,
-} from "react-native";
+import { FlatList, NativeSyntheticEvent, StyleSheet, View } from "react-native";
 
 const DEBOUNCE_MS = 500;
-
-/**
- * Debounce hook
- * - 입력이 "멈춘 뒤" delay(ms) 후에만 값이 반영됨
- * - 검색/자동완성에 throttle보다 더 적합
- */
-const useDebounce = (value: string, delay: number) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const t = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(t);
-  }, [value, delay]);
-
-  return debouncedValue;
-};
 
 const SearchScreen = () => {
   const { theme } = useTheme();
@@ -48,7 +26,6 @@ const SearchScreen = () => {
 
   const [query, setQuery] = useState("");
 
-  // debounce 적용
   const debouncedQuery = useDebounce(query, DEBOUNCE_MS);
   const trimmedQuery = debouncedQuery.trim();
 
@@ -77,27 +54,9 @@ const SearchScreen = () => {
   }, [navigation, handleHeaderSearch]);
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteQuery<SearchResponse>({
-      queryKey: ["searchDocs", trimmedQuery],
-      queryFn: ({ pageParam = 1, signal }) =>
-        getSearch({
-          domain: "",
-          q: trimmedQuery,
-          page: pageParam as number,
-          // getSearch가 fetch 기반이라면 signal을 받아 abort 가능하게 만들 수 있음
-          // getSearch 쪽 타입이 안 받으면 제거해도 됨.
-          signal,
-        } as any),
-      getNextPageParam: (lastPage) => {
-        const totalPages = Math.ceil(lastPage.total / lastPage.pageSize);
-        const nextPage = lastPage.page + 1;
-        return nextPage <= totalPages ? nextPage : undefined;
-      },
-      initialPageParam: 1,
-      enabled: canSearch,
-      // 캐시 전략 (원하면 조정)
-      staleTime: 30_000, // 30초 동안은 동일 검색어 재진입 시 호출 억제
-      gcTime: 5 * 60_000,
+    useSearchInfinityQuery({
+      canSearch,
+      trimmedQuery,
     });
 
   // 검색 결과 가공은 useMemo로 안정화(렌더마다 재계산 방지)
@@ -117,21 +76,6 @@ const SearchScreen = () => {
     );
   }, [canSearch, data?.pages]);
 
-  const renderItem = ({ item }: { item: SearchResult }) => {
-    return <SearchResultCard doc={item} />;
-  };
-
-  const renderFooter = () => {
-    const shouldShowLoader = (isLoading && canSearch) || isFetchingNextPage;
-    if (!shouldShowLoader) return null;
-
-    return (
-      <View style={styles.footerLoader}>
-        <ActivityIndicator color={theme.colors.accentStrong} />
-      </View>
-    );
-  };
-
   const renderEmptyComponent =
     canSearch && !isLoading ? () => <SearchEmptyResult /> : null;
 
@@ -139,7 +83,7 @@ const SearchScreen = () => {
     <FlatList
       data={searchResults}
       keyExtractor={(item) => item.id ?? item.title}
-      renderItem={renderItem}
+      renderItem={({ item }) => <SearchResultCard doc={item} />}
       ListHeaderComponent={
         <SearchHeader
           query={query}
@@ -150,7 +94,13 @@ const SearchScreen = () => {
       }
       ListHeaderComponentStyle={styles.listHeaderSpacing}
       ListEmptyComponent={renderEmptyComponent}
-      ListFooterComponent={renderFooter}
+      ListFooterComponent={
+        <SearchFooter
+          canSearch={canSearch}
+          isLoading={isLoading}
+          isFetchingNextPage={isFetchingNextPage}
+        />
+      }
       ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
       contentContainerStyle={[
         styles.container,
@@ -184,8 +134,5 @@ const styles = StyleSheet.create({
 
   itemSeparator: {
     height: 12,
-  },
-  footerLoader: {
-    paddingVertical: 12,
   },
 });
