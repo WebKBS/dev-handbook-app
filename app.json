@@ -90,7 +90,15 @@
           }
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "dev-handbook-app",
+          "organization": "webkbs"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

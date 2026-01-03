@@ -13,6 +13,29 @@ import * as SplashScreen from "expo-splash-screen";
 import { SQLiteProvider } from "expo-sqlite";
 import { useEffect, useRef } from "react";
 import { Platform, StatusBar, View } from "react-native";
+import * as Sentry from "@sentry/react-native";
+
+Sentry.init({
+  dsn: "https://81bd59531404d96ddad216a563fa5c94@o4510555343552512.ingest.us.sentry.io/4510645767372800",
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [
+    Sentry.mobileReplayIntegration(),
+    Sentry.feedbackIntegration(),
+  ],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 SplashScreen.preventAutoHideAsync().then().catch(console.error);
 
@@ -97,7 +120,7 @@ function RootLayoutNav() {
   );
 }
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   return (
     <ThemeProvider>
       <SQLiteProvider databaseName={dbName}>
@@ -107,4 +130,4 @@ export default function RootLayout() {
       </SQLiteProvider>
     </ThemeProvider>
   );
-}
+});
