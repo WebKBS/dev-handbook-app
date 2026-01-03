@@ -41,10 +41,7 @@ const BookmarkItemCard = ({
             ? { opacity: 0.7 }
             : {
                 opacity: 1,
-                backgroundColor:
-                  theme.mode === "dark"
-                    ? "rgba(255,255,255,0.92)"
-                    : theme.colors.surface,
+                backgroundColor: theme.colors.cardBg,
               },
         ]}
       >
@@ -173,12 +170,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     lineHeight: 22,
-    letterSpacing: -0.3,
   },
   description: {
     fontSize: 13,
     lineHeight: 18,
-    letterSpacing: -0.1,
   },
 
   ctaCircle: {

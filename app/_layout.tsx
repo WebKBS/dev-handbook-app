@@ -1,5 +1,7 @@
 import { db, dbName } from "@/db";
 import migrations from "@/db/migrations/migrations";
+import HeaderBackButton from "@/features/button/HeaderBackButton";
+import OpenUrlLinkButton from "@/features/button/OpenUrlLinkButton";
 import { useDomain } from "@/hooks/services/useDomain";
 import { queryClient } from "@/libs/tanstack-query";
 import { ThemeProvider, useTheme } from "@/providers/ThemeProvider";
@@ -10,7 +12,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SQLiteProvider } from "expo-sqlite";
 import { useEffect, useRef } from "react";
-import { Platform, StatusBar } from "react-native";
+import { Platform, StatusBar, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync().then().catch(console.error);
 
@@ -45,7 +47,7 @@ function RootLayoutNav() {
   // if (!fontsReady || !manifestReady) return <ErrorState />;
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -53,6 +55,27 @@ function RootLayoutNav() {
         }}
       >
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="detail" />
+
+        <Stack.Screen
+          name="reference-modal/index"
+          options={({ navigation }) => ({
+            presentation: "pageSheet",
+            animation: "slide_from_bottom",
+            headerShown: true,
+            title: "참고 자료",
+            headerStyle: { backgroundColor: theme.colors.background },
+            headerTitleStyle: { color: theme.colors.text },
+            headerTintColor: theme.colors.text,
+            headerShadowVisible: false,
+            headerTitleAlign: "center",
+            headerBackVisible: false,
+
+            headerLeft: () => <HeaderBackButton navigation={navigation} />,
+
+            headerRight: () => <OpenUrlLinkButton />,
+          })}
+        />
       </Stack>
       {Platform.OS === "ios" ? (
         <StatusBar
@@ -70,7 +93,7 @@ function RootLayoutNav() {
           barStyle={mode === "dark" ? "light-content" : "dark-content"}
         />
       )}
-    </>
+    </View>
   );
 }
 

@@ -4,6 +4,7 @@ export const Domain = {
   javascript: "javascript",
   typescript: "typescript",
   react: "react",
+  web: "web",
 } as const;
 
 export type DomainType = (typeof Domain)[keyof typeof Domain];
@@ -38,5 +39,10 @@ export const DomainHeroContent: Record<DomainType, DomainHeroItem> = {
     title: "UI를 구축하는 라이브러리, React",
     subtitle:
       "컴포넌트, 상태 관리, 훅까지, 현대적인 웹 애플리케이션 개발의 핵심.",
+  },
+  web: {
+    title: "웹 개발의 기반 지식, Web",
+    subtitle:
+      "표준과 브라우저 동작, 성능·접근성·보안 같은 필수 기반을 빠짐없이 정리합니다.",
   },
 };

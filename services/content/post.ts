@@ -1,6 +1,12 @@
 import { DomainType } from "@/constants/domain";
 import { axiosInstance } from "@/libs/axios";
 
+export type Reference = {
+  title: string;
+  url: string;
+  note?: string;
+};
+
 interface PostsResponse {
   meta: {
     id: string;
@@ -13,6 +19,7 @@ interface PostsResponse {
     coverImage?: string;
     order: number;
     level: number;
+    references?: Reference[];
   };
   content: string;
 }

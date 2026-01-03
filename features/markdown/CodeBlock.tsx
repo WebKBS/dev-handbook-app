@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
   langLabel: {
     fontFamily: monoFont,
     fontSize: 12,
-    letterSpacing: 0.2,
   },
   scroll: { padding: 12 },
   syntaxCustom: {

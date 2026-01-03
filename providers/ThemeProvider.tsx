@@ -93,7 +93,7 @@ export const themes: Record<ThemeMode, Theme> = {
       tabInactive: "#6b7280",
       shadow: "rgba(8, 15, 26, 0.6)",
     },
-    mode: "light",
+    mode: "dark",
   },
 };
 
@@ -115,7 +115,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const theme = useMemo(() => themes[mode], [mode]);
 
   const toggleMode = () => {
-    setMode((prev) => (prev === "light" ? "dark" : "light"));
+    setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
   };
 
   const value = useMemo(

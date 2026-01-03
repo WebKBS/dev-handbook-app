@@ -1,16 +1,11 @@
-import { DomainType } from "@/constants/domain";
-import BackButton from "@/features/button/BackButton";
 import { useTheme } from "@/providers/ThemeProvider";
-import { Stack, useGlobalSearchParams } from "expo-router";
+import { Stack } from "expo-router";
 import { Platform, View } from "react-native";
 
-const HomeLayout = () => {
+const SearchLayout = () => {
   const { theme } = useTheme();
 
-  const { domain } = useGlobalSearchParams<{ domain: DomainType }>();
-
   return (
-    // 배경색을 테마에 맞게 설정
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <Stack
         screenOptions={{
@@ -36,17 +31,8 @@ const HomeLayout = () => {
         <Stack.Screen
           name="index"
           options={{
+            title: "검색",
             headerShown: false,
-            // animation: "none",
-          }}
-        />
-        <Stack.Screen
-          name="[domain]/index"
-          options={{
-            // animation: "none",
-            headerShown: false,
-            title: domain?.toUpperCase(),
-            headerLeft: () => <BackButton />,
           }}
         />
       </Stack>
@@ -54,4 +40,4 @@ const HomeLayout = () => {
   );
 };
 
-export default HomeLayout;
+export default SearchLayout;

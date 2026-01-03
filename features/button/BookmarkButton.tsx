@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { createBookmarks, deleteBookmark } from "@/db/queries/bookmark";
 import { bookmarkTable } from "@/db/schema/bookmark.table";
+import { useTheme } from "@/providers/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
@@ -22,6 +23,8 @@ const BookmarkButton = ({
   description,
   domain,
 }: BookmarkButtonProps) => {
+  const { theme } = useTheme();
+
   const bookmarkQuery = db
     .select()
     .from(bookmarkTable)
@@ -65,11 +68,15 @@ const BookmarkButton = ({
   };
 
   return (
-    <TouchableOpacity style={styles.bookmarkButton} onPress={handlePress}>
+    <TouchableOpacity
+      style={styles.bookmarkButton}
+      onPress={handlePress}
+      activeOpacity={0.8}
+    >
       <Ionicons
         name={optimisticBookmark ? "bookmark" : "bookmark-outline"}
         size={24}
-        color={optimisticBookmark ? "#FFD60A" : "#FFF"}
+        color={optimisticBookmark ? "#FFD60A" : theme.colors.text}
       />
     </TouchableOpacity>
   );
@@ -79,7 +86,6 @@ export default BookmarkButton;
 
 const styles = StyleSheet.create({
   bookmarkButton: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
     padding: 6,
   },
 });
