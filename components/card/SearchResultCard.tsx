@@ -3,6 +3,8 @@ import { useTheme } from "@/providers/ThemeProvider";
 import { SearchItem } from "@/services/content/search";
 import { replaceDomainText } from "@/utils/replaceDomainText";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { Link } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
 interface SearchResultCardProps {
@@ -32,11 +34,11 @@ const SearchResultCard = ({ doc }: SearchResultCardProps) => {
             },
           ]}
         >
-          {/*<Image */}
-          {/*  source={doc.faviconUrl}*/}
-          {/*  style={{ width: 16, height: 16 }}*/}
-          {/*  contentFit="contain"*/}
-          {/*/>*/}
+          <Image
+            source={doc.coverImage}
+            style={{ width: 16, height: 16 }}
+            contentFit="contain"
+          />
         </View>
         <AppText
           weight="semibold"
@@ -79,7 +81,10 @@ const SearchResultCard = ({ doc }: SearchResultCardProps) => {
         ))}
       </View>
 
-      <View style={styles.resultFooter}>
+      <Link
+        href={`/detail/${doc.domain}/${doc.slug}`}
+        style={styles.resultFooter}
+      >
         <AppText
           weight="semibold"
           style={[styles.resultLink, { color: theme.colors.accentStrong }]}
@@ -91,7 +96,7 @@ const SearchResultCard = ({ doc }: SearchResultCardProps) => {
           size={16}
           color={theme.colors.accentStrong}
         />
-      </View>
+      </Link>
     </View>
   );
 };

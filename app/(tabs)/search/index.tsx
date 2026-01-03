@@ -74,7 +74,6 @@ const SearchScreen = () => {
       })),
     );
   }, [canSearch, data?.pages]);
-  console.log("data", searchResults);
 
   const renderEmptyComponent =
     canSearch && !isLoading ? () => <SearchEmptyResult /> : null;
