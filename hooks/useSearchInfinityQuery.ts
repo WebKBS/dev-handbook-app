@@ -10,8 +10,6 @@ export const useSearchInfinityQuery = ({
   canSearch,
   trimmedQuery,
 }: UseSearchInfinityQueryProps) => {
-  // debounce 적용
-
   return useInfiniteQuery<SearchResponse>({
     queryKey: ["searchDocs", trimmedQuery],
     queryFn: ({ pageParam = 1, signal }) =>

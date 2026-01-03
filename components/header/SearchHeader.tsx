@@ -1,7 +1,6 @@
 import SearchResultHeader from "@/components/header/SearchResultHeader";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
-import { SearchItem } from "@/services/content/search";
 import { Feather } from "@expo/vector-icons";
 import { startTransition } from "react";
 import { Platform, Pressable, StyleSheet, TextInput, View } from "react-native";
@@ -9,15 +8,15 @@ import { Platform, Pressable, StyleSheet, TextInput, View } from "react-native";
 interface SearchHeaderProps {
   query: string;
   setQuery: (query: string) => void;
-  searchResults: SearchItem[];
   trimmedQuery: string;
+  total: number;
 }
 
 const SearchHeader = ({
   query,
   setQuery,
-  searchResults,
   trimmedQuery,
+  total,
 }: SearchHeaderProps) => {
   const { theme } = useTheme();
 
@@ -99,7 +98,7 @@ const SearchHeader = ({
         </View>
       )}
 
-      <SearchResultHeader count={searchResults.length} />
+      <SearchResultHeader count={total} />
     </View>
   );
 };

@@ -44,5 +44,6 @@ export const getSearch = async ({
       pageSize,
     },
   });
+
   return response.data;
 };

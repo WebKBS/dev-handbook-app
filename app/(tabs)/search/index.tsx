@@ -78,6 +78,8 @@ const SearchScreen = () => {
   const renderEmptyComponent =
     canSearch && !isLoading ? () => <SearchEmptyResult /> : null;
 
+  const total = data?.pages?.[0]?.total ?? 0;
+
   return (
     <FlatList
       data={searchResults}
@@ -87,8 +89,8 @@ const SearchScreen = () => {
         <SearchHeader
           query={query}
           setQuery={setQuery}
-          searchResults={searchResults}
           trimmedQuery={trimmedQuery}
+          total={total}
         />
       }
       ListHeaderComponentStyle={styles.listHeaderSpacing}
