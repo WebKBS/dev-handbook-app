@@ -1,4 +1,5 @@
 import SearchResultCard from "@/components/card/SearchResultCard";
+import SearchResultHeader from "@/components/header/SearchResultHeader";
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Feather } from "@expo/vector-icons";
@@ -16,21 +17,6 @@ export type SearchResult = {
 interface SearchListCardProps {
   filteredDocs: SearchResult[];
 }
-
-export const SearchResultHeader = ({ count }: { count: number }) => {
-  const { theme } = useTheme();
-  return (
-    <View style={styles.sectionHeader}>
-      <AppText
-        weight="semibold"
-        style={[styles.sectionTitle, { color: theme.colors.text }]}
-      >
-        검색 결과
-      </AppText>
-      <AppText style={{ color: theme.colors.muted }}>{count}건</AppText>
-    </View>
-  );
-};
 
 export const SearchEmptyResult = () => {
   const { theme } = useTheme();
@@ -76,15 +62,6 @@ const SearchListCard = ({ filteredDocs }: SearchListCardProps) => {
 export default SearchListCard;
 
 const styles = StyleSheet.create({
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  sectionTitle: {
-    fontSize: 16,
-  },
-
   resultList: {
     gap: 12,
   },
