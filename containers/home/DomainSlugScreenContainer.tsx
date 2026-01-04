@@ -4,6 +4,7 @@ import { DomainType } from "@/constants/domain";
 import BookmarkButton from "@/features/button/BookmarkButton";
 import ReferencesCard from "@/features/card/ReferencesCard";
 import { MarkdownView } from "@/features/markdown/MarkdownView";
+import HeaderMoreMenu from "@/features/menu/HeaderMoreMenu";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getPosts, Reference } from "@/services/content/post";
@@ -75,12 +76,17 @@ const DomainSlugScreenContainer = () => {
         <Stack.Screen
           options={{
             headerRight: () => (
-              <BookmarkButton
-                domain={domain}
-                slug={slug}
-                title={meta.title}
-                description={meta?.description}
-              />
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+              >
+                <BookmarkButton
+                  domain={domain}
+                  slug={slug}
+                  title={meta.title}
+                  description={meta?.description}
+                />
+                <HeaderMoreMenu />
+              </View>
             ),
           }}
         />
