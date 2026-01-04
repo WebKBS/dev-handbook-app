@@ -56,8 +56,8 @@ export function LinkBottomSheetModal({
         { backgroundColor: theme.colors.background },
       ]}
       handleIndicatorStyle={{
-        backgroundColor:
-          theme.mode === "dark" ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.25)",
+        backgroundColor: theme.colors.accent,
+        opacity: theme.mode === "dark" ? 0.9 : 0.8,
         width: 44,
       }}
     >
