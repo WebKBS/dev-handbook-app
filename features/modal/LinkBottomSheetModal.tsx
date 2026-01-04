@@ -1,11 +1,18 @@
+import { useTheme } from "@/providers/ThemeProvider";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
+
+const HEIGHT = Dimensions.get("window").height;
+
+function isHttpUrl(u: string) {
+  return /^https?:\/\//i.test(u);
+}
 
 export function LinkBottomSheetModal({
   modalRef,
@@ -14,45 +21,67 @@ export function LinkBottomSheetModal({
   modalRef: React.RefObject<BottomSheetModal>;
   url: string | null;
 }) {
-  const snapPoints = useMemo(() => ["50%", "90%"], []);
-  const safeUrl = url && /^https?:\/\//i.test(url) ? url : null;
+  const { theme } = useTheme();
 
-  console.log(safeUrl);
+  const snapPoints = useMemo(() => ["60%", "100%"], []);
+  const safeUrl = url?.trim() ?? null;
 
   return (
     <BottomSheetModal
       ref={modalRef}
       snapPoints={snapPoints}
       index={0}
-      enableDynamicSizing={false} // ✅ v5 기본 true라 작아지는 원인 제거 :contentReference[oaicite:1]{index=1}
+      enableDynamicSizing={false}
       enablePanDownToClose
+      //  WebView 스크롤이 안 되는 주원인 해결
+      // - 시트 “콘텐츠 영역”의 팬 제스처를 꺼서 WebView가 터치를 가져가게 함
+      // - 시트 높이 조절/닫기는 "핸들"로만 가능 (UX도 보통 이게 더 깔끔)
+      enableContentPanningGesture={false}
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}
           appearsOnIndex={0}
           disappearsOnIndex={-1}
           pressBehavior="close"
+          style={[
+            props.style,
+            {
+              backgroundColor: theme.colors.background,
+            },
+          ]}
         />
       )}
-      backgroundStyle={styles.sheetBg}
+      backgroundStyle={[
+        styles.sheetBg,
+        { backgroundColor: theme.colors.background },
+      ]}
+      handleIndicatorStyle={{
+        backgroundColor:
+          theme.mode === "dark" ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.25)",
+        width: 44,
+      }}
     >
       <BottomSheetView style={styles.content}>
-        {safeUrl ? (
-          <WebView
-            source={{ uri: safeUrl }}
-            style={{ flex: 1 }} // ✅ WebView 높이 확보
-            startInLoadingState
-            javaScriptEnabled
-            domStorageEnabled
-            originWhitelist={["http://*", "https://*"]}
-            setSupportMultipleWindows={false}
-            onShouldStartLoadWithRequest={(req) =>
-              /^https?:\/\//i.test(req.url)
-            }
-          />
-        ) : (
-          <View />
-        )}
+        <View style={styles.webWrap}>
+          {safeUrl && isHttpUrl(safeUrl) ? (
+            <>
+              <WebView
+                source={{ uri: safeUrl }}
+                style={[
+                  styles.webview,
+                  {
+                    height: HEIGHT,
+                  },
+                ]}
+                scrollEnabled
+                nestedScrollEnabled
+                startInLoadingState
+              />
+            </>
+          ) : (
+            <View />
+          )}
+        </View>
       </BottomSheetView>
     </BottomSheetModal>
   );
@@ -65,4 +94,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   content: { flex: 1 },
+  webWrap: { flex: 1 },
+  webview: { flex: 1 },
 });
