@@ -18,7 +18,7 @@ export function LinkBottomSheetModal({
   modalRef,
   url,
 }: {
-  modalRef: React.RefObject<BottomSheetModal>;
+  modalRef: React.RefObject<BottomSheetModal | null>;
   url: string | null;
 }) {
   const { theme } = useTheme();
