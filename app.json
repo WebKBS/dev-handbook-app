@@ -99,7 +99,8 @@
           "project": "dev-handbook-app",
           "organization": "webkbs"
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true,
