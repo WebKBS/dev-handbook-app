@@ -77,7 +77,12 @@ const DomainSlugScreenContainer = () => {
           options={{
             headerRight: () => (
               <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                  paddingHorizontal: 8,
+                }}
               >
                 <BookmarkButton
                   domain={domain}

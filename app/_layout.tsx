@@ -78,7 +78,7 @@ function RootLayoutNav() {
         }}
       >
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="detail" />
+        <Stack.Screen name="learn" />
 
         <Stack.Screen
           name="reference-modal/index"

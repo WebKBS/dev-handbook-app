@@ -239,7 +239,7 @@ export default function GraphScreenContainer() {
   const openItem = async (itemId: string) => {
     const domain = itemId.split("/")[0];
     const slug = itemId.split("/")[1];
-    router.push(`/detail/${domain}/${slug}`);
+    router.push(`/learn/${domain}/${slug}`);
   };
 
   const getDomainColor = (domain?: DomainType) =>

@@ -13,7 +13,8 @@
       "bundleIdentifier": "com.kangbeomsu.devhandbookapp",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "associatedDomains": ["applinks:recodelog.com"]
     },
     "android": {
       "adaptiveIcon": {

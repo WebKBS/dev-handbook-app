@@ -82,7 +82,7 @@ const SearchResultCard = ({ doc }: SearchResultCardProps) => {
       </View>
 
       <Link
-        href={`/detail/${doc.domain}/${doc.slug}`}
+        href={`/learn/${doc.domain}/${doc.slug}`}
         style={styles.resultFooter}
       >
         <AppText

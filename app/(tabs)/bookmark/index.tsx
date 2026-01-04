@@ -53,7 +53,7 @@ export default function BookmarkScreen() {
         renderItem={({ item }) => (
           <BookmarkItemCard
             item={item}
-            href={`/detail/${item.domain}/${item.slug}`}
+            href={`/learn/${item.domain}/${item.slug}`}
             isSkeleton={isSkeleton}
           />
         )}

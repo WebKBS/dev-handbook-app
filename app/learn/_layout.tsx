@@ -4,7 +4,7 @@ import { useTheme } from "@/providers/ThemeProvider";
 import { Stack, useGlobalSearchParams } from "expo-router";
 import { View } from "react-native";
 
-const DetailLayout = () => {
+const LearnLayout = () => {
   const { theme } = useTheme();
 
   const { domain } = useGlobalSearchParams<{ domain: DomainType }>();
@@ -26,4 +26,4 @@ const DetailLayout = () => {
   );
 };
 
-export default DetailLayout;
+export default LearnLayout;

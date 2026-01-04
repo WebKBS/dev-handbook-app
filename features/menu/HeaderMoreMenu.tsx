@@ -1,36 +1,61 @@
+import { DomainType } from "@/constants/domain"; // 네 프로젝트 경로에 맞게
 import { useTheme } from "@/providers/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { MenuView } from "@react-native-menu/menu";
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import { Alert, Platform, Pressable } from "react-native";
+import { Alert, Platform, Pressable, Share } from "react-native";
 
 function HeaderMoreMenu() {
   const { theme } = useTheme();
 
+  //  현재 라우트 파라미터 가져오기
+  const { slug, domain } = useLocalSearchParams<{
+    slug: string;
+    domain: DomainType;
+  }>();
+
+  console.log("HeaderMoreMenu slug:", slug);
+  console.log("HeaderMoreMenu domain:", domain);
+
+  const handleShare = async () => {
+    try {
+      if (!slug || !domain) {
+        Alert.alert("공유 실패", "공유할 경로 정보를 찾지 못했어요.");
+        return;
+      }
+
+      // 웹(Universal/App Links)로 공유할 URL
+      const url = `https://recodelog.com/learn/${encodeURIComponent(
+        String(domain),
+      )}/${encodeURIComponent(String(slug))}`;
+
+      await Share.share({
+        message: `이 글 보기: ${url}`, // 대부분 메신저가 message 안 URL을 링크로 인식
+        // url, // 필요하면 같이 넣어도 되지만 message에 포함만 해도 충분한 경우가 많음
+      });
+    } catch (error: any) {
+      Alert.alert("공유 실패", "공유 중 오류가 발생했어요.", error);
+    }
+  };
+
   return (
     <MenuView
-      // iOS에서 메뉴 타이틀 (선택)
-      // Android에서 오른쪽 기준 정렬(헤더 우측이면 켜두는 게 자연스러움)
-      isAnchoredToRight={true}
+      isAnchoredToRight
       shouldOpenOnLongPress={false}
       actions={[
         { id: "feedback", title: "피드백 보내기" },
-        { id: "report", title: "오류 신고" },
         { id: "share", title: "공유" },
       ]}
       onPressAction={({ nativeEvent }) => {
-        // nativeEvent.event === 선택된 id
         const id = nativeEvent.event;
 
         if (id === "feedback") {
           // TODO: 피드백 화면 이동
         }
-        if (id === "report") {
-          // TODO: 신고 화면 이동
-        }
+
         if (id === "share") {
-          // TODO: 공유
-          Alert.alert("공유하기", "공유 기능은 아직 구현되지 않았습니다.");
+          handleShare();
         }
       }}
     >
