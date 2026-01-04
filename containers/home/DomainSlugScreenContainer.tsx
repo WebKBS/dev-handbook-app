@@ -4,7 +4,7 @@ import { DomainType } from "@/constants/domain";
 import BookmarkButton from "@/features/button/BookmarkButton";
 import ReferencesCard from "@/features/card/ReferencesCard";
 import { MarkdownView } from "@/features/markdown/MarkdownView";
-import HeaderMoreMenu from "@/features/menu/HeaderMoreMenu";
+import DomainSlugHeaderMoreMenu from "@/features/menu/DomainSlugHeaderMoreMenu";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getPosts, Reference } from "@/services/content/post";
@@ -90,7 +90,7 @@ const DomainSlugScreenContainer = () => {
                   title={meta.title}
                   description={meta?.description}
                 />
-                <HeaderMoreMenu />
+                <DomainSlugHeaderMoreMenu slug={slug} domain={domain} />
               </View>
             ),
           }}

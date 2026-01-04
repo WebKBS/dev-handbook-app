@@ -1,22 +1,16 @@
-import { DomainType } from "@/constants/domain"; // 네 프로젝트 경로에 맞게
 import { useTheme } from "@/providers/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { MenuView } from "@react-native-menu/menu";
-import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Alert, Platform, Pressable, Share } from "react-native";
 
-function HeaderMoreMenu() {
+interface HeaderMoreMenuProps {
+  slug: string;
+  domain: string;
+}
+
+function DomainSlugHeaderMoreMenu({ slug, domain }: HeaderMoreMenuProps) {
   const { theme } = useTheme();
-
-  //  현재 라우트 파라미터 가져오기
-  const { slug, domain } = useLocalSearchParams<{
-    slug: string;
-    domain: DomainType;
-  }>();
-
-  console.log("HeaderMoreMenu slug:", slug);
-  console.log("HeaderMoreMenu domain:", domain);
 
   const handleShare = async () => {
     try {
@@ -72,4 +66,4 @@ function HeaderMoreMenu() {
   );
 }
 
-export default HeaderMoreMenu;
+export default DomainSlugHeaderMoreMenu;
