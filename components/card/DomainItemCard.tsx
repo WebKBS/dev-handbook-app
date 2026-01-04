@@ -1,5 +1,6 @@
 import { AppText } from "@/components/text/AppText";
-import { useTheme } from "@/providers/ThemeProvider";
+import type { DomainType } from "@/constants/domain";
+import { DOMAIN_COLORS, useTheme } from "@/providers/ThemeProvider";
 import { RootManifestResponse } from "@/services/content/root-manifest";
 import { Feather } from "@expo/vector-icons";
 import { Link, LinkProps } from "expo-router";
@@ -15,6 +16,11 @@ const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
   const { theme } = useTheme();
 
   const skeletonColor = { backgroundColor: theme.colors.card };
+
+  const domain = item?.domain;
+  const domainColor =
+    (domain && DOMAIN_COLORS[domain as DomainType]) ||
+    theme.colors.accentStrong;
 
   const CardContent = (
     <Pressable
@@ -41,12 +47,7 @@ const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
               },
         ]}
       >
-        <View
-          style={[
-            styles.accentBar,
-            { backgroundColor: theme.colors.accentStrong },
-          ]}
-        />
+        <View style={[styles.accentBar, { backgroundColor: domainColor }]} />
         <View style={styles.textContent}>
           {isSkeleton ? (
             <>

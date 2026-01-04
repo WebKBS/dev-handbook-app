@@ -1,3 +1,4 @@
+import { Domain, DomainType } from "@/constants/domain";
 import {
   createContext,
   type ReactNode,
@@ -52,6 +53,15 @@ const palette = {
   ember: "#f97316",
   ash: "#94a3b8",
   mutedLight: "#64748b",
+};
+
+export const DOMAIN_COLORS: Record<DomainType, string> = {
+  [Domain.html]: "#f97316",
+  [Domain.css]: "#2563eb",
+  [Domain.javascript]: "#f59e0b",
+  [Domain.typescript]: "#0ea5e9",
+  [Domain.react]: "#22d3ee",
+  [Domain.web]: "#10b981",
 };
 
 export const themes: Record<ThemeMode, Theme> = {
