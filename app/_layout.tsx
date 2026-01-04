@@ -5,6 +5,7 @@ import OpenUrlLinkButton from "@/features/button/OpenUrlLinkButton";
 import { useDomain } from "@/hooks/services/useDomain";
 import { queryClient } from "@/libs/tanstack-query";
 import { ThemeProvider, useTheme } from "@/providers/ThemeProvider";
+import * as Sentry from "@sentry/react-native";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useFonts } from "expo-font";
@@ -13,7 +14,6 @@ import * as SplashScreen from "expo-splash-screen";
 import { SQLiteProvider } from "expo-sqlite";
 import { useEffect, useRef } from "react";
 import { Platform, StatusBar, View } from "react-native";
-import * as Sentry from "@sentry/react-native";
 
 Sentry.init({
   dsn: "https://81bd59531404d96ddad216a563fa5c94@o4510555343552512.ingest.us.sentry.io/4510645767372800",
@@ -26,10 +26,10 @@ Sentry.init({
   enableLogs: true,
 
   // Configure Session Replay
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
+  replaysSessionSampleRate: 0, // 평소에는 세션 리플레이 수집 안 함
+  replaysOnErrorSampleRate: 0.2,
   integrations: [
-    Sentry.mobileReplayIntegration(),
+    // Sentry.mobileReplayIntegration(),
     Sentry.feedbackIntegration(),
   ],
 
