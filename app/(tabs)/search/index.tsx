@@ -2,6 +2,7 @@ import SearchResultCard from "@/components/card/SearchResultCard";
 import SearchEmptyResult from "@/components/empty/SearchEmptyResult";
 import SearchFooter from "@/components/footer/SearchFooter";
 import SearchHeader from "@/components/header/SearchHeader";
+import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useSearchInfinityQuery } from "@/hooks/useSearchInfinityQuery";
 import { useTheme } from "@/providers/ThemeProvider";
@@ -21,6 +22,8 @@ const DEBOUNCE_MS = 500;
 const SearchScreen = () => {
   const { theme } = useTheme();
   const navigation = useNavigation();
+
+  const contentPaddingBottom = useContentPaddingBotton();
 
   const [query, setQuery] = useState("");
 
@@ -105,7 +108,10 @@ const SearchScreen = () => {
       ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
       contentContainerStyle={[
         styles.container,
-        { backgroundColor: theme.colors.background },
+        {
+          backgroundColor: theme.colors.background,
+          paddingBottom: contentPaddingBottom,
+        },
       ]}
       style={{ backgroundColor: theme.colors.background }}
       keyboardDismissMode="on-drag"
