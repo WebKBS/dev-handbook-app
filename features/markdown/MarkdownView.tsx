@@ -1,5 +1,7 @@
 import { AppText } from "@/components/text/AppText";
 import CodeBlock from "@/features/markdown/CodeBlock";
+import { LinkBottomSheetModal } from "@/features/modal/LinkBottomSheetModal";
+import { useLinkBottomSheet } from "@/hooks/useLinkBottomSheet";
 import { Theme, useTheme } from "@/providers/ThemeProvider";
 import React, { useMemo } from "react";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
@@ -17,6 +19,8 @@ function extractFenceLanguage(node: any): string | undefined {
 export function MarkdownView({ markdown }: Props) {
   const { theme } = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+
+  const { ref, url, open } = useLinkBottomSheet();
 
   const rules = useMemo(() => {
     return {
@@ -73,9 +77,19 @@ export function MarkdownView({ markdown }: Props) {
   ]);
 
   return (
-    <Markdown rules={rules} style={styles.markdown}>
-      {markdown}
-    </Markdown>
+    <>
+      <Markdown
+        rules={rules}
+        style={styles.markdown}
+        onLinkPress={(linkUrl) => {
+          open(linkUrl);
+          return false; // 기본 Linking.openURL 막고 내가 처리 :contentReference[oaicite:2]{index=2}
+        }}
+      >
+        {markdown}
+      </Markdown>
+      <LinkBottomSheetModal modalRef={ref} url={url} />
+    </>
   );
 }
 

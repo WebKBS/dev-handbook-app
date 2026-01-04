@@ -7,9 +7,11 @@ import { MarkdownView } from "@/features/markdown/MarkdownView";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getPosts, Reference } from "@/services/content/post";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const DomainSlugScreenContainer = () => {
   const { slug, domain } = useLocalSearchParams<{
@@ -68,33 +70,37 @@ const DomainSlugScreenContainer = () => {
   }
 
   return (
-    <>
-      <Stack.Screen
-        options={{
-          headerRight: () => (
-            <BookmarkButton
-              domain={domain}
-              slug={slug}
-              title={meta.title}
-              description={meta?.description}
-            />
-          ),
-        }}
-      />
-      <View style={[styles.container, { paddingBottom: contentPaddingBottom }]}>
-        <NonTitleStackScreen />
-        <ScrollView
-          contentInsetAdjustmentBehavior={"automatic"}
-          style={styles.scrollViewContent}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <Stack.Screen
+          options={{
+            headerRight: () => (
+              <BookmarkButton
+                domain={domain}
+                slug={slug}
+                title={meta.title}
+                description={meta?.description}
+              />
+            ),
+          }}
+        />
+        <View
+          style={[styles.container, { paddingBottom: contentPaddingBottom }]}
         >
-          {/* 마크다운 내용 */}
-          <MarkdownView markdown={content} />
+          <NonTitleStackScreen />
+          <ScrollView
+            contentInsetAdjustmentBehavior={"automatic"}
+            style={styles.scrollViewContent}
+          >
+            {/* 마크다운 내용 */}
+            <MarkdownView markdown={content} />
 
-          {/* 참고 링크 */}
-          <ReferencesCard referencesList={referencesList} />
-        </ScrollView>
-      </View>
-    </>
+            {/* 참고 링크 */}
+            <ReferencesCard referencesList={referencesList} />
+          </ScrollView>
+        </View>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 };
 
