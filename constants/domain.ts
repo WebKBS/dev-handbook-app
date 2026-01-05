@@ -5,6 +5,7 @@ export const Domain = {
   typescript: "typescript",
   react: "react",
   web: "web",
+  glossary: "glossary",
 } as const;
 
 export type DomainType = (typeof Domain)[keyof typeof Domain];
@@ -44,5 +45,10 @@ export const DomainHeroContent: Record<DomainType, DomainHeroItem> = {
     title: "웹 개발의 기반 지식, Web",
     subtitle:
       "표준과 브라우저 동작, 성능·접근성·보안 같은 필수 기반을 빠짐없이 정리합니다.",
+  },
+  glossary: {
+    title: "웹 개발 용어사전",
+    subtitle:
+      "웹 개발에서 자주 사용되는 용어들을 알기 쉽게 정리한 용어사전입니다.",
   },
 };

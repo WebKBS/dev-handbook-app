@@ -11,6 +11,8 @@ export const replaceDomainText = (domain: DomainType | string) => {
       return "JavaScript";
     case "typescript":
       return "TypeScript";
+    case "glossary":
+      return "용어사전";
     default:
       return domain.charAt(0).toUpperCase() + domain.slice(1);
   }
