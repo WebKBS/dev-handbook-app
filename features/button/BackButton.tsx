@@ -6,13 +6,17 @@ import { Pressable } from "react-native";
 const BackButton = () => {
   const { theme } = useTheme();
   const router = useRouter();
+
+  const handlePress = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("//home");
+    }
+  };
+
   return (
-    <Pressable
-      onPress={() => {
-        router.back();
-      }}
-      hitSlop={10}
-    >
+    <Pressable onPress={handlePress} hitSlop={10}>
       {/*hitSlop은 터치 영역을 확장해주는 속성입니다. */}
       <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
     </Pressable>
