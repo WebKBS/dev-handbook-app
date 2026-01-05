@@ -5,6 +5,7 @@ import { DomainType } from "@/constants/domain";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getDomainManifest } from "@/services/content/domain-manifest";
+import { replaceDomainText } from "@/utils/replaceDomainText";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect } from "react";
@@ -20,7 +21,7 @@ const DomainScreen = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: true,
-      title: domain?.toUpperCase(),
+      title: replaceDomainText(domain),
     });
   }, [navigation, domain]);
 

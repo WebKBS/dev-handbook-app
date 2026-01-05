@@ -1,21 +1,27 @@
 import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import { DomainResponseData } from "@/services/content/domain";
+import { replaceDomainText } from "@/utils/replaceDomainText";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
+type DomainItem = DomainResponseData["items"][number];
+
 interface HomeCardGridProps {
-  data: DomainResponseData;
+  data: DomainResponseData["items"];
 }
 
 const HomeCardGrid = ({ data }: HomeCardGridProps) => {
   const { theme } = useTheme();
   const router = useRouter();
 
+  const items: (DomainItem | null)[] =
+    data.length > 0 ? data : new Array(4).fill(null);
+
   return (
     <View style={styles.cardGrid}>
-      {(data?.items ?? new Array(4).fill(null)).map((item, index) => {
+      {items.map((item, index) => {
         const isSkeleton = !item;
         const domainLabel = item?.domain ?? "------";
         const countLabel = item?.count ?? 0;
@@ -40,7 +46,7 @@ const HomeCardGrid = ({ data }: HomeCardGridProps) => {
           >
             <View style={styles.cardTop}>
               <Image
-                source={item.image}
+                source={item?.image}
                 contentFit="contain"
                 style={{
                   width: 24,
@@ -53,7 +59,7 @@ const HomeCardGrid = ({ data }: HomeCardGridProps) => {
                 style={[styles.cardTitle, { color: theme.colors.text }]}
                 numberOfLines={1}
               >
-                {domainLabel.toUpperCase()}
+                {replaceDomainText(domainLabel)}
               </AppText>
             </View>
             <AppText

@@ -6,7 +6,7 @@ import { DomainResponseData } from "@/services/content/domain";
 import { StyleSheet, View } from "react-native";
 
 interface HomeScreenContainerProps {
-  data: DomainResponseData;
+  data: DomainResponseData["items"];
 }
 
 const HomeScreenContainer = ({ data }: HomeScreenContainerProps) => {

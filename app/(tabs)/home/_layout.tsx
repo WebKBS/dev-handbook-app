@@ -1,6 +1,7 @@
 import { DomainType } from "@/constants/domain";
 import BackButton from "@/features/button/BackButton";
 import { useTheme } from "@/providers/ThemeProvider";
+import { replaceDomainText } from "@/utils/replaceDomainText";
 import { Stack, useGlobalSearchParams } from "expo-router";
 import { Platform, View } from "react-native";
 
@@ -45,7 +46,7 @@ const HomeLayout = () => {
           options={{
             // animation: "none",
             headerShown: false,
-            title: domain?.toUpperCase(),
+            title: replaceDomainText(domain),
             headerLeft: () => <BackButton />,
           }}
         />
