@@ -1,12 +1,12 @@
 import { AppText } from "@/components/text/AppText";
-import { ThemeColors, useTheme } from "@/providers/ThemeProvider";
+import { useTheme } from "@/providers/ThemeProvider";
 import React, { useMemo } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import SyntaxHighlighter from "react-native-syntax-highlighter";
 
 type Props = {
   code: string;
-  language?: string;
+  language?: string; // hljs language key 그대로 (typescript/javascript/css/xml/bash...)
   showLineNumbers?: boolean;
 };
 
@@ -16,71 +16,209 @@ const monoFont = Platform.select({
   default: "monospace",
 });
 
-function normalizeLanguage(language?: string) {
-  const l = (language ?? "").trim().toLowerCase();
-  if (!l) return "text";
-  if (l === "typescript") return "ts";
-  if (l === "javascript") return "js";
-  if (l === "shell") return "bash";
-  return l;
+type Mode = "light" | "dark";
+
+type Palette = {
+  bg: string;
+  headerBg: string;
+  border: string;
+  text: string;
+  muted: string;
+  lineNumber: string;
+
+  keyword: string;
+  builtIn: string;
+  type: string;
+
+  string: string;
+  number: string;
+  literal: string;
+
+  title: string;
+  function: string;
+  className: string;
+
+  tag: string;
+  attr: string;
+  property: string;
+
+  comment: string;
+  meta: string;
+  symbol: string;
+};
+
+const BASE_DARK = {
+  bg: "#0B1020",
+  headerBg: "#0F172A",
+  border: "#1E293B",
+  text: "#E5E7EB",
+  muted: "#94A3B8",
+  lineNumber: "#64748B",
+};
+
+const BASE_LIGHT = {
+  bg: "#F8FAFC",
+  headerBg: "#FFFFFF",
+  border: "#E2E8F0",
+  text: "#0F172A",
+  muted: "#64748B",
+  lineNumber: "#94A3B8",
+};
+
+function pickPalette(lang: string, mode: Mode): Palette {
+  const base = mode === "dark" ? BASE_DARK : BASE_LIGHT;
+
+  // 공통 토큰 톤(모드별로 대비 다르게)
+  const common =
+    mode === "dark"
+      ? {
+          string: "#9ECE6A",
+          number: "#FF9E64",
+          literal: "#FF9E64",
+          title: "#E0AF68",
+          function: "#7AA2F7",
+          className: "#E0AF68",
+          attr: "#E5E7EB",
+          property: "#CBD5E1",
+          comment: "#64748B",
+          meta: "#A1A1AA",
+          symbol: "#A1A1AA",
+        }
+      : {
+          string: "#15803D", // green-700
+          number: "#C2410C", // orange-700
+          literal: "#C2410C",
+          title: "#7C2D12", // warm brown-ish
+          function: "#1D4ED8", // blue-700
+          className: "#7C2D12",
+          attr: "#0F172A",
+          property: "#0F172A",
+          comment: "#64748B",
+          meta: "#475569",
+          symbol: "#475569",
+        };
+
+  // “언어 느낌”은 keyword/type/tag 쪽의 포인트로만 분리
+  // (라이트에서도 잘 보이도록 너무 밝은 노랑 같은 건 약간 톤다운)
+  switch (lang) {
+    case "xml":
+    case "html":
+      return {
+        ...base,
+        ...common,
+        keyword: mode === "dark" ? "#7DCFFF" : "#0EA5E9",
+        builtIn: mode === "dark" ? "#7DCFFF" : "#0EA5E9",
+        type: mode === "dark" ? "#7DCFFF" : "#0EA5E9",
+        tag: mode === "dark" ? "#FF7A5C" : "#DC2626", // red-600
+      };
+
+    case "css":
+    case "scss":
+    case "less":
+      return {
+        ...base,
+        ...common,
+        keyword: mode === "dark" ? "#89DDFF" : "#2563EB", // blue-600
+        builtIn: mode === "dark" ? "#89DDFF" : "#2563EB",
+        type: mode === "dark" ? "#89DDFF" : "#2563EB",
+        tag: mode === "dark" ? "#7AA2F7" : "#1D4ED8", // selector 느낌
+        property: mode === "dark" ? "#C0CAF5" : "#0F172A",
+      };
+
+    case "javascript":
+    case "jsx":
+      return {
+        ...base,
+        ...common,
+        keyword: mode === "dark" ? "#F7DF1E" : "#B45309", // amber-700 (라이트에서 노랑 대비 보정)
+        builtIn: mode === "dark" ? "#F7DF1E" : "#B45309",
+        type: mode === "dark" ? "#F7DF1E" : "#B45309",
+        tag: mode === "dark" ? "#7AA2F7" : "#1D4ED8",
+      };
+
+    case "typescript":
+    case "tsx":
+      return {
+        ...base,
+        ...common,
+        keyword: mode === "dark" ? "#4FC3F7" : "#0284C7", // sky-600
+        builtIn: mode === "dark" ? "#4FC3F7" : "#0284C7",
+        type: mode === "dark" ? "#4FC3F7" : "#0284C7",
+        tag: mode === "dark" ? "#7AA2F7" : "#1D4ED8",
+      };
+
+    case "json":
+      return {
+        ...base,
+        ...common,
+        keyword: mode === "dark" ? "#CBA6F7" : "#7C3AED", // violet-600
+        builtIn: mode === "dark" ? "#CBA6F7" : "#7C3AED",
+        type: mode === "dark" ? "#CBA6F7" : "#7C3AED",
+        title: mode === "dark" ? "#CBA6F7" : "#7C3AED",
+        tag: mode === "dark" ? "#CBA6F7" : "#7C3AED",
+      };
+
+    case "bash":
+    case "sh":
+    case "shell":
+    case "zsh":
+      return {
+        ...base,
+        ...common,
+        keyword: mode === "dark" ? "#A6E3A1" : "#15803D",
+        builtIn: mode === "dark" ? "#A6E3A1" : "#15803D",
+        type: mode === "dark" ? "#A6E3A1" : "#15803D",
+        tag: mode === "dark" ? "#A6E3A1" : "#15803D",
+      };
+
+    default:
+      return {
+        ...base,
+        ...common,
+        keyword: mode === "dark" ? "#7AA2F7" : "#2563EB",
+        builtIn: mode === "dark" ? "#7AA2F7" : "#2563EB",
+        type: mode === "dark" ? "#7AA2F7" : "#2563EB",
+        tag: mode === "dark" ? "#7AA2F7" : "#2563EB",
+      };
+  }
 }
 
-/**
- * highlight.js(hljs) 토큰 클래스에 대응하는 스타일 맵
- * - react-native-syntax-highlighter (highlighter="hljs")에서 잘 먹음
- * - colors에 맞춰 “대충 예쁘게”가 아니라, 문서 앱처럼 톤 맞추는 게 목표
- */
-function createHljsTheme(colors: ThemeColors) {
-  const baseText = colors.codeText ?? colors.text;
-  const muted = colors.muted;
-
-  // 포인트 컬러는 theme.accent를 기반으로 과하지 않게 분기
-  const accent = colors.accent;
-
+function createHljsTheme(p: Palette) {
   return {
     hljs: {
-      color: baseText,
+      color: p.text,
       backgroundColor: "transparent",
     },
 
-    // 키워드/타입/예약어
-    "hljs-keyword": { color: accent, fontWeight: "700" },
-    "hljs-built_in": { color: accent },
-    "hljs-type": { color: accent },
+    "hljs-keyword": { color: p.keyword, fontWeight: "700" },
+    "hljs-built_in": { color: p.builtIn },
+    "hljs-type": { color: p.type },
 
-    // 문자열/템플릿
-    "hljs-string": { color: baseText },
-    "hljs-template-string": { color: baseText },
+    "hljs-string": { color: p.string },
+    "hljs-template-string": { color: p.string },
 
-    // 숫자/불리언/리터럴
-    "hljs-number": { color: baseText },
-    "hljs-literal": { color: baseText },
+    "hljs-number": { color: p.number },
+    "hljs-literal": { color: p.literal },
 
-    // 함수/클래스/타이틀
-    "hljs-title": { color: baseText, fontWeight: "700" },
-    "hljs-function": { color: baseText },
-    "hljs-class": { color: baseText, fontWeight: "700" },
+    "hljs-title": { color: p.title, fontWeight: "700" },
+    "hljs-function": { color: p.function },
+    "hljs-class": { color: p.className, fontWeight: "700" },
 
-    // 속성/프로퍼티
-    "hljs-attr": { color: baseText },
-    "hljs-attribute": { color: baseText },
-    "hljs-property": { color: baseText },
+    "hljs-tag": { color: p.tag },
+    "hljs-name": { color: p.tag },
 
-    // 주석
-    "hljs-comment": { color: muted },
+    "hljs-attr": { color: p.attr },
+    "hljs-attribute": { color: p.attr },
+    "hljs-property": { color: p.property },
 
-    // 태그/선택자(HTML/CSS 계열)
-    "hljs-tag": { color: accent },
-    "hljs-name": { color: accent },
-    "hljs-selector-tag": { color: accent },
-    "hljs-selector-class": { color: accent },
-    "hljs-selector-id": { color: accent },
+    "hljs-selector-tag": { color: p.tag },
+    "hljs-selector-class": { color: p.tag },
+    "hljs-selector-id": { color: p.tag },
 
-    // 메타/심볼
-    "hljs-meta": { color: muted },
-    "hljs-symbol": { color: muted },
+    "hljs-comment": { color: p.comment },
+    "hljs-meta": { color: p.meta },
+    "hljs-symbol": { color: p.symbol },
 
-    // 강조
     "hljs-emphasis": { fontStyle: "italic" },
     "hljs-strong": { fontWeight: "800" },
   } as const;
@@ -92,26 +230,38 @@ export default function CodeBlock({
   showLineNumbers = false,
 }: Props) {
   const { theme } = useTheme();
+  const mode: Mode = theme.mode === "light" ? "light" : "dark";
 
-  const themed = useMemo(() => createStyles(theme.colors), [theme.colors]);
-  const lang = useMemo(() => normalizeLanguage(language), [language]);
+  const lang = (language ?? "text").trim().toLowerCase();
 
-  // 내부 하이라이트 테마
-  const hljsTheme = useMemo(
-    () => createHljsTheme(theme.colors),
-    [theme.colors],
-  );
+  const palette = useMemo(() => pickPalette(lang, mode), [lang, mode]);
+  const hljsTheme = useMemo(() => createHljsTheme(palette), [palette]);
 
   return (
-    <View style={[styles.container, themed.container]}>
-      <View style={[styles.header, themed.header]}>
-        <AppText style={[styles.langLabel, themed.langLabel]}>{lang}</AppText>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: palette.bg, borderColor: palette.border },
+      ]}
+    >
+      <View
+        style={[
+          styles.header,
+          {
+            backgroundColor: palette.headerBg,
+            borderBottomColor: palette.border,
+          },
+        ]}
+      >
+        <AppText style={[styles.langLabel, { color: palette.muted }]}>
+          {lang}
+        </AppText>
       </View>
 
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[styles.scroll]}
+        contentContainerStyle={styles.scroll}
       >
         <SyntaxHighlighter
           language={lang}
@@ -119,11 +269,19 @@ export default function CodeBlock({
           style={hljsTheme}
           showLineNumbers={showLineNumbers}
           wrapLongLines={false}
-          customStyle={[styles.syntaxCustom, themed.syntaxCustom] as any}
+          customStyle={styles.syntaxCustom as any}
           CodeTag={AppText}
           PreTag={AppText}
+          lineNumberStyle={{
+            color: palette.lineNumber,
+            fontFamily: monoFont,
+            fontSize: 12,
+            lineHeight: 19,
+            paddingRight: 12,
+          }}
           codeTagProps={{
             style: {
+              color: palette.text,
               fontFamily: monoFont,
               fontSize: 13,
               lineHeight: 19,
@@ -160,21 +318,3 @@ const styles = StyleSheet.create({
     margin: 0,
   },
 });
-
-const createStyles = (colors: ThemeColors) =>
-  StyleSheet.create({
-    container: {
-      backgroundColor: colors.codeBg,
-      borderColor: colors.border,
-    },
-    header: {
-      backgroundColor: colors.surface,
-      borderBottomColor: colors.border,
-    },
-    langLabel: {
-      color: colors.muted,
-    },
-    syntaxCustom: {
-      color: colors.codeText ?? colors.text,
-    },
-  });

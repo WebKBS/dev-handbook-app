@@ -27,7 +27,7 @@ Sentry.init({
 
   // Configure Session Replay
   replaysSessionSampleRate: 0, // 평소에는 세션 리플레이 수집 안 함
-  replaysOnErrorSampleRate: 0.2,
+  replaysOnErrorSampleRate: 0,
   integrations: [
     // Sentry.mobileReplayIntegration(),
     Sentry.feedbackIntegration(),
