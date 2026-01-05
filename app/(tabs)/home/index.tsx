@@ -64,7 +64,7 @@ export default function HomeScreen() {
         contentInsetAdjustmentBehavior={"automatic"}
         showsVerticalScrollIndicator={false}
       >
-        <HomeScreenContainer data={data} />
+        <HomeScreenContainer data={data?.items ?? []} />
       </ScrollView>
     </SafeAreaViewScreen>
   );

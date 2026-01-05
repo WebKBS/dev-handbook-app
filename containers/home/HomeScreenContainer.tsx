@@ -12,6 +12,14 @@ interface HomeScreenContainerProps {
 const HomeScreenContainer = ({ data }: HomeScreenContainerProps) => {
   const { theme } = useTheme();
 
+  // "glossary" 용어 도메인을 제외한 나머지 도메인만 필터링
+  const filteredData = data.filter((item) => item.domain !== "glossary");
+
+  // glossary 도메인 데이터 추출 (필요 시 사용)
+  const glossaryData = data.find((item) => item.domain === "glossary");
+
+  console.log("glossaryData:", glossaryData);
+
   return (
     <>
       <ScreenHeroCard
@@ -30,7 +38,7 @@ const HomeScreenContainer = ({ data }: HomeScreenContainerProps) => {
           도메인 카드에서 바로 이동할 수 있어요.
         </AppText>
       </View>
-      <HomeCardGrid data={data} />
+      <HomeCardGrid data={filteredData} />
     </>
   );
 };
