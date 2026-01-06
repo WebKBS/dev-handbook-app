@@ -1,5 +1,6 @@
 import NonTitleStackScreen from "@/components/stack/NonTitleStackScreen";
 import ErrorState from "@/components/state/ErrorState";
+import { AppText } from "@/components/text/AppText";
 import { DomainType } from "@/constants/domain";
 import BookmarkButton from "@/features/button/BookmarkButton";
 import ReferencesWebBrowserCard from "@/features/card/ReferencesWebBrowserCard";
@@ -11,7 +12,16 @@ import { getPosts, Reference } from "@/services/content/post";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  LayoutRectangle,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const DomainSlugScreenContainer = () => {
@@ -32,6 +42,34 @@ const DomainSlugScreenContainer = () => {
   const referencesList: Reference[] = references ?? [];
 
   const contentPaddingBottom = useContentPaddingBotton();
+  const [headingHeight, setHeadingHeight] = useState<number | null>(null);
+  const [isStickyTitleVisible, setIsStickyTitleVisible] = useState(false);
+
+  useEffect(() => {
+    setHeadingHeight(null);
+    setIsStickyTitleVisible(false);
+  }, [content, meta?.title]);
+
+  const handleHeadingLayout = useCallback(
+    (layout: LayoutRectangle) => {
+      if (headingHeight !== null) return;
+      const marginBuffer = 28; // markdown heading 상단/하단 여백 보정
+      setHeadingHeight(layout.height + marginBuffer);
+    },
+    [headingHeight],
+  );
+
+  const handleScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (headingHeight === null) return;
+      const offsetY = event.nativeEvent.contentOffset.y;
+      const shouldShow = offsetY >= headingHeight;
+      setIsStickyTitleVisible((prev) =>
+        prev === shouldShow ? prev : shouldShow,
+      );
+    },
+    [headingHeight],
+  );
 
   if (isPending) {
     return (
@@ -99,12 +137,37 @@ const DomainSlugScreenContainer = () => {
           style={[styles.container, { paddingBottom: contentPaddingBottom }]}
         >
           <NonTitleStackScreen />
+          {isStickyTitleVisible && (
+            <View
+              pointerEvents="none"
+              style={[
+                styles.stickyTitle,
+                {
+                  backgroundColor: theme.colors.background,
+                  borderBottomColor: theme.colors.border,
+                },
+              ]}
+            >
+              <AppText
+                weight="semibold"
+                style={styles.stickyTitleText}
+                numberOfLines={1}
+              >
+                {meta.title}
+              </AppText>
+            </View>
+          )}
           <ScrollView
             contentInsetAdjustmentBehavior={"automatic"}
             style={styles.scrollViewContent}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
           >
             {/* 마크다운 내용 */}
-            <MarkdownView markdown={content} />
+            <MarkdownView
+              markdown={content}
+              onFirstHeadingLayout={handleHeadingLayout}
+            />
 
             {/* 참고 링크 */}
             <ReferencesWebBrowserCard referencesList={referencesList} />
@@ -130,5 +193,18 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     paddingHorizontal: 20,
     paddingBottom: 20,
+  },
+  stickyTitle: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    zIndex: 10,
+  },
+  stickyTitleText: {
+    fontSize: 14,
   },
 });
