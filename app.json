@@ -101,7 +101,13 @@
           "organization": "webkbs"
         }
       ],
-      "@sentry/react-native"
+      "@sentry/react-native",
+      [
+        "expo-web-browser",
+        {
+          "experimentalLauncherActivity": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

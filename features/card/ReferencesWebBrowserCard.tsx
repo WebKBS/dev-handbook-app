@@ -2,25 +2,32 @@ import { AppText } from "@/components/text/AppText";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Reference } from "@/services/content/post";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
+import { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-interface ReferencesCardProps {
+interface ReferencesWebBrowserCardProps {
   referencesList: Reference[];
 }
 
-const ReferencesCard = ({ referencesList }: ReferencesCardProps) => {
+const ReferencesWebBrowserCard = ({
+  referencesList,
+}: ReferencesWebBrowserCardProps) => {
   const { theme } = useTheme();
   const hasReferences = referencesList.length > 0;
-  const router = useRouter();
+  const [result, setResult] = useState(null);
 
   if (!hasReferences) {
     return null;
   }
 
-  const handleReferencePress = (url: string) => {
-    router.push(`/reference-modal?url=${url}`);
+  const handleReferencePress = async (url: string) => {
+    let result = await WebBrowser.openBrowserAsync(url);
+    if (result.type === "opened") {
+    }
   };
+
+  console.log(result);
 
   return (
     <>
@@ -89,7 +96,7 @@ const ReferencesCard = ({ referencesList }: ReferencesCardProps) => {
   );
 };
 
-export default ReferencesCard;
+export default ReferencesWebBrowserCard;
 
 const styles = StyleSheet.create({
   referenceSection: {

@@ -2,7 +2,7 @@ import NonTitleStackScreen from "@/components/stack/NonTitleStackScreen";
 import ErrorState from "@/components/state/ErrorState";
 import { DomainType } from "@/constants/domain";
 import BookmarkButton from "@/features/button/BookmarkButton";
-import ReferencesCard from "@/features/card/ReferencesCard";
+import ReferencesWebBrowserCard from "@/features/card/ReferencesWebBrowserCard";
 import { MarkdownView } from "@/features/markdown/MarkdownView";
 import DomainSlugHeaderMoreMenu from "@/features/menu/DomainSlugHeaderMoreMenu";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
@@ -107,7 +107,7 @@ const DomainSlugScreenContainer = () => {
             <MarkdownView markdown={content} />
 
             {/* 참고 링크 */}
-            <ReferencesCard referencesList={referencesList} />
+            <ReferencesWebBrowserCard referencesList={referencesList} />
           </ScrollView>
         </View>
       </BottomSheetModalProvider>
