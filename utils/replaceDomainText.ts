@@ -14,6 +14,6 @@ export const replaceDomainText = (domain: DomainType | string) => {
     case "glossary":
       return "용어사전";
     default:
-      return domain?.charAt(0).toUpperCase() + domain?.slice(1);
+      return "";
   }
 };

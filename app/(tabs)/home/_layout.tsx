@@ -1,14 +1,10 @@
-import { DomainType } from "@/constants/domain";
 import BackButton from "@/features/button/BackButton";
 import { useTheme } from "@/providers/ThemeProvider";
-import { replaceDomainText } from "@/utils/replaceDomainText";
-import { Stack, useGlobalSearchParams } from "expo-router";
+import { Stack } from "expo-router";
 import { Platform, View } from "react-native";
 
 const HomeLayout = () => {
   const { theme } = useTheme();
-
-  const { domain } = useGlobalSearchParams<{ domain: DomainType }>();
 
   return (
     // 배경색을 테마에 맞게 설정
@@ -46,7 +42,6 @@ const HomeLayout = () => {
           options={{
             // animation: "none",
             headerShown: false,
-            title: replaceDomainText(domain),
             headerLeft: () => <BackButton />,
           }}
         />
