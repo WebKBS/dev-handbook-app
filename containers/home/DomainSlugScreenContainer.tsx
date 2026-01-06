@@ -12,17 +12,10 @@ import { getPosts, Reference } from "@/services/content/post";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  LayoutRectangle,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+const STICKY_TITLE_HEIGHT = 34;
 
 const DomainSlugScreenContainer = () => {
   const { slug, domain } = useLocalSearchParams<{
@@ -42,34 +35,6 @@ const DomainSlugScreenContainer = () => {
   const referencesList: Reference[] = references ?? [];
 
   const contentPaddingBottom = useContentPaddingBotton();
-  const [headingHeight, setHeadingHeight] = useState<number | null>(null);
-  const [isStickyTitleVisible, setIsStickyTitleVisible] = useState(false);
-
-  useEffect(() => {
-    setHeadingHeight(null);
-    setIsStickyTitleVisible(false);
-  }, [content, meta?.title]);
-
-  const handleHeadingLayout = useCallback(
-    (layout: LayoutRectangle) => {
-      if (headingHeight !== null) return;
-      const marginBuffer = 28; // markdown heading 상단/하단 여백 보정
-      setHeadingHeight(layout.height + marginBuffer);
-    },
-    [headingHeight],
-  );
-
-  const handleScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (headingHeight === null) return;
-      const offsetY = event.nativeEvent.contentOffset.y;
-      const shouldShow = offsetY >= headingHeight;
-      setIsStickyTitleVisible((prev) =>
-        prev === shouldShow ? prev : shouldShow,
-      );
-    },
-    [headingHeight],
-  );
 
   if (isPending) {
     return (
@@ -134,40 +99,41 @@ const DomainSlugScreenContainer = () => {
           }}
         />
         <View
-          style={[styles.container, { paddingBottom: contentPaddingBottom }]}
+          style={[
+            styles.container,
+            {
+              paddingBottom: contentPaddingBottom,
+            },
+          ]}
         >
           <NonTitleStackScreen />
-          {isStickyTitleVisible && (
-            <View
-              pointerEvents="none"
-              style={[
-                styles.stickyTitle,
-                {
-                  backgroundColor: theme.colors.background,
-                  borderBottomColor: theme.colors.border,
-                },
-              ]}
+          <View
+            pointerEvents="none"
+            style={[
+              styles.stickyTitle,
+              {
+                backgroundColor: theme.colors.surface,
+                borderBottomColor: theme.colors.border,
+              },
+            ]}
+          >
+            <AppText
+              weight="semibold"
+              style={[styles.stickyTitleText, { color: theme.colors.accent }]}
+              numberOfLines={1}
             >
-              <AppText
-                weight="semibold"
-                style={styles.stickyTitleText}
-                numberOfLines={1}
-              >
-                {meta.title}
-              </AppText>
-            </View>
-          )}
+              {meta.title}
+            </AppText>
+          </View>
           <ScrollView
             contentInsetAdjustmentBehavior={"automatic"}
-            style={styles.scrollViewContent}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
+            style={[
+              styles.scrollViewContent,
+              { paddingTop: STICKY_TITLE_HEIGHT },
+            ]}
           >
             {/* 마크다운 내용 */}
-            <MarkdownView
-              markdown={content}
-              onFirstHeadingLayout={handleHeadingLayout}
-            />
+            <MarkdownView markdown={content} />
 
             {/* 참고 링크 */}
             <ReferencesWebBrowserCard referencesList={referencesList} />
@@ -199,8 +165,9 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
+    height: STICKY_TITLE_HEIGHT,
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    justifyContent: "center",
     borderBottomWidth: StyleSheet.hairlineWidth,
     zIndex: 10,
   },

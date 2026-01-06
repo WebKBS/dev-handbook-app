@@ -3,21 +3,11 @@ import CodeBlock from "@/features/markdown/CodeBlock";
 import { LinkBottomSheetModal } from "@/features/modal/LinkBottomSheetModal";
 import { useLinkBottomSheet } from "@/hooks/useLinkBottomSheet";
 import { Theme, useTheme } from "@/providers/ThemeProvider";
-import React, { useEffect, useMemo, useRef } from "react";
-import {
-  Dimensions,
-  LayoutChangeEvent,
-  LayoutRectangle,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import React, { useMemo } from "react";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import Markdown from "react-native-markdown-display";
 
-type Props = {
-  markdown: string;
-  onFirstHeadingLayout?: (layout: LayoutRectangle) => void;
-};
+type Props = { markdown: string };
 
 function extractFenceLanguage(node: any): string | undefined {
   const info = node?.info ?? node?.attributes?.info ?? node?.sourceInfo ?? "";
@@ -26,37 +16,14 @@ function extractFenceLanguage(node: any): string | undefined {
   return raw.split(/\s+/)[0];
 }
 
-export function MarkdownView({ markdown, onFirstHeadingLayout }: Props) {
+export function MarkdownView({ markdown }: Props) {
   const { theme } = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const headingMeasuredRef = useRef(false);
-
-  useEffect(() => {
-    headingMeasuredRef.current = false;
-  }, [markdown]);
 
   const { ref, url, open } = useLinkBottomSheet();
 
-  const handleHeadingLayout = (event: LayoutChangeEvent) => {
-    if (headingMeasuredRef.current) return;
-    headingMeasuredRef.current = true;
-    onFirstHeadingLayout?.(event.nativeEvent.layout);
-  };
-
   const rules = useMemo(() => {
     return {
-      heading1: (node: any, children: any) => {
-        return (
-          <AppText
-            key={node.key}
-            style={styles.markdown.heading1}
-            onLayout={handleHeadingLayout}
-          >
-            {children}
-          </AppText>
-        );
-      },
-
       fence: (node: any) => {
         const language = extractFenceLanguage(node);
         const code = node?.content ?? "";
@@ -107,7 +74,6 @@ export function MarkdownView({ markdown, onFirstHeadingLayout }: Props) {
     styles.tableWrap,
     styles.markdown.table,
     styles.tableScrollContent,
-    handleHeadingLayout,
   ]);
 
   return (
