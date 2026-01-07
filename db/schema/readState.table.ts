@@ -2,7 +2,6 @@ import { READ_STATUS } from "@/enums/readState.enum";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const readState = sqliteTable("read_state", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
   docKey: text("doc_key").primaryKey(), // `${domain}:${slug}`
   domain: text("domain").notNull(),
   slug: text("slug").notNull(),
