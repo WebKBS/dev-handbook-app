@@ -62,7 +62,8 @@ const DomainItemCard = ({
     },
   };
 
-  const status = statusTokens[readStatus];
+  const status =
+    readStatus && readStatus !== "unread" ? statusTokens[readStatus] : null;
 
   const CardContent = (
     <Pressable
@@ -90,6 +91,26 @@ const DomainItemCard = ({
         ]}
       >
         <View style={[styles.accentBar, { backgroundColor: domainColor }]} />
+        {status && (
+          <View
+            style={[
+              styles.statusBadge,
+              styles.statusBadgePosition,
+              {
+                backgroundColor: status.bg,
+                borderColor: status.border,
+              },
+            ]}
+          >
+            <Feather name={status.icon} size={12} color={status.text} />
+            <AppText
+              weight="semibold"
+              style={[styles.statusText, { color: status.text }]}
+            >
+              {status.label}
+            </AppText>
+          </View>
+        )}
         <View style={styles.textContent}>
           {isSkeleton ? (
             <>
@@ -110,33 +131,14 @@ const DomainItemCard = ({
             </>
           ) : (
             <>
-              <View style={styles.titleRow}>
-                <AppText
-                  weight="semibold"
-                  style={[styles.title, { color: theme.colors.text }]}
-                  numberOfLines={2}
-                  lineBreakStrategyIOS={"hangul-word"}
-                >
-                  {item?.title}
-                </AppText>
-                <View
-                  style={[
-                    styles.statusBadge,
-                    {
-                      backgroundColor: status.bg,
-                      borderColor: status.border,
-                    },
-                  ]}
-                >
-                  <Feather name={status.icon} size={12} color={status.text} />
-                  <AppText
-                    weight="semibold"
-                    style={[styles.statusText, { color: status.text }]}
-                  >
-                    {status.label}
-                  </AppText>
-                </View>
-              </View>
+              <AppText
+                weight="semibold"
+                style={[styles.title, { color: theme.colors.text }]}
+                numberOfLines={2}
+                lineBreakStrategyIOS={"hangul-word"}
+              >
+                {item?.title}
+              </AppText>
               <AppText
                 style={[styles.description, { color: theme.colors.muted }]}
                 numberOfLines={2}
@@ -228,17 +230,10 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 8,
   },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    flexWrap: "wrap",
-    paddingRight: 6,
-  },
   title: {
     fontSize: 16,
     lineHeight: 22,
-    paddingRight: 12,
+    paddingRight: 112, // CTA + 상태 뱃지 공간 확보
     position: "relative",
     flexShrink: 1,
   },
@@ -259,6 +254,12 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 999,
     borderWidth: 1,
+  },
+  statusBadgePosition: {
+    position: "absolute",
+    top: 12,
+    right: 52, // CTA 원형보다 약간 왼쪽에 배치
+    zIndex: 2,
   },
   statusText: {
     fontSize: 11,

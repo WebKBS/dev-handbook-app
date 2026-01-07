@@ -4,6 +4,7 @@ import { AppText } from "@/components/text/AppText";
 import { DomainType } from "@/constants/domain";
 
 import { markDone, markInProgress } from "@/db/repo/readState.repo";
+import { ReadStatus } from "@/enums/readState.enum";
 import BookmarkButton from "@/features/button/BookmarkButton";
 import ReferencesWebBrowserCard from "@/features/card/ReferencesWebBrowserCard";
 import { MarkdownView } from "@/features/markdown/MarkdownView";
@@ -25,6 +26,7 @@ import {
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+// 스크롤뷰 상단에 고정되는 제목 높이
 const STICKY_TITLE_HEIGHT = 34;
 
 // 바닥 판정(심플)
@@ -33,8 +35,6 @@ const DONE_THRESHOLD_PX = 32;
 // 너무 짧은 문서에서 “바닥=즉시 완료” 방지(심플 가드)
 const MIN_SCROLL_Y_TO_COMPLETE = 24; // 최소 이 정도 내려야 완료
 const MIN_OVERFLOW_TO_SCROLL = 80; // content가 viewport보다 이 정도 이상 길면 완료 허용
-
-type ReadStatus = "unread" | "in_progress" | "done";
 
 function pickFirst<T>(v: T | T[] | undefined): T | undefined {
   return Array.isArray(v) ? v[0] : v;
