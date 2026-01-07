@@ -37,8 +37,6 @@ const DomainScreen = () => {
     getReadStatesByDomain(domain ?? ""),
   );
 
-  console.log("readStateRows", readStateRows);
-
   const readStateMap = useMemo(() => {
     const map: Record<string, ReadStatus> = {};
     (readStateRows ?? []).forEach((row) => {

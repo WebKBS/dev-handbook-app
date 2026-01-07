@@ -12,6 +12,7 @@ import DomainSlugHeaderMoreMenu from "@/features/menu/DomainSlugHeaderMoreMenu";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getPosts, Reference } from "@/services/content/post";
+import { Feather } from "@expo/vector-icons";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams } from "expo-router";
@@ -60,6 +61,7 @@ const DomainSlugScreenContainer = () => {
 
   const content = data?.content;
   const meta = data?.meta;
+  const readingMinutes = meta?.derived?.readingMinutes ?? meta?.readingMinutes;
 
   const references = data?.meta?.references;
   const referencesList: Reference[] = references ?? [];
@@ -234,6 +236,29 @@ const DomainSlugScreenContainer = () => {
             >
               {meta.title}
             </AppText>
+            {typeof readingMinutes === "number" && (
+              <View
+                style={[
+                  styles.readingBadge,
+                  {
+                    backgroundColor: theme.colors.card,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
+              >
+                <Feather
+                  name="clock"
+                  size={13}
+                  color={theme.colors.accentStrong}
+                />
+                <AppText
+                  weight="semibold"
+                  style={[styles.readingText, { color: theme.colors.muted }]}
+                >
+                  {`${readingMinutes}분 읽기`}
+                </AppText>
+              </View>
+            )}
           </View>
 
           <ScrollView
@@ -278,9 +303,22 @@ const styles = StyleSheet.create({
     right: 0,
     height: STICKY_TITLE_HEIGHT,
     paddingHorizontal: 20,
-    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
     borderBottomWidth: StyleSheet.hairlineWidth,
     zIndex: 10,
   },
-  stickyTitleText: { fontSize: 14 },
+  stickyTitleText: { fontSize: 14, flex: 1 },
+  readingBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+  readingText: {
+    fontSize: 12,
+  },
 });

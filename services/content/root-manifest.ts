@@ -12,6 +12,13 @@ export type ItemType = {
   coverImage: string;
   order: number;
   level: number;
+  derived: {
+    readingMinutes: number;
+    textChars: number;
+    codeLines: number;
+    imagesCount: number;
+    metricVersion: number;
+  };
 };
 
 export interface RootManifestResponse {
