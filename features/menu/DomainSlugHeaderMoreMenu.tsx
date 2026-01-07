@@ -7,7 +7,7 @@ import { ReadStatus } from "@/enums/readState.enum";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { MenuView } from "@react-native-menu/menu";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Alert, Platform, Pressable, Share } from "react-native";
 
 interface HeaderMoreMenuProps {
@@ -47,32 +47,32 @@ function DomainSlugHeaderMoreMenu({
     }
   };
 
-  const handleMark = useCallback(
-    async (nextStatus: ReadStatus, opts?: { force?: boolean }) => {
-      if (saving) return;
-      if (!slug || !domain) return;
-      setSaving(true);
-      try {
-        if (nextStatus === "done") {
-          await markDone(domain, slug);
-        } else if (nextStatus === "in_progress") {
-          if (opts?.force) {
-            await markInProgressOverride(domain, slug);
-          } else {
-            await markInProgress(domain, slug);
-          }
+  const handleMark = async (
+    nextStatus: ReadStatus,
+    opts?: { force?: boolean },
+  ) => {
+    if (saving) return;
+    if (!slug || !domain) return;
+    setSaving(true);
+    try {
+      if (nextStatus === "done") {
+        await markDone(domain, slug);
+      } else if (nextStatus === "in_progress") {
+        if (opts?.force) {
+          await markInProgressOverride(domain, slug);
+        } else {
+          await markInProgress(domain, slug);
         }
-        onReadStatusChange?.(nextStatus);
-      } catch (error: any) {
-        Alert.alert("상태 변경 실패", "읽음 상태를 저장하지 못했어요.", error);
-      } finally {
-        setSaving(false);
       }
-    },
-    [domain, onReadStatusChange, saving, slug],
-  );
+      onReadStatusChange?.(nextStatus);
+    } catch (error: any) {
+      Alert.alert("상태 변경 실패", "읽음 상태를 저장하지 못했어요.", error);
+    } finally {
+      setSaving(false);
+    }
+  };
 
-  const readActions = useMemo(() => {
+  const readActions = () => {
     if (readStatus === "done") {
       return [{ id: "mark-reset", title: "완료 취소" }];
     }
@@ -83,14 +83,14 @@ function DomainSlugHeaderMoreMenu({
     }
     actions.push({ id: "mark-done", title: "완료로 표시" });
     return actions;
-  }, [readStatus]);
+  };
 
   return (
     <MenuView
       isAnchoredToRight
       shouldOpenOnLongPress={false}
       actions={[
-        ...readActions,
+        ...readActions(),
         { id: "feedback", title: "피드백 보내기" },
         { id: "share", title: "공유" },
       ]}
