@@ -3,7 +3,7 @@ import ErrorState from "@/components/state/ErrorState";
 import { AppText } from "@/components/text/AppText";
 import { DomainType } from "@/constants/domain";
 
-import { markDone, markInProgress } from "@/db/repo/readState.repo";
+import { markDone, markInProgress } from "@/db/queries/readState";
 import { ReadStatus } from "@/enums/readState.enum";
 import BookmarkButton from "@/features/button/BookmarkButton";
 import ReferencesWebBrowserCard from "@/features/card/ReferencesWebBrowserCard";

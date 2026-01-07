@@ -40,7 +40,7 @@ const DomainItemCard = ({
     }
   > = {
     done: {
-      label: "완독",
+      label: "완료",
       icon: "check",
       bg: theme.colors.accentSubtle,
       text: theme.colors.accentStrong,
