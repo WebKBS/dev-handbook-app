@@ -3,7 +3,7 @@ import ErrorState from "@/components/state/ErrorState";
 import { AppText } from "@/components/text/AppText";
 import { DomainType } from "@/constants/domain";
 
-import { markDone, markInProgress } from "@/db/queries/readState";
+import { markDone, markInProgress } from "@/db/readState";
 import { ReadStatus } from "@/enums/readState.enum";
 import BookmarkButton from "@/features/button/BookmarkButton";
 import ReferencesWebBrowserCard from "@/features/card/ReferencesWebBrowserCard";
@@ -15,7 +15,7 @@ import { getPosts, Reference } from "@/services/content/post";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   NativeScrollEvent,
@@ -69,6 +69,12 @@ const DomainSlugScreenContainer = () => {
   // 중복 저장/레이스 방지용 ref들
   const statusRef = useRef<ReadStatus>("unread");
   const markingDoneRef = useRef(false); // done 저장 중 lock
+  const [readStatus, setReadStatus] = useState<ReadStatus>("unread");
+
+  const updateStatus = useCallback((next: ReadStatus) => {
+    statusRef.current = next;
+    setReadStatus(next);
+  }, []);
 
   // 1) 콘텐츠 준비되면 "읽는 중" 처리 (단, done이면 절대 덮지 않음)
   useEffect(() => {
@@ -84,7 +90,7 @@ const DomainSlugScreenContainer = () => {
 
         // 레이스 방지: 이미 done이면 in_progress로 절대 덮지 않기
         if (statusRef.current !== "done") {
-          statusRef.current = res.status;
+          updateStatus(res.status);
         }
       } catch {
         // 저장 실패는 화면에 치명적이지 않으니 무시(원하면 로깅)
@@ -94,7 +100,7 @@ const DomainSlugScreenContainer = () => {
     return () => {
       cancelled = true;
     };
-  }, [content, meta, domain, slug]);
+  }, [content, meta, domain, slug, updateStatus]);
 
   // 2) 바닥 근처 도달 시 done 처리 (중복 저장/레이스 방지 포함)
   const onScroll = useCallback(
@@ -122,7 +128,7 @@ const DomainSlugScreenContainer = () => {
 
         try {
           const res = await markDone(domain, slug); // { status: "done" }
-          statusRef.current = res.status; // 이제는 무조건 done
+          updateStatus(res.status); // 이제는 무조건 done
         } catch {
           // 실패하면 lock 해제 후 재시도 가능
         } finally {
@@ -130,7 +136,7 @@ const DomainSlugScreenContainer = () => {
         }
       }
     },
-    [domain, slug],
+    [domain, slug, updateStatus],
   );
 
   if (isPending) {
@@ -193,6 +199,8 @@ const DomainSlugScreenContainer = () => {
                 <DomainSlugHeaderMoreMenu
                   domain={domain as DomainType}
                   slug={slug as string}
+                  readStatus={readStatus}
+                  onReadStatusChange={(next) => updateStatus(next)}
                 />
               </View>
             ),
