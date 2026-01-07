@@ -2,6 +2,8 @@ import NonTitleStackScreen from "@/components/stack/NonTitleStackScreen";
 import ErrorState from "@/components/state/ErrorState";
 import { AppText } from "@/components/text/AppText";
 import { DomainType } from "@/constants/domain";
+
+import { markDone, markInProgress } from "@/db/repo/readState.repo";
 import BookmarkButton from "@/features/button/BookmarkButton";
 import ReferencesWebBrowserCard from "@/features/card/ReferencesWebBrowserCard";
 import { MarkdownView } from "@/features/markdown/MarkdownView";
@@ -12,29 +14,124 @@ import { getPosts, Reference } from "@/services/content/post";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect, useRef } from "react";
+import {
+  ActivityIndicator,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const STICKY_TITLE_HEIGHT = 34;
 
+// 바닥 판정(심플)
+const DONE_THRESHOLD_PX = 32;
+
+// 너무 짧은 문서에서 “바닥=즉시 완료” 방지(심플 가드)
+const MIN_SCROLL_Y_TO_COMPLETE = 24; // 최소 이 정도 내려야 완료
+const MIN_OVERFLOW_TO_SCROLL = 80; // content가 viewport보다 이 정도 이상 길면 완료 허용
+
+type ReadStatus = "unread" | "in_progress" | "done";
+
+function pickFirst<T>(v: T | T[] | undefined): T | undefined {
+  return Array.isArray(v) ? v[0] : v;
+}
+
 const DomainSlugScreenContainer = () => {
-  const { slug, domain } = useLocalSearchParams<{
+  const params = useLocalSearchParams<{
     slug: string;
     domain: DomainType;
   }>();
 
+  // expo-router에서 가끔 string | string[] 들어오는 경우 방어
+  const slug = pickFirst(params.slug);
+  const domain = pickFirst(params.domain);
+
   const { theme } = useTheme();
   const { data, isPending, error, refetch } = useQuery({
     queryKey: ["post", domain, slug],
-    queryFn: () => getPosts({ domain, slug }),
+    queryFn: () =>
+      getPosts({ domain: domain as DomainType, slug: slug as string }),
+    enabled: !!domain && !!slug, // params 없을 때 불필요 호출 방지
   });
 
   const content = data?.content;
   const meta = data?.meta;
+
   const references = data?.meta?.references;
   const referencesList: Reference[] = references ?? [];
 
   const contentPaddingBottom = useContentPaddingBotton();
+
+  // 중복 저장/레이스 방지용 ref들
+  const statusRef = useRef<ReadStatus>("unread");
+  const markingDoneRef = useRef(false); // done 저장 중 lock
+
+  // 1) 콘텐츠 준비되면 "읽는 중" 처리 (단, done이면 절대 덮지 않음)
+  useEffect(() => {
+    if (!content || !meta) return;
+    if (!domain || !slug) return;
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await markInProgress(domain, slug); // { status: "in_progress" | "done" }
+        if (cancelled) return;
+
+        // 레이스 방지: 이미 done이면 in_progress로 절대 덮지 않기
+        if (statusRef.current !== "done") {
+          statusRef.current = res.status;
+        }
+      } catch {
+        // 저장 실패는 화면에 치명적이지 않으니 무시(원하면 로깅)
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [content, meta, domain, slug]);
+
+  // 2) 바닥 근처 도달 시 done 처리 (중복 저장/레이스 방지 포함)
+  const onScroll = useCallback(
+    async (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (!domain || !slug) return;
+
+      // 이미 done이거나, done 저장 중이면 skip
+      if (statusRef.current === "done") return;
+      if (markingDoneRef.current) return;
+
+      const { layoutMeasurement, contentOffset, contentSize } = e.nativeEvent;
+
+      const viewportH = layoutMeasurement.height;
+      const contentH = contentSize.height;
+      const y = contentOffset.y;
+
+      const overflow = contentH - viewportH;
+      const bottomDistance = contentH - (y + viewportH);
+
+      const canCompleteByScroll =
+        overflow >= MIN_OVERFLOW_TO_SCROLL || y >= MIN_SCROLL_Y_TO_COMPLETE;
+
+      if (canCompleteByScroll && bottomDistance <= DONE_THRESHOLD_PX) {
+        markingDoneRef.current = true; // lock
+
+        try {
+          const res = await markDone(domain, slug); // { status: "done" }
+          statusRef.current = res.status; // 이제는 무조건 done
+        } catch {
+          // 실패하면 lock 해제 후 재시도 가능
+        } finally {
+          markingDoneRef.current = false;
+        }
+      }
+    },
+    [domain, slug],
+  );
 
   if (isPending) {
     return (
@@ -88,16 +185,20 @@ const DomainSlugScreenContainer = () => {
                 }}
               >
                 <BookmarkButton
-                  domain={domain}
-                  slug={slug}
+                  domain={domain as DomainType}
+                  slug={slug as string}
                   title={meta.title}
                   description={meta?.description}
                 />
-                <DomainSlugHeaderMoreMenu slug={slug} domain={domain} />
+                <DomainSlugHeaderMoreMenu
+                  domain={domain as DomainType}
+                  slug={slug as string}
+                />
               </View>
             ),
           }}
         />
+
         <View
           style={[
             styles.container,
@@ -107,6 +208,7 @@ const DomainSlugScreenContainer = () => {
           ]}
         >
           <NonTitleStackScreen />
+
           <View
             pointerEvents="none"
             style={[
@@ -125,12 +227,15 @@ const DomainSlugScreenContainer = () => {
               {meta.title}
             </AppText>
           </View>
+
           <ScrollView
             contentInsetAdjustmentBehavior={"automatic"}
             style={[
               styles.scrollViewContent,
               { paddingTop: STICKY_TITLE_HEIGHT },
             ]}
+            onScroll={onScroll}
+            scrollEventThrottle={16}
           >
             {/* 마크다운 내용 */}
             <MarkdownView markdown={content} />
@@ -147,9 +252,7 @@ const DomainSlugScreenContainer = () => {
 export default DomainSlugScreenContainer;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   centered: {
     flex: 1,
     alignItems: "center",
@@ -171,7 +274,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     zIndex: 10,
   },
-  stickyTitleText: {
-    fontSize: 14,
-  },
+  stickyTitleText: { fontSize: 14 },
 });
