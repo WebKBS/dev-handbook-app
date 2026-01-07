@@ -2,13 +2,16 @@ import DomainItemCard from "@/components/card/DomainItemCard";
 import DomainScreenHeader from "@/components/header/DomainScreenHeader";
 import ErrorState from "@/components/state/ErrorState";
 import { DomainType } from "@/constants/domain";
+import { getReadStatesByDomain } from "@/db/queries/readState";
+import { ReadStatus } from "@/enums/readState.enum";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getDomainManifest } from "@/services/content/domain-manifest";
 import { replaceDomainText } from "@/utils/replaceDomainText";
 import { useQuery } from "@tanstack/react-query";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
 const DomainScreen = () => {
@@ -30,6 +33,21 @@ const DomainScreen = () => {
     queryFn: () => getDomainManifest({ domain }),
   });
 
+  const { data: readStateRows } = useLiveQuery(
+    getReadStatesByDomain(domain ?? ""),
+  );
+
+  console.log("readStateRows", readStateRows);
+
+  const readStateMap = useMemo(() => {
+    const map: Record<string, ReadStatus> = {};
+    (readStateRows ?? []).forEach((row) => {
+      const key = `${row.domain}:${row.slug}`;
+      map[key] = row.status;
+    });
+    return map;
+  }, [readStateRows]);
+
   if (error)
     return <ErrorState title={"데이터를 불러오는 중 오류가 발생했어요."} />;
 
@@ -44,6 +62,9 @@ const DomainScreen = () => {
         <DomainItemCard
           item={item ?? undefined}
           isSkeleton={!item}
+          readStatus={
+            item ? readStateMap[`${item.domain}:${item.slug}`] : undefined
+          }
           href={item ? `/home/${domain}/${item.slug}` : undefined}
         />
       )}

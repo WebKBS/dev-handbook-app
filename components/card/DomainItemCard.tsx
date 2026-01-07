@@ -1,5 +1,6 @@
 import { AppText } from "@/components/text/AppText";
 import type { DomainType } from "@/constants/domain";
+import { ReadStatus } from "@/enums/readState.enum";
 import { DOMAIN_COLORS, useTheme } from "@/providers/ThemeProvider";
 import { RootManifestResponse } from "@/services/content/root-manifest";
 import { Feather } from "@expo/vector-icons";
@@ -10,9 +11,15 @@ interface DomainItemCardProps {
   item?: RootManifestResponse["items"][number];
   isSkeleton?: boolean;
   href?: LinkProps["href"];
+  readStatus?: ReadStatus;
 }
 
-const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
+const DomainItemCard = ({
+  item,
+  isSkeleton,
+  href,
+  readStatus = "unread",
+}: DomainItemCardProps) => {
   const { theme } = useTheme();
 
   const skeletonColor = { backgroundColor: theme.colors.card };
@@ -21,6 +28,41 @@ const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
   const domainColor =
     (domain && DOMAIN_COLORS[domain as DomainType]) ||
     theme.colors.accentStrong;
+
+  const statusTokens: Record<
+    ReadStatus,
+    {
+      label: string;
+      icon: "check" | "clock" | "minus";
+      bg: string;
+      text: string;
+      border?: string;
+    }
+  > = {
+    done: {
+      label: "완독",
+      icon: "check",
+      bg: theme.colors.accentSubtle,
+      text: theme.colors.accentStrong,
+      border: "transparent",
+    },
+    in_progress: {
+      label: "읽는 중",
+      icon: "clock",
+      bg: theme.colors.card,
+      text: theme.colors.accent,
+      border: theme.colors.border,
+    },
+    unread: {
+      label: "미열람",
+      icon: "minus",
+      bg: theme.colors.card,
+      text: theme.colors.muted,
+      border: theme.colors.border,
+    },
+  };
+
+  const status = statusTokens[readStatus];
 
   const CardContent = (
     <Pressable
@@ -68,14 +110,33 @@ const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
             </>
           ) : (
             <>
-              <AppText
-                weight="semibold"
-                style={[styles.title, { color: theme.colors.text }]}
-                numberOfLines={2}
-                lineBreakStrategyIOS={"hangul-word"}
-              >
-                {item?.title}
-              </AppText>
+              <View style={styles.titleRow}>
+                <AppText
+                  weight="semibold"
+                  style={[styles.title, { color: theme.colors.text }]}
+                  numberOfLines={2}
+                  lineBreakStrategyIOS={"hangul-word"}
+                >
+                  {item?.title}
+                </AppText>
+                <View
+                  style={[
+                    styles.statusBadge,
+                    {
+                      backgroundColor: status.bg,
+                      borderColor: status.border,
+                    },
+                  ]}
+                >
+                  <Feather name={status.icon} size={12} color={status.text} />
+                  <AppText
+                    weight="semibold"
+                    style={[styles.statusText, { color: status.text }]}
+                  >
+                    {status.label}
+                  </AppText>
+                </View>
+              </View>
               <AppText
                 style={[styles.description, { color: theme.colors.muted }]}
                 numberOfLines={2}
@@ -167,11 +228,19 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 8,
   },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flexWrap: "wrap",
+    paddingRight: 6,
+  },
   title: {
     fontSize: 16,
     lineHeight: 22,
-    paddingRight: 24,
+    paddingRight: 12,
     position: "relative",
+    flexShrink: 1,
   },
   icon: {
     position: "absolute",
@@ -181,6 +250,18 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 13,
     lineHeight: 18,
+  },
+  statusBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+  statusText: {
+    fontSize: 11,
   },
 
   ctaCircle: {
