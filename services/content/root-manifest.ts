@@ -13,6 +13,7 @@ export type ItemType = {
   slug: string;
   title: string;
   description: string;
+  sectionId: string;
   tags: string[];
   updatedAt: string;
   coverImage: string;

@@ -12,11 +12,11 @@ const HomeLayout = () => {
       <Stack
         screenOptions={{
           // iOS 네이티브 느낌 (큰 타이틀)
-          headerLargeTitle: true,
+          // headerLargeTitle: true,
 
           headerTitleStyle: {
             color: theme.colors.text,
-            fontFamily: "Pretendard-Bold",
+            fontFamily: "Pretendard-ExtraBold",
           },
           headerTintColor: theme.colors.accent,
           contentStyle: { backgroundColor: theme.colors.background },
