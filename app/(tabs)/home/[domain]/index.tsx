@@ -1,7 +1,7 @@
 import DomainItemCard from "@/components/card/DomainItemCard";
 import DomainScreenHeader from "@/components/header/DomainScreenHeader";
+import DomainSectionHeader from "@/components/header/DomainSectionHeader";
 import ErrorState from "@/components/state/ErrorState";
-import { AppText } from "@/components/text/AppText";
 import { DomainType } from "@/constants/domain";
 import { getReadStatesByDomain } from "@/db/queries/readState";
 import { ReadStatus } from "@/enums/readState.enum";
@@ -30,7 +30,6 @@ const DomainScreen = () => {
       headerStyle: {
         backgroundColor: theme.colors.background,
       },
-      // // iOS에서 스크롤 시 배경색 유지
     });
   }, [navigation, domain, theme]);
 
@@ -52,7 +51,12 @@ const DomainScreen = () => {
   const domainItems = data?.items ?? [];
   const sections = data?.sections ?? [];
 
-  let sectionedData: any[] = [];
+  let sectionedData: {
+    id: string;
+    name: string;
+    data: typeof domainItems;
+  }[];
+
   if (isPending) {
     sectionedData = [
       { id: "__skeleton__", name: "", data: new Array(4).fill(null) },
@@ -91,13 +95,13 @@ const DomainScreen = () => {
       keyExtractor={(item, index) => item?.id ?? `sk-${index}`}
       // iOS Sticky 핵심 설정
       stickySectionHeadersEnabled={true}
-      contentInsetAdjustmentBehavior="automatic" // Large Title 애니메이션 동기화
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[
         styles.container,
         { paddingBottom: contentPaddingBottom },
       ]}
       style={{ backgroundColor: theme.colors.background }}
-      renderItem={({ item }: any) => (
+      renderItem={({ item }) => (
         <View style={styles.cardWrapper}>
           <DomainItemCard
             item={item ?? undefined}
@@ -111,24 +115,7 @@ const DomainScreen = () => {
       )}
       // Sticky Header 디자인
       renderSectionHeader={({ section }) =>
-        section.name ? (
-          <View
-            style={[
-              styles.sectionHeader,
-              { backgroundColor: theme.colors.background },
-            ]}
-          >
-            <View style={styles.sectionTextContainer}>
-              <AppText
-                weight="extrabold"
-                style={[styles.sectionTitle, { color: theme.colors.text }]}
-                numberOfLines={1}
-              >
-                {section.name}
-              </AppText>
-            </View>
-          </View>
-        ) : null
+        section.name ? <DomainSectionHeader name={section.name} /> : null
       }
       ListHeaderComponent={<DomainScreenHeader domain={domain} />}
     />
@@ -145,19 +132,5 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     marginBottom: 12,
-  },
-  sectionHeader: {
-    // iOS에서 header와 자연스럽게 연결되도록 패딩 조절
-    paddingVertical: 12,
-    // Sticky 상태일 때 뒤쪽 아이템이 비치지 않도록 불투명 배경 필수
-    width: "100%",
-  },
-  sectionTextContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  sectionTitle: {
-    fontSize: 16,
   },
 });
