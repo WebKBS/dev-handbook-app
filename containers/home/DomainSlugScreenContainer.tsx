@@ -203,6 +203,7 @@ const DomainSlugScreenContainer = () => {
                   slug={slug as string}
                   readStatus={readStatus}
                   onReadStatusChange={(next) => updateStatus(next)}
+                  title={meta.title}
                 />
               </View>
             ),

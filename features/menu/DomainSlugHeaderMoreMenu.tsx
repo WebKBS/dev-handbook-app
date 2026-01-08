@@ -1,3 +1,4 @@
+import { DomainType } from "@/constants/domain";
 import {
   markDone,
   markInProgress,
@@ -13,13 +14,15 @@ import { Alert, Linking, Platform, Pressable, Share } from "react-native";
 const FEEDBACK_EMAIL = "dev21c2020@gmail.com";
 
 interface HeaderMoreMenuProps {
+  title: string;
   slug: string;
-  domain: string;
+  domain: DomainType;
   readStatus?: ReadStatus;
   onReadStatusChange?: (next: ReadStatus) => void;
 }
 
 function DomainSlugHeaderMoreMenu({
+  title,
   slug,
   domain,
   readStatus,
