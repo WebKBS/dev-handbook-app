@@ -8,7 +8,9 @@ import { useTheme } from "@/providers/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { MenuView } from "@react-native-menu/menu";
 import React, { useState } from "react";
-import { Alert, Platform, Pressable, Share } from "react-native";
+import { Alert, Linking, Platform, Pressable, Share } from "react-native";
+
+const FEEDBACK_EMAIL = "dev21c2020@gmail.com";
 
 interface HeaderMoreMenuProps {
   slug: string;
@@ -44,6 +46,39 @@ function DomainSlugHeaderMoreMenu({
       });
     } catch (error: any) {
       Alert.alert("공유 실패", "공유 중 오류가 발생했어요.", error);
+    }
+  };
+
+  const handleFeedback = async () => {
+    try {
+      const subject = encodeURIComponent(
+        `Dev Handbook 피드백 (${domain}/${slug})`,
+      );
+      const body = encodeURIComponent(
+        [
+          "아래 내용을 작성해 주세요:",
+          "",
+          `- 도메인: ${domain}`,
+          `- 슬러그: ${slug}`,
+          "- 내용:",
+          "",
+        ].join("\n"),
+      );
+      const mailtoUrl = `mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`;
+
+      const canOpen = await Linking.canOpenURL(mailtoUrl);
+      if (!canOpen) {
+        Alert.alert("피드백 전송 실패", "메일 앱을 열 수 없습니다.");
+        return;
+      }
+
+      await Linking.openURL(mailtoUrl);
+    } catch (error: any) {
+      Alert.alert(
+        "피드백 전송 실패",
+        "메일 전송을 준비하는 중 오류가 발생했습니다.",
+        error,
+      );
     }
   };
 
@@ -98,7 +133,7 @@ function DomainSlugHeaderMoreMenu({
         const id = nativeEvent.event;
 
         if (id === "feedback") {
-          // TODO: 피드백 화면 이동
+          handleFeedback();
         }
 
         if (id === "share") {
