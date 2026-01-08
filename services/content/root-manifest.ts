@@ -1,6 +1,12 @@
 import { DomainType } from "@/constants/domain";
 import { axiosInstance } from "@/libs/axios";
 
+export type SectionType = {
+  id: string;
+  name: string;
+  order: number;
+};
+
 export type ItemType = {
   id: string;
   domain: DomainType;
@@ -24,10 +30,12 @@ export type ItemType = {
 export interface RootManifestResponse {
   version: number;
   generatedAt: string;
+  sectionsByDomain: Record<DomainType, SectionType[]>;
   items: ItemType[];
 }
 
 export const getRootManifest = async (): Promise<RootManifestResponse> => {
   const response = await axiosInstance.get("/api/service/content/manifest");
+  console.log("response:", response.data);
   return response.data;
 };
