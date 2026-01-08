@@ -54,16 +54,18 @@ function DomainSlugHeaderMoreMenu({
 
   const handleFeedback = async () => {
     try {
-      const subject = encodeURIComponent(
-        `Dev Handbook 피드백 (${domain}/${slug})`,
-      );
+      const subject = encodeURIComponent(`Dev Handbook 피드백: ${title}`);
       const body = encodeURIComponent(
         [
-          "아래 내용을 작성해 주세요:",
+          "Dev Handbook 팀에 보내는 피드백입니다.",
           "",
-          `- 도메인: ${domain}`,
-          `- 슬러그: ${slug}`,
-          "- 내용:",
+          "------------",
+          `제목: ${title}`,
+          `경로: /${domain}/${slug}`,
+          "------------",
+          "",
+          "피드백 내용:",
+          "",
           "",
         ].join("\n"),
       );
