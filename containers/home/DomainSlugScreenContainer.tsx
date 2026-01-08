@@ -31,7 +31,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 const STICKY_TITLE_HEIGHT = 34;
 
 // 바닥 판정(심플)
-const DONE_THRESHOLD_PX = 32;
+const DONE_THRESHOLD_PX = 64;
 
 // 너무 짧은 문서에서 “바닥=즉시 완료” 방지(심플 가드)
 const MIN_SCROLL_Y_TO_COMPLETE = 24; // 최소 이 정도 내려야 완료
