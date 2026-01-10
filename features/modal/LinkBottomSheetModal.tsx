@@ -33,6 +33,9 @@ export function LinkBottomSheetModal({
       index={0}
       enableDynamicSizing={false}
       enablePanDownToClose
+      containerStyle={{
+        zIndex: 50,
+      }}
       //  WebView 스크롤이 안 되는 주원인 해결
       // - 시트 “콘텐츠 영역”의 팬 제스처를 꺼서 WebView가 터치를 가져가게 함
       // - 시트 높이 조절/닫기는 "핸들"로만 가능 (UX도 보통 이게 더 깔끔)
