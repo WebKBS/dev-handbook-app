@@ -12,14 +12,16 @@ import { replaceDomainText } from "@/utils/replaceDomainText";
 import { useQuery } from "@tanstack/react-query";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 import { SectionList, StyleSheet, View } from "react-native";
+import { DomainReadFilter } from "@/features/menu/DomainReadFilterMenu";
 
 const DomainScreen = () => {
   const { theme } = useTheme();
   const { domain } = useLocalSearchParams<{ domain: DomainType }>();
   const contentPaddingBottom = useContentPaddingBotton();
   const navigation = useNavigation();
+  const [filter, setFilter] = useState<DomainReadFilter>("all");
 
   // 1. iOS Large Title 내비게이션 설정
   useLayoutEffect(() => {
@@ -50,6 +52,12 @@ const DomainScreen = () => {
 
   const domainItems = data?.items ?? [];
   const sections = data?.sections ?? [];
+  const filteredItems = domainItems.filter((item) => {
+    const status = readStateMap[`${item.domain}:${item.slug}`];
+    if (filter === "read") return status === "done";
+    if (filter === "unread") return status !== "done";
+    return true;
+  });
 
   let sectionedData: {
     id: string;
@@ -67,13 +75,13 @@ const DomainScreen = () => {
     );
     sectionedData = orderedSections.map((section) => ({
       ...section,
-      data: domainItems
+      data: filteredItems
         .filter((item) => item.sectionId === section.id)
         .sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0)),
     }));
 
     const sectionIds = new Set(orderedSections.map((s) => s.id));
-    const uncategorized = domainItems.filter(
+    const uncategorized = filteredItems.filter(
       (item) => !sectionIds.has(item.sectionId),
     );
     if (uncategorized.length > 0) {
@@ -117,7 +125,13 @@ const DomainScreen = () => {
       renderSectionHeader={({ section }) =>
         section.name ? <DomainSectionHeader name={section.name} /> : null
       }
-      ListHeaderComponent={<DomainScreenHeader domain={domain} />}
+      ListHeaderComponent={
+        <DomainScreenHeader
+          domain={domain as DomainType}
+          filter={filter}
+          onFilterChange={setFilter}
+        />
+      }
     />
   );
 };
