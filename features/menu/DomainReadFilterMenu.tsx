@@ -10,7 +10,7 @@ export type DomainReadFilter = "all" | "unread" | "read";
 const FILTER_OPTIONS: { id: DomainReadFilter; label: string }[] = [
   { id: "all", label: "전체" },
   { id: "unread", label: "안 읽음" },
-  { id: "read", label: "읽음" },
+  { id: "read", label: "완료" },
 ];
 
 type Props = {
@@ -55,11 +55,7 @@ export function DomainReadFilterMenu({ value, onChange }: Props) {
           >
             {current?.label ?? "전체"}
           </AppText>
-          <Ionicons
-            name="chevron-down"
-            size={16}
-            color={theme.colors.muted}
-          />
+          <Ionicons name="chevron-down" size={16} color={theme.colors.muted} />
         </View>
       </Pressable>
     </MenuView>
