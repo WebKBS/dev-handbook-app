@@ -131,8 +131,8 @@ function DomainSlugHeaderMoreMenu({
       shouldOpenOnLongPress={false}
       actions={[
         ...readActions(),
-        { id: "feedback", title: "피드백 보내기" },
         { id: "share", title: "공유" },
+        { id: "feedback", title: "피드백 보내기" },
       ]}
       onPressAction={({ nativeEvent }) => {
         const id = nativeEvent.event;
