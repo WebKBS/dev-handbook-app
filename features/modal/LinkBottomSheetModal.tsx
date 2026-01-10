@@ -25,13 +25,13 @@ export function LinkBottomSheetModal({
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
 
-  // ✅ 시트가 실제로 올라갈 수 있는 최대 높이(상단 안전영역 고려)
+  // 시트가 실제로 올라갈 수 있는 최대 높이(상단 안전영역 고려)
   const maxSheetHeight = useMemo(
     () => SCREEN_HEIGHT - insets.top,
     [insets.top],
   );
 
-  // ✅ % 문자열 대신 px로 고정: WebView 높이 계산이 확실해짐
+  // % 문자열 대신 px로 고정: WebView 높이 계산이 확실해짐
   const snapPoints = useMemo(
     () => [Math.round(maxSheetHeight * 0.6), Math.round(maxSheetHeight)],
     [maxSheetHeight],
@@ -42,7 +42,7 @@ export function LinkBottomSheetModal({
   const safeUrl = url?.trim() ?? null;
   const canRender = !!safeUrl && isHttpUrl(safeUrl);
 
-  // ✅ 현재 snap에 맞는 “확정 높이”를 래퍼에 직접 부여
+  // 현재 snap에 맞는 “확정 높이”를 래퍼에 직접 부여
   const currentSheetHeight =
     sheetIndex >= 0
       ? snapPoints[Math.min(sheetIndex, snapPoints.length - 1)]
@@ -57,7 +57,7 @@ export function LinkBottomSheetModal({
       enableDynamicSizing={false}
       enablePanDownToClose
       containerStyle={{ zIndex: 50 }}
-      // ✅ WebView가 스크롤/터치 우선권 갖게
+      // WebView가 스크롤/터치 우선권 갖게
       enableContentPanningGesture={false}
       backdropComponent={(props) => (
         <BottomSheetBackdrop
@@ -68,10 +68,7 @@ export function LinkBottomSheetModal({
           style={[props.style, { backgroundColor: theme.colors.background }]}
         />
       )}
-      backgroundStyle={[
-        styles.sheetBg,
-        { backgroundColor: theme.colors.background },
-      ]}
+      backgroundStyle={[styles.sheetBg]}
       handleIndicatorStyle={{
         backgroundColor: theme.colors.accent,
         opacity: theme.mode === "dark" ? 0.9 : 0.8,
@@ -83,7 +80,7 @@ export function LinkBottomSheetModal({
           style={[
             styles.webWrap,
             {
-              height: currentSheetHeight, // ✅ 핵심: 0 방지 + 60%에서도 넘침 방지
+              height: currentSheetHeight, // 핵심: 0 방지 + 60%에서도 넘침 방지
               paddingBottom: insets.bottom,
             },
           ]}
