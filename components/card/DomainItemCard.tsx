@@ -148,7 +148,7 @@ const DomainItemCard = ({
                 </AppText>
                 <AppText
                   style={[styles.description, { color: theme.colors.muted }]}
-                  numberOfLines={2}
+                  // numberOfLines={3}
                 >
                   {item?.description}
                 </AppText>
