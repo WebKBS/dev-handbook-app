@@ -5,6 +5,7 @@ import ErrorState from "@/components/state/ErrorState";
 import { DomainType } from "@/constants/domain";
 import { getReadStatesByDomain } from "@/db/queries/readState";
 import { ReadStatus } from "@/enums/readState.enum";
+import { DomainReadFilter } from "@/features/menu/DomainReadFilterMenu";
 import { useContentPaddingBotton } from "@/hooks/useContentPaddingBotton";
 import { useTheme } from "@/providers/ThemeProvider";
 import { getDomainManifest } from "@/services/content/domain-manifest";
@@ -14,7 +15,6 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect, useState } from "react";
 import { SectionList, StyleSheet, View } from "react-native";
-import { DomainReadFilter } from "@/features/menu/DomainReadFilterMenu";
 
 const DomainScreen = () => {
   const { theme } = useTheme();
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     // Large Title 사용 시 paddingTop을 너무 크게 주면 sticky 위치가 어긋날 수 있음
-    paddingTop: 8,
+    paddingTop: 20,
   },
   cardWrapper: {
     marginBottom: 12,
