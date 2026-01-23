@@ -1,9 +1,13 @@
 import { DomainType } from "@/constants/domain";
 import { axiosInstance } from "@/libs/axios";
-import { RootManifestResponse } from "@/services/content/root-manifest";
+import { ItemType, SectionType } from "@/services/content/root-manifest";
 
-interface DomainManifestResponse extends RootManifestResponse {
+interface DomainManifestResponse {
+  version: number;
+  generatedAt: string;
   domain: DomainType;
+  sections: SectionType[];
+  items: ItemType[];
 }
 
 interface DomainManifestItem {

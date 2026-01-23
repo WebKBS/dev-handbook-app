@@ -1,5 +1,6 @@
-import { db, dbName } from "@/db";
+import { db } from "@/db";
 import migrations from "@/db/migrations/migrations";
+
 import HeaderBackButton from "@/features/button/HeaderBackButton";
 import OpenUrlLinkButton from "@/features/button/OpenUrlLinkButton";
 import { useDomain } from "@/hooks/services/useDomain";
@@ -123,7 +124,10 @@ function RootLayoutNav() {
 export default Sentry.wrap(function RootLayout() {
   return (
     <ThemeProvider>
-      <SQLiteProvider databaseName={dbName}>
+      <SQLiteProvider
+        databaseName={"dev-app.db"}
+        options={{ useNewConnection: true }}
+      >
         <QueryClientProvider client={queryClient}>
           <RootLayoutNav />
         </QueryClientProvider>

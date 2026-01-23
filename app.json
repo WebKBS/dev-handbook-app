@@ -14,7 +14,8 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
-      "associatedDomains": ["applinks:recodelog.com"]
+      "associatedDomains": ["applinks:recodelog.com"],
+      "buildNumber": "26"
     },
     "android": {
       "adaptiveIcon": {

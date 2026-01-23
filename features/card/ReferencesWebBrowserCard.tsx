@@ -27,8 +27,6 @@ const ReferencesWebBrowserCard = ({
     }
   };
 
-  console.log(result);
-
   return (
     <>
       <View style={styles.referenceSection}>

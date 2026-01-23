@@ -1,5 +1,6 @@
 import { AppText } from "@/components/text/AppText";
 import type { DomainType } from "@/constants/domain";
+import { ReadStatus } from "@/enums/readState.enum";
 import { DOMAIN_COLORS, useTheme } from "@/providers/ThemeProvider";
 import { RootManifestResponse } from "@/services/content/root-manifest";
 import { Feather } from "@expo/vector-icons";
@@ -10,17 +11,58 @@ interface DomainItemCardProps {
   item?: RootManifestResponse["items"][number];
   isSkeleton?: boolean;
   href?: LinkProps["href"];
+  readStatus?: ReadStatus;
 }
 
-const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
+const DomainItemCard = ({
+  item,
+  isSkeleton,
+  href,
+  readStatus = "unread",
+}: DomainItemCardProps) => {
   const { theme } = useTheme();
 
   const skeletonColor = { backgroundColor: theme.colors.card };
-
   const domain = item?.domain;
   const domainColor =
     (domain && DOMAIN_COLORS[domain as DomainType]) ||
     theme.colors.accentStrong;
+
+  const statusTokens: Record<
+    ReadStatus,
+    {
+      label: string;
+      icon: "check" | "clock" | "minus";
+      bg: string;
+      text: string;
+      border?: string;
+    }
+  > = {
+    done: {
+      label: "완료",
+      icon: "check",
+      bg: theme.colors.accentSubtle,
+      text: theme.colors.accentStrong,
+      border: "transparent",
+    },
+    in_progress: {
+      label: "읽는 중",
+      icon: "clock",
+      bg: theme.colors.card,
+      text: theme.colors.accent,
+      border: theme.colors.border,
+    },
+    unread: {
+      label: "미열람",
+      icon: "minus",
+      bg: theme.colors.card,
+      text: theme.colors.muted,
+      border: theme.colors.border,
+    },
+  };
+
+  const status =
+    readStatus && readStatus !== "unread" ? statusTokens[readStatus] : null;
 
   const CardContent = (
     <Pressable
@@ -29,7 +71,7 @@ const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
         {
           backgroundColor: theme.colors.card,
           shadowColor: theme.colors.shadow,
-          opacity: isSkeleton ? 0.5 : 1,
+          opacity: isSkeleton ? 0.6 : 1,
           borderColor: theme.colors.border,
         },
       ]}
@@ -39,77 +81,103 @@ const DomainItemCard = ({ item, isSkeleton, href }: DomainItemCardProps) => {
       <View
         style={[
           styles.cardContent,
-          isSkeleton
-            ? { opacity: 0.7 }
-            : {
-                opacity: 1,
-                backgroundColor: theme.colors.cardBg,
-              },
+          {
+            backgroundColor: isSkeleton
+              ? theme.colors.card
+              : theme.colors.cardBg,
+          },
         ]}
       >
+        {/* 왼쪽 컬러 바 */}
         <View style={[styles.accentBar, { backgroundColor: domainColor }]} />
-        <View style={styles.textContent}>
-          {isSkeleton ? (
-            <>
-              <View
-                style={[
-                  styles.skeletonBox,
-                  skeletonColor,
-                  { width: "50%", height: 18, borderRadius: 4 },
-                ]}
-              />
-              <View
-                style={[
-                  styles.skeletonBox,
-                  skeletonColor,
-                  { width: "90%", height: 14, borderRadius: 4, marginTop: 8 },
-                ]}
-              />
-            </>
-          ) : (
-            <>
-              <AppText
-                weight="semibold"
-                style={[styles.title, { color: theme.colors.text }]}
-                numberOfLines={2}
-                lineBreakStrategyIOS={"hangul-word"}
-              >
-                {item?.title}
-              </AppText>
-              <AppText
-                style={[styles.description, { color: theme.colors.muted }]}
-                numberOfLines={2}
-              >
-                {item?.description}
-              </AppText>
-            </>
-          )}
-        </View>
 
-        {!isSkeleton ? (
-          <View
-            style={[
-              styles.ctaCircle,
-              styles.ctaPosition,
-              { backgroundColor: theme.colors.surface },
-            ]}
-          >
-            <Feather
-              name="chevron-right"
-              size={16}
-              color={theme.colors.accentStrong}
-              style={styles.icon}
-            />
+        <View style={styles.mainContainer}>
+          <View style={styles.textContent}>
+            {isSkeleton ? (
+              <>
+                <View
+                  style={[
+                    styles.skeletonBox,
+                    skeletonColor,
+                    { width: "40%", height: 16, borderRadius: 4 },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.skeletonBox,
+                    skeletonColor,
+                    { width: "90%", height: 18, borderRadius: 4, marginTop: 8 },
+                  ]}
+                />
+              </>
+            ) : (
+              <>
+                {/* 상단 상태 표시 */}
+                {status && (
+                  <View style={styles.statusRow}>
+                    <View
+                      style={[
+                        styles.statusBadge,
+                        {
+                          backgroundColor: status.bg,
+                          borderColor: status.border,
+                        },
+                      ]}
+                    >
+                      <Feather
+                        name={status.icon}
+                        size={10}
+                        color={status.text}
+                      />
+                      <AppText
+                        weight="semibold"
+                        style={[styles.statusText, { color: status.text }]}
+                      >
+                        {status.label}
+                      </AppText>
+                    </View>
+                  </View>
+                )}
+                {/* 제목 및 설명 */}
+                <AppText
+                  weight="bold"
+                  style={[styles.title, { color: theme.colors.text }]}
+                  numberOfLines={2}
+                >
+                  {item?.title}
+                </AppText>
+                <AppText
+                  style={[styles.description, { color: theme.colors.muted }]}
+                  // numberOfLines={3}
+                >
+                  {item?.description}
+                </AppText>
+              </>
+            )}
           </View>
-        ) : (
-          <View
-            style={[
-              styles.ctaCircle,
-              skeletonColor,
-              { borderRadius: 999, width: 32, height: 32 },
-            ]}
-          />
-        )}
+
+          {/* 우측 아이콘 영역 */}
+          <View style={styles.actionArea}>
+            {!isSkeleton ? (
+              <View
+                style={[
+                  styles.ctaCircle,
+                  { backgroundColor: theme.colors.surface },
+                ]}
+              >
+                <Feather
+                  name="chevron-right"
+                  size={16}
+                  color={theme.colors.accentStrong}
+                />
+              </View>
+            ) : (
+              <View
+                style={[styles.ctaCircle, skeletonColor, { opacity: 0.5 }]}
+              />
+            )}
+          </View>
+        </View>
       </View>
     </Pressable>
   );
@@ -130,74 +198,75 @@ export default DomainItemCard;
 const styles = StyleSheet.create({
   cardWrapper: {
     marginBottom: 12,
-    borderRadius: 14,
+    borderRadius: 14, // 기존 유지
     overflow: "hidden",
     borderWidth: 1,
-    padding: 6,
+    padding: 6, // 기존 유지
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 1,
-    position: "relative",
   },
-
   cardContent: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingLeft: 14,
-    paddingRight: 40,
-    paddingVertical: 14,
-    borderRadius: 8,
-    position: "relative",
+    borderRadius: 8, // 기존 유지
     overflow: "hidden",
+    position: "relative",
   },
-
   accentBar: {
     position: "absolute",
     left: 0,
     top: 0,
     bottom: 0,
     width: 4,
-    opacity: 0.9,
     zIndex: 1,
   },
-
+  mainContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 16, // 컬러바 공간 포함 여백
+    paddingRight: 12,
+    paddingVertical: 14,
+  },
   textContent: {
     flex: 1,
-    gap: 8,
+    gap: 4,
+  },
+  statusRow: {
+    flexDirection: "row",
+    marginBottom: 4,
+  },
+  statusBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  statusText: {
+    fontSize: 10,
   },
   title: {
     fontSize: 16,
     lineHeight: 22,
-    paddingRight: 24,
-    position: "relative",
-  },
-  icon: {
-    position: "absolute",
-    top: 4,
-    right: 4,
   },
   description: {
     fontSize: 13,
     lineHeight: 18,
   },
-
+  actionArea: {
+    marginLeft: 12,
+    justifyContent: "center",
+  },
   ctaCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "rgba(0,0,0,0.08)",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-  },
-  ctaPosition: {
-    position: "absolute",
-    top: 10,
-    right: 10,
   },
   skeletonBox: {
     backgroundColor: "#E0E0E0",

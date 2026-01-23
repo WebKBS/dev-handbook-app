@@ -20,6 +20,10 @@ interface PostsResponse {
     order: number;
     level: number;
     references?: Reference[];
+    readingMinutes?: number;
+    derived?: {
+      readingMinutes?: number;
+    };
   };
   content: string;
 }

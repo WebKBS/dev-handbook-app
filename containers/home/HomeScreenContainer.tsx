@@ -18,8 +18,6 @@ const HomeScreenContainer = ({ data }: HomeScreenContainerProps) => {
   // glossary 도메인 데이터 추출 (필요 시 사용)
   const glossaryData = data.find((item) => item.domain === "glossary");
 
-  console.log("glossaryData:", glossaryData);
-
   return (
     <>
       <ScreenHeroCard
