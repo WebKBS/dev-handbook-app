@@ -5,6 +5,7 @@ import { useLinkBottomSheet } from "@/hooks/useLinkBottomSheet";
 import { Theme, useTheme } from "@/providers/ThemeProvider";
 import React, { useMemo } from "react";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
+import FitImage from "react-native-fit-image";
 import Markdown from "react-native-markdown-display";
 
 type Props = { markdown: string };
@@ -66,6 +67,46 @@ export function MarkdownView({ markdown }: Props) {
             </View>
           </ScrollView>
         );
+      },
+
+      image: (
+        node: any,
+        _children: any,
+        _parent: any,
+        mdStyles: any,
+        allowedImageHandlers: string[],
+        defaultImageHandler: string | null,
+      ) => {
+        const { src, alt } = node.attributes ?? {};
+        const show =
+          allowedImageHandlers.filter((value) => {
+            return String(src).toLowerCase().startsWith(value.toLowerCase());
+          }).length > 0;
+
+        if (show === false && defaultImageHandler === null) {
+          return null;
+        }
+
+        const imageProps: {
+          indicator: boolean;
+          style: any;
+          source: { uri: string };
+          accessible?: boolean;
+          accessibilityLabel?: string;
+        } = {
+          indicator: true,
+          style: mdStyles._VIEW_SAFE_image,
+          source: {
+            uri: show === true ? src : `${defaultImageHandler}${src}`,
+          },
+        };
+
+        if (alt) {
+          imageProps.accessible = true;
+          imageProps.accessibilityLabel = alt;
+        }
+
+        return <FitImage key={node.key} {...imageProps} />;
       },
     };
   }, [
