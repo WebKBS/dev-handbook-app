@@ -131,7 +131,7 @@ function DomainSlugHeaderMoreMenu({
       shouldOpenOnLongPress={false}
       actions={[
         ...readActions(),
-        { id: "share", title: "공유" },
+        // { id: "share", title: "공유" }, // TODO: 공유 기능 비활성화 - 추후 필요 시 다시 활성화
         { id: "feedback", title: "피드백 보내기" },
       ]}
       onPressAction={({ nativeEvent }) => {

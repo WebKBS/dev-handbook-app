@@ -24,9 +24,12 @@ export function AppText({
       {...props}
       style={[
         styles.base,
-        { fontFamily: fontMap[weight], fontWeight: "normal" },
+        {
+          fontFamily: fontMap[weight],
+          fontWeight: "normal",
+          color: theme.colors.text,
+        },
         style,
-        { color: theme.colors.text },
       ]}
     />
   );

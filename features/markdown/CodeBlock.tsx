@@ -268,6 +268,7 @@ export default function CodeBlock({
           highlighter="hljs"
           style={hljsTheme}
           showLineNumbers={showLineNumbers}
+          wrapLines={false}
           wrapLongLines={false}
           customStyle={styles.syntaxCustom as any}
           CodeTag={AppText}
