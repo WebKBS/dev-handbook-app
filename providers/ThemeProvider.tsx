@@ -62,6 +62,7 @@ export const DOMAIN_COLORS: Record<DomainType, string> = {
   [Domain.typescript]: "#0ea5e9",
   [Domain.react]: "#22d3ee",
   [Domain.web]: "#10b981",
+  [Domain.glossary]: "#8b5cf6",
 };
 
 export const themes: Record<ThemeMode, Theme> = {
