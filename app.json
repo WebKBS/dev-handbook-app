@@ -41,7 +41,8 @@
           "backgroundColor": "#ffffff",
           "dark": {
             "backgroundColor": "#000000"
-          }
+          },
+          "imageWidth": 400
         }
       ],
       [
