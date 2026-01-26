@@ -14,8 +14,7 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
-      "associatedDomains": ["applinks:recodelog.com"],
-      "buildNumber": "26"
+      "associatedDomains": ["applinks:recodelog.com"]
     },
     "android": {
       "adaptiveIcon": {
@@ -42,7 +41,7 @@
           "dark": {
             "backgroundColor": "#000000"
           },
-          "imageWidth": 400
+          "imageWidth": 240
         }
       ],
       [
