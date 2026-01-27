@@ -34,7 +34,7 @@ export const getSearch = async ({
   page = 1,
   pageSize = 20,
 }: SearchParams): Promise<SearchResponse> => {
-  const response = await axiosInstance.get(`/api/service/content/posts`, {
+  const response = await axiosInstance.get(`/content/posts`, {
     params: {
       domain,
       q,

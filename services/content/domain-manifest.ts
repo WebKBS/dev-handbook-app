@@ -18,7 +18,7 @@ export const getDomainManifest = async ({
   domain,
 }: DomainManifestItem): Promise<DomainManifestResponse> => {
   const response = await axiosInstance.get(
-    `/api/service/content/domains/${domain}/manifest`,
+    `/content/domains/${domain}/manifest`,
   );
   return response.data;
 };

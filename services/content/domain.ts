@@ -11,6 +11,6 @@ export interface DomainResponseData {
 }
 
 export const getDomain = async (): Promise<DomainResponseData> => {
-  const response = await axiosInstance.get("/api/service/content/domains");
+  const response = await axiosInstance.get("/content/domains");
   return response.data;
 };

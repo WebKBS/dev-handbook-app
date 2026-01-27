@@ -36,7 +36,7 @@ export interface RootManifestResponse {
 }
 
 export const getRootManifest = async (): Promise<RootManifestResponse> => {
-  const response = await axiosInstance.get("/api/service/content/manifest");
+  const response = await axiosInstance.get("/content/manifest");
   console.log("response:", response.data);
   return response.data;
 };

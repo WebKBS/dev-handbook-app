@@ -37,8 +37,6 @@ export const getPosts = async ({
   domain,
   slug,
 }: PostParams): Promise<PostsResponse> => {
-  const response = await axiosInstance.get(
-    `/api/service/content/posts/${domain}/${slug}`,
-  );
+  const response = await axiosInstance.get(`/content/posts/${domain}/${slug}`);
   return response.data;
 };

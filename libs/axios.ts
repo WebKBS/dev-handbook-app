@@ -1,4 +1,3 @@
-// src/lib/axiosInstance.ts
 import { env } from "@/config/env";
 import { type Tokens, tokenStorage } from "@/libs/tokenStorage";
 import { tokenPairSchema } from "@/schema/auth.schemas";
@@ -8,16 +7,16 @@ type RetryableConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
 };
 
-const REFRESH_PATH = "/auth/refresh"; // 너 서버 경로에 맞게 수정
+const REFRESH_PATH = "/auth/refresh";
 
 export const axiosInstance = axios.create({
-  baseURL: env.API_URL,
+  baseURL: `${env.API_URL}/api/v1/service`,
   timeout: 15_000,
 });
 
 // refresh 전용(인터셉터 영향 X)
 const refreshClient = axios.create({
-  baseURL: env.API_URL,
+  baseURL: `${env.API_URL}/api/v1/service`,
   timeout: 15_000,
 });
 
