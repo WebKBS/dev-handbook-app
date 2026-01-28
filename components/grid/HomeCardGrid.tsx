@@ -4,7 +4,7 @@ import { DomainResponseData } from "@/services/content/domain";
 import { replaceDomainText } from "@/utils/replaceDomainText";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 type DomainItem = DomainResponseData["items"][number];
 
@@ -27,8 +27,9 @@ const HomeCardGrid = ({ data }: HomeCardGridProps) => {
         const countLabel = item?.count ?? 0;
 
         return (
-          <Pressable
+          <TouchableOpacity
             key={item?.domain ?? `skeleton-${index}`}
+            activeOpacity={0.8}
             style={[
               styles.card,
               {
@@ -68,7 +69,7 @@ const HomeCardGrid = ({ data }: HomeCardGridProps) => {
             >
               {isSkeleton ? "—" : `${countLabel}개 문서`}
             </AppText>
-          </Pressable>
+          </TouchableOpacity>
         );
       })}
     </View>
@@ -79,12 +80,12 @@ export default HomeCardGrid;
 
 const styles = StyleSheet.create({
   cardGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    // flexDirection: "row",
+    // flexWrap: "wrap",
     gap: 12,
   },
   card: {
-    width: "48%",
+    // width: "48%",
     borderRadius: 14,
     borderWidth: 1,
     padding: 14,

@@ -5,7 +5,7 @@ import { DOMAIN_COLORS, useTheme } from "@/providers/ThemeProvider";
 import { RootManifestResponse } from "@/services/content/root-manifest";
 import { Feather } from "@expo/vector-icons";
 import { Link, LinkProps } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 interface DomainItemCardProps {
   item?: RootManifestResponse["items"][number];
@@ -41,8 +41,8 @@ const DomainItemCard = ({
     done: {
       label: "완료",
       icon: "check",
-      bg: theme.colors.accentSubtle,
-      text: theme.colors.accentStrong,
+      bg: theme.colors.successSubtle,
+      text: theme.colors.success,
       border: "transparent",
     },
     in_progress: {
@@ -65,7 +65,8 @@ const DomainItemCard = ({
     readStatus && readStatus !== "unread" ? statusTokens[readStatus] : null;
 
   const CardContent = (
-    <Pressable
+    <TouchableOpacity
+      activeOpacity={0.8}
       style={[
         styles.cardWrapper,
         {
@@ -76,7 +77,6 @@ const DomainItemCard = ({
         },
       ]}
       disabled={isSkeleton || !href}
-      android_ripple={{ color: theme.colors.border }}
     >
       <View
         style={[
@@ -179,7 +179,7 @@ const DomainItemCard = ({
           </View>
         </View>
       </View>
-    </Pressable>
+    </TouchableOpacity>
   );
 
   if (href && !isSkeleton) {

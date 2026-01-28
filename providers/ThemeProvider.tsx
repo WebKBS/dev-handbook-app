@@ -27,6 +27,8 @@ export type ThemeColors = {
   codeText: string;
   tabInactive: string;
   shadow: string;
+  success: string;
+  successSubtle: string;
 };
 
 export type Theme = {
@@ -83,6 +85,8 @@ export const themes: Record<ThemeMode, Theme> = {
       codeText: palette.ink,
       tabInactive: palette.ash,
       shadow: "rgba(15, 23, 42, 0.08)",
+      success: "#10b981",
+      successSubtle: "rgba(16, 185, 129, 0.12)",
     },
     mode: "light",
   },
@@ -103,6 +107,8 @@ export const themes: Record<ThemeMode, Theme> = {
       codeText: "#e5e7eb",
       tabInactive: "#6b7280",
       shadow: "rgba(8, 15, 26, 0.6)",
+      success: "#34d399",
+      successSubtle: "rgba(52, 211, 153, 0.16)",
     },
     mode: "dark",
   },
